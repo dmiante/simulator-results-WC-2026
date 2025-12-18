@@ -1,0 +1,92 @@
+"use client"
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { MatchInput } from "@/components/match-input"
+import { StandingsTable } from "@/components/standings-table"
+import type { Match, Team, GroupStanding } from "@/lib/tournament-data"
+
+interface GroupStageProps {
+  groups: Record<string, string[]>
+  groupMatches: Match[]
+  groupStandings: Record<string, GroupStanding[]>
+  teamsMap: Record<string, Team>
+  onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
+  qualifiedTeams: { first: string[]; second: string[]; thirdBest: string[] }
+}
+
+export function GroupStage({
+  groups,
+  groupMatches,
+  groupStandings,
+  teamsMap,
+  onScoreChange,
+  qualifiedTeams,
+}: GroupStageProps) {
+  return (
+    <div className="space-y-8">
+      {/* Progress indicator */}
+      <div className="flex flex-wrap items-center gap-4 p-4 bg-muted/50 rounded-lg">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Qualified:</span>
+          <Badge variant="default">
+            {qualifiedTeams.first.length + qualifiedTeams.second.length + qualifiedTeams.thirdBest.length} / 32
+          </Badge>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-green-500" />
+          <span className="text-xs text-muted-foreground">1st Place</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-blue-500" />
+          <span className="text-xs text-muted-foreground">2nd Place</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-amber-500" />
+          <span className="text-xs text-muted-foreground">Best 3rd</span>
+        </div>
+      </div>
+
+      {/* Groups grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        {Object.entries(groups).map(([groupName, teamIds]) => {
+          const matches = groupMatches.filter((m) => m.group === groupName)
+          const standings = groupStandings[groupName] || []
+
+          return (
+            <Card key={groupName} className="overflow-hidden">
+              <CardHeader className="bg-muted/30 py-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                    {groupName}
+                  </span>
+                  Group {groupName}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-4">
+                {/* Standings */}
+                <StandingsTable standings={standings} teamsMap={teamsMap} qualifiedTeams={qualifiedTeams} />
+
+                {/* Matches */}
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Matches</h4>
+                  <div className="space-y-2">
+                    {matches.map((match) => (
+                      <MatchInput
+                        key={match.id}
+                        match={match}
+                        team1={teamsMap[match.team1Id]}
+                        team2={teamsMap[match.team2Id]}
+                        onScoreChange={onScoreChange}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
