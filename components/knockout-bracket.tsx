@@ -134,11 +134,13 @@ function BracketConnector({
   matchHeight,
   gap,
   connectorWidth,
+  direction = "right",
 }: {
   matchCount: number
   matchHeight: number
   gap: number
   connectorWidth: number
+  direction?: "left" | "right"
 }) {
   const paths: React.ReactElement[] = []
   const pairCount = matchCount / 2
@@ -152,37 +154,21 @@ function BracketConnector({
     const y2 = matchIndex2 * (matchHeight + gap) + matchHeight / 2
     const midY = (y1 + y2) / 2
 
+    const midX = connectorWidth / 2
+    const startX = direction === "right" ? 0 : connectorWidth
+    const endX = direction === "right" ? connectorWidth : 0
+
     // Horizontal from first match to vertical line
-    paths.push(<line key={`h1-${i}`} x1={0} y1={y1} x2={connectorWidth / 2} y2={y1} stroke="#4a5568" strokeWidth="2" />)
+    paths.push(<line key={`h1-${i}`} x1={startX} y1={y1} x2={midX} y2={y1} stroke="#4a5568" strokeWidth="2" />)
 
     // Horizontal from second match to vertical line
-    paths.push(<line key={`h2-${i}`} x1={0} y1={y2} x2={connectorWidth / 2} y2={y2} stroke="#4a5568" strokeWidth="2" />)
+    paths.push(<line key={`h2-${i}`} x1={startX} y1={y2} x2={midX} y2={y2} stroke="#4a5568" strokeWidth="2" />)
 
     // Vertical line connecting the pair
-    paths.push(
-      <line
-        key={`v-${i}`}
-        x1={connectorWidth / 2}
-        y1={y1}
-        x2={connectorWidth / 2}
-        y2={y2}
-        stroke="#4a5568"
-        strokeWidth="2"
-      />,
-    )
+    paths.push(<line key={`v-${i}`} x1={midX} y1={y1} x2={midX} y2={y2} stroke="#4a5568" strokeWidth="2" />)
 
     // Horizontal from vertical line to next round
-    paths.push(
-      <line
-        key={`h3-${i}`}
-        x1={connectorWidth / 2}
-        y1={midY}
-        x2={connectorWidth}
-        y2={midY}
-        stroke="#4a5568"
-        strokeWidth="2"
-      />,
-    )
+    paths.push(<line key={`h3-${i}`} x1={midX} y1={midY} x2={endX} y2={midY} stroke="#4a5568" strokeWidth="2" />)
   }
 
   const totalHeight = matchCount * (matchHeight + gap) - gap
@@ -623,6 +609,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   matchHeight={matchHeight}
                   gap={r16Gap}
                   connectorWidth={connectorWidth}
+                  direction="left"
                 />
               </div>
 
@@ -640,7 +627,13 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
               </div>
 
               {/* Connector R16 -> R32 (right) */}
-              <BracketConnector matchCount={8} matchHeight={matchHeight} gap={r32Gap} connectorWidth={connectorWidth} />
+              <BracketConnector
+                matchCount={8}
+                matchHeight={matchHeight}
+                gap={r32Gap}
+                connectorWidth={connectorWidth}
+                direction="left"
+              />
 
               {/* Right R32 */}
               <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
