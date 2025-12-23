@@ -305,65 +305,99 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
       return ""
     }
 
-    const updatedMatches = [...matches]
+    setMatches((currentMatches) => {
+      const updatedMatches = [...currentMatches]
+      let hasChanges = false
 
-    for (let i = 0; i < 8; i++) {
-      const r16Match = updatedMatches.find((m) => m.id === `round16-${i + 1}`)
-      const r32Match1 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 1}`)
-      const r32Match2 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 2}`)
-      if (r16Match && r32Match1 && r32Match2) {
-        r16Match.team1Id = getWinner(r32Match1)
-        r16Match.team2Id = getWinner(r32Match2)
+      // Update Round of 16 from Round of 32
+      for (let i = 0; i < 8; i++) {
+        const r16Match = updatedMatches.find((m) => m.id === `round16-${i + 1}`)
+        const r32Match1 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 1}`)
+        const r32Match2 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 2}`)
+        if (r16Match && r32Match1 && r32Match2) {
+          const winner1 = getWinner(r32Match1)
+          const winner2 = getWinner(r32Match2)
+          if (r16Match.team1Id !== winner1 || r16Match.team2Id !== winner2) {
+            r16Match.team1Id = winner1
+            r16Match.team2Id = winner2
+            hasChanges = true
+          }
+        }
       }
-    }
 
-    for (let i = 0; i < 4; i++) {
-      const qMatch = updatedMatches.find((m) => m.id === `quarter-${i + 1}`)
-      const r16Match1 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 1}`)
-      const r16Match2 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 2}`)
-      if (qMatch && r16Match1 && r16Match2) {
-        qMatch.team1Id = getWinner(r16Match1)
-        qMatch.team2Id = getWinner(r16Match2)
+      // Update Quarter-finals from Round of 16
+      for (let i = 0; i < 4; i++) {
+        const qMatch = updatedMatches.find((m) => m.id === `quarter-${i + 1}`)
+        const r16Match1 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 1}`)
+        const r16Match2 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 2}`)
+        if (qMatch && r16Match1 && r16Match2) {
+          const winner1 = getWinner(r16Match1)
+          const winner2 = getWinner(r16Match2)
+          if (qMatch.team1Id !== winner1 || qMatch.team2Id !== winner2) {
+            qMatch.team1Id = winner1
+            qMatch.team2Id = winner2
+            hasChanges = true
+          }
+        }
       }
-    }
 
-    for (let i = 0; i < 2; i++) {
-      const sMatch = updatedMatches.find((m) => m.id === `semi-${i + 1}`)
-      const qMatch1 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 1}`)
-      const qMatch2 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 2}`)
-      if (sMatch && qMatch1 && qMatch2) {
-        sMatch.team1Id = getWinner(qMatch1)
-        sMatch.team2Id = getWinner(qMatch2)
+      // Update Semi-finals from Quarter-finals
+      for (let i = 0; i < 2; i++) {
+        const sMatch = updatedMatches.find((m) => m.id === `semi-${i + 1}`)
+        const qMatch1 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 1}`)
+        const qMatch2 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 2}`)
+        if (sMatch && qMatch1 && qMatch2) {
+          const winner1 = getWinner(qMatch1)
+          const winner2 = getWinner(qMatch2)
+          if (sMatch.team1Id !== winner1 || sMatch.team2Id !== winner2) {
+            sMatch.team1Id = winner1
+            sMatch.team2Id = winner2
+            hasChanges = true
+          }
+        }
       }
-    }
 
-    const semi1 = updatedMatches.find((m) => m.id === "semi-1")
-    const semi2 = updatedMatches.find((m) => m.id === "semi-2")
-    const finalMatch = updatedMatches.find((m) => m.id === "final-1")
-    const thirdMatch = updatedMatches.find((m) => m.id === "third-1")
+      // Update Final from Semi-finals
+      const semi1 = updatedMatches.find((m) => m.id === "semi-1")
+      const semi2 = updatedMatches.find((m) => m.id === "semi-2")
+      const finalMatch = updatedMatches.find((m) => m.id === "final-1")
+      const thirdMatch = updatedMatches.find((m) => m.id === "third-1")
 
-    if (finalMatch && semi1 && semi2) {
-      finalMatch.team1Id = getWinner(semi1)
-      finalMatch.team2Id = getWinner(semi2)
-    }
+      if (finalMatch && semi1 && semi2) {
+        const winner1 = getWinner(semi1)
+        const winner2 = getWinner(semi2)
+        if (finalMatch.team1Id !== winner1 || finalMatch.team2Id !== winner2) {
+          finalMatch.team1Id = winner1
+          finalMatch.team2Id = winner2
+          hasChanges = true
+        }
+      }
 
-    if (thirdMatch && semi1 && semi2) {
-      thirdMatch.team1Id =
-        semi1.team1Score === null || semi1.team2Score === null
-          ? ""
-          : semi1.team1Score > semi1.team2Score
-            ? semi1.team2Id
-            : semi1.team1Id
-      thirdMatch.team2Id =
-        semi2.team1Score === null || semi2.team2Score === null
-          ? ""
-          : semi2.team1Score > semi2.team2Score
-            ? semi2.team2Id
-            : semi2.team1Id
-    }
+      // Update Third Place match (losers from Semi-finals)
+      if (thirdMatch && semi1 && semi2) {
+        const loser1 =
+          semi1.team1Score === null || semi1.team2Score === null
+            ? ""
+            : semi1.team1Score > semi1.team2Score
+              ? semi1.team2Id
+              : semi1.team1Id
+        const loser2 =
+          semi2.team1Score === null || semi2.team2Score === null
+            ? ""
+            : semi2.team1Score > semi2.team2Score
+              ? semi2.team2Id
+              : semi2.team1Id
+        if (thirdMatch.team1Id !== loser1 || thirdMatch.team2Id !== loser2) {
+          thirdMatch.team1Id = loser1
+          thirdMatch.team2Id = loser2
+          hasChanges = true
+        }
+      }
 
-    setMatches(updatedMatches)
-  }, [matches, setMatches])
+      // Only return updated matches if there were actual changes
+      return hasChanges ? updatedMatches : currentMatches
+    })
+  }, [setMatches])
 
   const champion =
     final &&
