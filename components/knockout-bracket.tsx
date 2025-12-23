@@ -1,14 +1,12 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { Trophy, ZoomIn, ZoomOut, Maximize2, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import type { Match, Team } from "@/lib/tournament-data"
-import type { JSX } from "react/jsx-runtime"
 
 interface KnockoutBracketProps {
   matches: Match[]
@@ -26,217 +24,245 @@ function MatchCard({
   isThirdPlace = false,
 }: {
   match: Match
-  team1: Team | undefined
-  team2: Team | undefined
+  team1: Team
+  team2: Team
   onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
   isFinal?: boolean
   isThirdPlace?: boolean
 }) {
-  const [isHovered, setIsHovered] = useState(false)
-
-  const handleChange = (team: "team1" | "team2", value: string) => {
-    const score = value === "" ? null : Math.max(0, Math.min(99, Number.parseInt(value) || 0))
-    onScoreChange(match.id, team, score)
-  }
+  const isTeam1TBD = !team1 || team1.name === "TBD"
+  const isTeam2TBD = !team2 || team2.name === "TBD"
 
   const getWinner = () => {
     if (match.team1Score === null || match.team2Score === null) return null
     if (match.team1Score > match.team2Score) return "team1"
     if (match.team2Score > match.team1Score) return "team2"
-    return "draw"
+    return null
   }
 
   const winner = getWinner()
-  const isComplete = match.team1Score !== null && match.team2Score !== null
 
   return (
     <div
       className={cn(
-        "w-[170px] rounded-lg overflow-hidden transition-all duration-200 backdrop-blur-sm",
-        isFinal
-          ? "border-2 border-primary/60 bg-gradient-to-b from-primary/15 to-primary/5 shadow-lg ring-2 ring-primary/20"
-          : isThirdPlace
-            ? "border border-amber-500/40 bg-gradient-to-b from-amber-500/10 to-transparent shadow-md"
-            : "border border-slate-200 dark:border-slate-700 bg-gradient-to-b from-slate-50 to-slate-50/50 dark:from-slate-800/50 dark:to-slate-900/50",
-        isHovered && "shadow-xl ring-1 ring-primary/30 scale-105",
-        isComplete &&
-          !isFinal &&
-          !isThirdPlace &&
-          "border-green-500/40 bg-gradient-to-b from-green-500/8 to-green-500/4",
+        "bg-white dark:bg-slate-800 rounded-lg border shadow-sm overflow-hidden transition-all hover:shadow-md group",
+        isFinal && "border-primary border-2 shadow-lg",
+        isThirdPlace && "border-amber-400 dark:border-amber-600",
+        !isFinal && !isThirdPlace && "border-slate-200 dark:border-slate-700",
       )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      style={{ width: "240px", minHeight: "88px" }}
     >
-      {(isFinal || isThirdPlace) && (
+      <div className="flex flex-col">
+        {/* Team 1 */}
         <div
           className={cn(
-            "text-[10px] font-bold uppercase tracking-widest text-center py-1.5 px-2",
-            isFinal && "bg-gradient-to-r from-primary/20 to-primary/10 text-primary",
-            isThirdPlace && "bg-gradient-to-r from-amber-500/20 to-amber-500/10 text-amber-600",
+            "flex items-center justify-between px-3 py-2.5 border-b transition-colors",
+            winner === "team1"
+              ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800"
+              : "border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750",
           )}
         >
-          {isFinal ? "🏆 Final" : "3️⃣ 3rd Place"}
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {!isTeam1TBD && <span className="text-xl shrink-0">{team1.flag}</span>}
+            <span
+              className={cn(
+                "text-sm font-medium truncate",
+                isTeam1TBD && "text-slate-400 dark:text-slate-500 italic",
+                winner === "team1" && "font-semibold text-emerald-900 dark:text-emerald-100",
+              )}
+            >
+              {team1?.name || "TBD"}
+            </span>
+          </div>
+          <Input
+            type="number"
+            min="0"
+            max="20"
+            value={match.team1Score ?? ""}
+            onChange={(e) => {
+              const val = e.target.value === "" ? null : Number.parseInt(e.target.value)
+              onScoreChange(match.id, "team1", val)
+            }}
+            className={cn(
+              "w-12 h-8 text-center text-sm font-bold border-slate-300 dark:border-slate-600",
+              winner === "team1" && "bg-emerald-100 dark:bg-emerald-900 border-emerald-400 dark:border-emerald-600",
+            )}
+            placeholder="-"
+            disabled={isTeam1TBD}
+          />
         </div>
-      )}
 
-      <div
-        className={cn(
-          "flex items-center gap-2 px-2.5 py-2 border-b border-slate-200 dark:border-slate-700 transition-colors",
-          winner === "team1"
-            ? "bg-gradient-to-r from-green-500/20 to-green-500/5 dark:from-green-500/15 dark:to-green-500/5"
-            : isHovered && "bg-slate-100 dark:bg-slate-700/50",
-        )}
-      >
-        {team1 ? (
-          <>
-            <span className="text-lg shrink-0">{team1.flag}</span>
+        {/* Team 2 */}
+        <div
+          className={cn(
+            "flex items-center justify-between px-3 py-2.5 transition-colors",
+            winner === "team2" ? "bg-emerald-50 dark:bg-emerald-950/30" : "hover:bg-slate-50 dark:hover:bg-slate-750",
+          )}
+        >
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {!isTeam2TBD && <span className="text-xl shrink-0">{team2.flag}</span>}
             <span
               className={cn(
-                "text-xs font-semibold flex-1 truncate transition-colors",
-                winner === "team1" ? "text-foreground font-bold" : "text-muted-foreground",
+                "text-sm font-medium truncate",
+                isTeam2TBD && "text-slate-400 dark:text-slate-500 italic",
+                winner === "team2" && "font-semibold text-emerald-900 dark:text-emerald-100",
               )}
             >
-              {team1.code}
+              {team2?.name || "TBD"}
             </span>
-          </>
-        ) : (
-          <span className="text-xs text-muted-foreground/40 flex-1 italic">TBD</span>
-        )}
-        <Input
-          type="number"
-          min={0}
-          max={99}
-          value={match.team1Score ?? ""}
-          onChange={(e) => handleChange("team1", e.target.value)}
-          className={cn(
-            "w-8 h-7 text-center p-0.5 text-xs font-bold border-0 rounded transition-all",
-            winner === "team1"
-              ? "bg-green-500/30 text-green-700 dark:text-green-300 ring-1 ring-green-500/50"
-              : "bg-slate-200/60 dark:bg-slate-700/60 text-foreground hover:bg-slate-300/60 dark:hover:bg-slate-600/60",
-          )}
-          placeholder="-"
-          disabled={!team1 || !team2}
-        />
-      </div>
-
-      <div
-        className={cn(
-          "flex items-center gap-2 px-2.5 py-2 transition-colors",
-          winner === "team2"
-            ? "bg-gradient-to-r from-green-500/20 to-green-500/5 dark:from-green-500/15 dark:to-green-500/5"
-            : isHovered && "bg-slate-100 dark:bg-slate-700/50",
-        )}
-      >
-        {team2 ? (
-          <>
-            <span className="text-lg shrink-0">{team2.flag}</span>
-            <span
-              className={cn(
-                "text-xs font-semibold flex-1 truncate transition-colors",
-                winner === "team2" ? "text-foreground font-bold" : "text-muted-foreground",
-              )}
-            >
-              {team2.code}
-            </span>
-          </>
-        ) : (
-          <span className="text-xs text-muted-foreground/40 flex-1 italic">TBD</span>
-        )}
-        <Input
-          type="number"
-          min={0}
-          max={99}
-          value={match.team2Score ?? ""}
-          onChange={(e) => handleChange("team2", e.target.value)}
-          className={cn(
-            "w-8 h-7 text-center p-0.5 text-xs font-bold border-0 rounded transition-all",
-            winner === "team2"
-              ? "bg-green-500/30 text-green-700 dark:text-green-300 ring-1 ring-green-500/50"
-              : "bg-slate-200/60 dark:bg-slate-700/60 text-foreground hover:bg-slate-300/60 dark:hover:bg-slate-600/60",
-          )}
-          placeholder="-"
-          disabled={!team1 || !team2}
-        />
+          </div>
+          <Input
+            type="number"
+            min="0"
+            max="20"
+            value={match.team2Score ?? ""}
+            onChange={(e) => {
+              const val = e.target.value === "" ? null : Number.parseInt(e.target.value)
+              onScoreChange(match.id, "team2", val)
+            }}
+            className={cn(
+              "w-12 h-8 text-center text-sm font-bold border-slate-300 dark:border-slate-600",
+              winner === "team2" && "bg-emerald-100 dark:bg-emerald-900 border-emerald-400 dark:border-emerald-600",
+            )}
+            placeholder="-"
+            disabled={isTeam2TBD}
+          />
+        </div>
       </div>
     </div>
   )
 }
 
-function CurvedConnector({
-  y1,
-  y2,
-  connectorWidth = 40,
+function StraightConnector({
+  matches,
   direction = "right",
+  gap = 24,
 }: {
-  y1: number
-  y2: number
-  connectorWidth?: number
+  matches: number
   direction?: "left" | "right"
+  gap?: number
 }) {
-  const midY = (y1 + y2) / 2
-  const controlX = connectorWidth / 2
+  const matchHeight = 88
+  const connectorWidth = 32
+  const lines = []
 
-  if (direction === "right") {
-    return (
-      <path
-        d={`M 0 ${y1} Q ${controlX} ${y1} ${controlX} ${midY} T ${connectorWidth} ${midY}
-                 M 0 ${y2} Q ${controlX} ${y2} ${controlX} ${midY}`}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        className="text-slate-300 dark:text-slate-600"
-      />
-    )
-  } else {
-    return (
-      <path
-        d={`M ${connectorWidth} ${y1} Q ${controlX} ${y1} ${controlX} ${midY} T 0 ${midY}
-                 M ${connectorWidth} ${y2} Q ${controlX} ${y2} ${controlX} ${midY}`}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        className="text-slate-300 dark:text-slate-600"
-      />
-    )
+  for (let i = 0; i < matches; i += 2) {
+    const y1 = i * (matchHeight + gap) + matchHeight / 2
+    const y2 = (i + 1) * (matchHeight + gap) + matchHeight / 2
+    const midY = (y1 + y2) / 2
+
+    if (direction === "right") {
+      // Horizontal line from match to mid point
+      lines.push(
+        <line
+          key={`h1-${i}`}
+          x1={0}
+          y1={y1}
+          x2={connectorWidth / 2}
+          y2={y1}
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-300 dark:text-slate-600"
+        />,
+      )
+      lines.push(
+        <line
+          key={`h2-${i}`}
+          x1={0}
+          y1={y2}
+          x2={connectorWidth / 2}
+          y2={y2}
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-300 dark:text-slate-600"
+        />,
+      )
+      // Vertical line connecting the two matches
+      lines.push(
+        <line
+          key={`v-${i}`}
+          x1={connectorWidth / 2}
+          y1={y1}
+          x2={connectorWidth / 2}
+          y2={y2}
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-300 dark:text-slate-600"
+        />,
+      )
+      // Horizontal line from mid point to next round
+      lines.push(
+        <line
+          key={`h3-${i}`}
+          x1={connectorWidth / 2}
+          y1={midY}
+          x2={connectorWidth}
+          y2={midY}
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-300 dark:text-slate-600"
+        />,
+      )
+    } else {
+      // Horizontal line from next round to mid point
+      lines.push(
+        <line
+          key={`h1-${i}`}
+          x1={connectorWidth}
+          y1={y1}
+          x2={connectorWidth / 2}
+          y2={y1}
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-300 dark:text-slate-600"
+        />,
+      )
+      lines.push(
+        <line
+          key={`h2-${i}`}
+          x1={connectorWidth}
+          y1={y2}
+          x2={connectorWidth / 2}
+          y2={y2}
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-300 dark:text-slate-600"
+        />,
+      )
+      // Vertical line connecting the two matches
+      lines.push(
+        <line
+          key={`v-${i}`}
+          x1={connectorWidth / 2}
+          y1={y1}
+          x2={connectorWidth / 2}
+          y2={y2}
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-300 dark:text-slate-600"
+        />,
+      )
+      // Horizontal line from mid point to matches
+      lines.push(
+        <line
+          key={`h3-${i}`}
+          x1={connectorWidth / 2}
+          y1={midY}
+          x2={0}
+          y2={midY}
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-300 dark:text-slate-600"
+        />,
+      )
+    }
   }
-}
 
-function BracketConnectors({
-  matchCount,
-  startY,
-  matchHeight,
-  gap,
-  direction,
-}: {
-  matchCount: number
-  startY: number
-  matchHeight: number
-  gap: number
-  direction: "left" | "right"
-}) {
-  const paths: JSX.Element[] = []
-  const connectorWidth = 40
-
-  for (let i = 0; i < matchCount; i += 2) {
-    const y1 = startY + i * (matchHeight + gap) + matchHeight / 2
-    const y2 = startY + (i + 1) * (matchHeight + gap) + matchHeight / 2
-
-    paths.push(
-      <CurvedConnector key={`connector-${i}`} y1={y1} y2={y2} connectorWidth={connectorWidth} direction={direction} />,
-    )
-  }
+  const height = matches * (matchHeight + gap) - gap
 
   return (
-    <svg
-      width={connectorWidth}
-      className="shrink-0"
-      style={{ height: startY * 2 + matchCount * (matchHeight + gap) - gap }}
-      viewBox={`0 0 ${connectorWidth} ${startY * 2 + matchCount * (matchHeight + gap) - gap}`}
-      preserveAspectRatio="none"
-    >
-      {paths}
+    <svg width={connectorWidth} height={height} className="shrink-0" preserveAspectRatio="xMidYMid meet">
+      {lines}
     </svg>
   )
 }
@@ -270,6 +296,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
     { title: "Finals", matches: [final, third].filter(Boolean) as Match[] },
   ]
 
+  // Auto-advance winners
   useEffect(() => {
     const getWinner = (match: Match): string => {
       if (match.team1Score === null || match.team2Score === null) return ""
@@ -278,132 +305,157 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
       return ""
     }
 
-    const getLoser = (match: Match): string => {
-      if (match.team1Score === null || match.team2Score === null) return ""
-      if (match.team1Score < match.team2Score) return match.team1Id
-      if (match.team2Score < match.team1Score) return match.team2Id
-      return ""
-    }
+    setMatches((currentMatches) => {
+      const updatedMatches = [...currentMatches]
+      let hasChanges = false
 
-    setMatches((prev) => {
-      const updated = [...prev]
-
+      // Update Round of 16 from Round of 32
       for (let i = 0; i < 8; i++) {
-        const r16Match = updated.find((m) => m.id === `round16-${i + 1}`)
-        const r32Match1 = updated.find((m) => m.id === `round32-${i * 2 + 1}`)
-        const r32Match2 = updated.find((m) => m.id === `round32-${i * 2 + 2}`)
+        const r16Match = updatedMatches.find((m) => m.id === `round16-${i + 1}`)
+        const r32Match1 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 1}`)
+        const r32Match2 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 2}`)
         if (r16Match && r32Match1 && r32Match2) {
-          r16Match.team1Id = getWinner(r32Match1)
-          r16Match.team2Id = getWinner(r32Match2)
+          const winner1 = getWinner(r32Match1)
+          const winner2 = getWinner(r32Match2)
+          if (r16Match.team1Id !== winner1 || r16Match.team2Id !== winner2) {
+            r16Match.team1Id = winner1
+            r16Match.team2Id = winner2
+            hasChanges = true
+          }
         }
       }
 
+      // Update Quarter-finals from Round of 16
       for (let i = 0; i < 4; i++) {
-        const qMatch = updated.find((m) => m.id === `quarter-${i + 1}`)
-        const r16Match1 = updated.find((m) => m.id === `round16-${i * 2 + 1}`)
-        const r16Match2 = updated.find((m) => m.id === `round16-${i * 2 + 2}`)
+        const qMatch = updatedMatches.find((m) => m.id === `quarter-${i + 1}`)
+        const r16Match1 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 1}`)
+        const r16Match2 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 2}`)
         if (qMatch && r16Match1 && r16Match2) {
-          qMatch.team1Id = getWinner(r16Match1)
-          qMatch.team2Id = getWinner(r16Match2)
+          const winner1 = getWinner(r16Match1)
+          const winner2 = getWinner(r16Match2)
+          if (qMatch.team1Id !== winner1 || qMatch.team2Id !== winner2) {
+            qMatch.team1Id = winner1
+            qMatch.team2Id = winner2
+            hasChanges = true
+          }
         }
       }
 
+      // Update Semi-finals from Quarter-finals
       for (let i = 0; i < 2; i++) {
-        const sMatch = updated.find((m) => m.id === `semi-${i + 1}`)
-        const qMatch1 = updated.find((m) => m.id === `quarter-${i * 2 + 1}`)
-        const qMatch2 = updated.find((m) => m.id === `quarter-${i * 2 + 2}`)
+        const sMatch = updatedMatches.find((m) => m.id === `semi-${i + 1}`)
+        const qMatch1 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 1}`)
+        const qMatch2 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 2}`)
         if (sMatch && qMatch1 && qMatch2) {
-          sMatch.team1Id = getWinner(qMatch1)
-          sMatch.team2Id = getWinner(qMatch2)
+          const winner1 = getWinner(qMatch1)
+          const winner2 = getWinner(qMatch2)
+          if (sMatch.team1Id !== winner1 || sMatch.team2Id !== winner2) {
+            sMatch.team1Id = winner1
+            sMatch.team2Id = winner2
+            hasChanges = true
+          }
         }
       }
 
-      const semi1 = updated.find((m) => m.id === "semi-1")
-      const semi2 = updated.find((m) => m.id === "semi-2")
-      const finalMatch = updated.find((m) => m.id === "final-1")
-      const thirdMatch = updated.find((m) => m.id === "third-1")
+      // Update Final from Semi-finals
+      const semi1 = updatedMatches.find((m) => m.id === "semi-1")
+      const semi2 = updatedMatches.find((m) => m.id === "semi-2")
+      const finalMatch = updatedMatches.find((m) => m.id === "final-1")
+      const thirdMatch = updatedMatches.find((m) => m.id === "third-1")
 
       if (finalMatch && semi1 && semi2) {
-        finalMatch.team1Id = getWinner(semi1)
-        finalMatch.team2Id = getWinner(semi2)
+        const winner1 = getWinner(semi1)
+        const winner2 = getWinner(semi2)
+        if (finalMatch.team1Id !== winner1 || finalMatch.team2Id !== winner2) {
+          finalMatch.team1Id = winner1
+          finalMatch.team2Id = winner2
+          hasChanges = true
+        }
       }
 
+      // Update Third Place match (losers from Semi-finals)
       if (thirdMatch && semi1 && semi2) {
-        thirdMatch.team1Id = getLoser(semi1)
-        thirdMatch.team2Id = getLoser(semi2)
+        const loser1 =
+          semi1.team1Score === null || semi1.team2Score === null
+            ? ""
+            : semi1.team1Score > semi1.team2Score
+              ? semi1.team2Id
+              : semi1.team1Id
+        const loser2 =
+          semi2.team1Score === null || semi2.team2Score === null
+            ? ""
+            : semi2.team1Score > semi2.team2Score
+              ? semi2.team2Id
+              : semi2.team1Id
+        if (thirdMatch.team1Id !== loser1 || thirdMatch.team2Id !== loser2) {
+          thirdMatch.team1Id = loser1
+          thirdMatch.team2Id = loser2
+          hasChanges = true
+        }
       }
 
-      return updated
+      // Only return updated matches if there were actual changes
+      return hasChanges ? updatedMatches : currentMatches
     })
-  }, [matches.filter((m) => m.team1Score !== null && m.team2Score !== null).length, setMatches])
+  }, [setMatches])
 
-  const champion = (() => {
-    if (!final || final.team1Score === null || final.team2Score === null) return null
-    if (final.team1Score > final.team2Score) return teamsMap[final.team1Id]
-    if (final.team2Score > final.team1Score) return teamsMap[final.team2Id]
-    return null
-  })()
+  const champion =
+    final &&
+    (() => {
+      if (final.team1Score === null || final.team2Score === null) return ""
+      if (final.team1Score > final.team2Score) return final.team1Id
+      if (final.team2Score > final.team1Score) return final.team2Id
+      return ""
+    })()
 
-  const handleZoom = (delta: number) => {
-    setZoom((prev) => Math.max(0.5, Math.min(1.5, prev + delta)))
-  }
-
-  const resetZoom = () => setZoom(1)
-
-  const matchHeight = 60
-  const r32Gap = 12
-  const r16Gap = 100
-  const qfGap = 260
-  const sfGap = 580
+  const matchHeight = 88
+  const r32Gap = 24
+  const r16Gap = matchHeight + r32Gap
+  const qfGap = matchHeight * 2 + r32Gap * 2
+  const sfGap = matchHeight * 4 + r32Gap * 4
 
   return (
     <div className="space-y-6">
-      {champion && (
-        <div className="relative overflow-hidden rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-transparent to-transparent p-8 text-center shadow-lg">
-          <div className="absolute inset-0 opacity-5 pointer-events-none">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl -z-10" />
-          </div>
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 mb-4 shadow-md">
-            <Trophy className="h-8 w-8 text-primary" />
-          </div>
-          <h2 className="text-2xl font-bold text-foreground mb-3">World Champion 2026</h2>
-          <div className="flex items-center justify-center gap-4">
-            <span className="text-5xl animate-bounce">{champion.flag}</span>
-            <span className="text-3xl font-bold text-primary">{champion.name}</span>
-          </div>
-        </div>
-      )}
-
-      <div className="hidden lg:block space-y-4">
-        <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-          <div className="text-sm text-muted-foreground font-medium">Scroll horizontally to explore the bracket</div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={() => handleZoom(-0.1)} className="hover:bg-primary/10">
+      {/* Desktop View */}
+      <div className="hidden lg:block">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">Knockout Stage</h2>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+              disabled={zoom <= 0.5}
+            >
               <ZoomOut className="h-4 w-4" />
             </Button>
-            <span className="text-sm font-semibold w-14 text-center text-foreground">{Math.round(zoom * 100)}%</span>
-            <Button variant="outline" size="sm" onClick={() => handleZoom(0.1)} className="hover:bg-primary/10">
+            <span className="text-sm font-medium w-12 text-center">{Math.round(zoom * 100)}%</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setZoom(Math.min(1.5, zoom + 0.1))}
+              disabled={zoom >= 1.5}
+            >
               <ZoomIn className="h-4 w-4" />
             </Button>
-            <div className="w-px h-6 bg-slate-300 dark:bg-slate-600" />
-            <Button variant="outline" size="sm" onClick={resetZoom} className="hover:bg-primary/10 bg-transparent">
+            <Button variant="outline" size="sm" onClick={() => setZoom(1)} disabled={zoom === 1}>
               <Maximize2 className="h-4 w-4" />
-              Reset
             </Button>
           </div>
         </div>
 
         <div
           ref={containerRef}
-          className="overflow-x-auto overflow-y-auto border rounded-xl bg-gradient-to-b from-slate-50 to-slate-100/50 dark:from-slate-900/50 dark:to-slate-950/50 p-8 shadow-lg"
+          className="overflow-x-auto overflow-y-auto border rounded-lg bg-slate-50 dark:bg-slate-900/30 p-8"
           style={{ maxHeight: "calc(100vh - 300px)" }}
         >
           <div
-            className="flex items-start justify-center gap-0 min-w-max transition-transform"
+            className="flex items-start justify-center gap-0 min-w-max"
             style={{ transform: `scale(${zoom})`, transformOrigin: "top center" }}
           >
-            <div className="flex flex-col gap-3">
-              <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground text-center mb-2 bg-slate-200/60 dark:bg-slate-700/60 px-3 py-1.5 rounded-full w-full">
+            {/* Left Side - Round of 32 */}
+            <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
+              <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 text-center mb-2">
                 Round of 32
               </div>
               {leftR32.map((match) => (
@@ -417,15 +469,17 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
               ))}
             </div>
 
-            <div className="pt-12">
-              <BracketConnectors matchCount={8} startY={0} matchHeight={matchHeight} gap={r32Gap} direction="right" />
+            {/* Connector: R32 → R16 (Left) */}
+            <div style={{ paddingTop: "50px" }}>
+              <StraightConnector matches={8} direction="right" gap={r32Gap} />
             </div>
 
+            {/* Left Side - Round of 16 */}
             <div
-              className="flex flex-col justify-around"
-              style={{ gap: r16Gap, paddingTop: matchHeight / 2 + r32Gap / 2 + 48 }}
+              className="flex flex-col"
+              style={{ gap: `${r16Gap}px`, paddingTop: `${matchHeight / 2 + r32Gap / 2 + 50}px` }}
             >
-              <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground text-center mb-2 bg-slate-200/60 dark:bg-slate-700/60 px-3 py-1.5 rounded-full absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap">
+              <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 text-center mb-2 absolute -top-4">
                 Round of 16
               </div>
               {leftR16.map((match) => (
@@ -439,13 +493,15 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
               ))}
             </div>
 
-            <div style={{ paddingTop: matchHeight / 2 + r32Gap / 2 + 48 }}>
-              <BracketConnectors matchCount={4} startY={0} matchHeight={matchHeight} gap={r16Gap} direction="right" />
+            {/* Connector: R16 → QF (Left) */}
+            <div style={{ paddingTop: `${matchHeight / 2 + r32Gap / 2 + 50}px` }}>
+              <StraightConnector matches={4} direction="right" gap={r16Gap} />
             </div>
 
+            {/* Left Side - Quarter Finals */}
             <div
-              className="flex flex-col justify-around"
-              style={{ gap: qfGap, paddingTop: matchHeight + r32Gap + r16Gap / 2 + 48 }}
+              className="flex flex-col"
+              style={{ gap: `${qfGap}px`, paddingTop: `${matchHeight + r32Gap + r16Gap / 2 + 50}px` }}
             >
               {leftQF.map((match) => (
                 <MatchCard
@@ -458,13 +514,15 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
               ))}
             </div>
 
-            <div style={{ paddingTop: matchHeight + r32Gap + r16Gap / 2 + 48 }}>
-              <BracketConnectors matchCount={2} startY={0} matchHeight={matchHeight} gap={qfGap} direction="right" />
+            {/* Connector: QF → SF (Left) */}
+            <div style={{ paddingTop: `${matchHeight + r32Gap + r16Gap / 2 + 50}px` }}>
+              <StraightConnector matches={2} direction="right" gap={qfGap} />
             </div>
 
+            {/* Left Side - Semi Final */}
             <div
-              className="flex flex-col justify-center"
-              style={{ paddingTop: matchHeight * 1.5 + r32Gap + r16Gap + qfGap / 2 + 48 }}
+              className="flex flex-col"
+              style={{ paddingTop: `${matchHeight * 1.5 + r32Gap + r16Gap + qfGap / 2 + 50}px` }}
             >
               {leftSF.map((match) => (
                 <MatchCard
@@ -477,42 +535,55 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
               ))}
             </div>
 
-            <div
-              style={{
-                paddingTop: matchHeight * 2 + r32Gap + r16Gap + qfGap + sfGap / 2 + 48,
-              }}
-            >
-              <BracketConnectors matchCount={1} startY={0} matchHeight={matchHeight} gap={sfGap} direction="right" />
+            {/* Connector: SF → Final (Left) */}
+            <div style={{ paddingTop: `${matchHeight * 1.5 + r32Gap + r16Gap + qfGap / 2 + 50}px` }}>
+              <StraightConnector matches={1} direction="right" gap={sfGap} />
             </div>
 
+            {/* Final & Third Place */}
             <div
-              className="flex flex-col justify-center"
-              style={{
-                paddingTop: matchHeight * 2.5 + r32Gap + r16Gap + qfGap + sfGap + 48,
-              }}
+              className="flex flex-col items-center gap-6"
+              style={{ paddingTop: `${matchHeight * 2 + r32Gap + r16Gap + qfGap + 50}px` }}
             >
-              {final && (
-                <MatchCard
-                  match={final}
-                  team1={teamsMap[final.team1Id]}
-                  team2={teamsMap[final.team2Id]}
-                  onScoreChange={onScoreChange}
-                  isFinal={true}
-                />
+              <div>
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 text-center mb-3">
+                  Final
+                </div>
+                {final && (
+                  <MatchCard
+                    match={final}
+                    team1={teamsMap[final.team1Id]}
+                    team2={teamsMap[final.team2Id]}
+                    onScoreChange={onScoreChange}
+                    isFinal={true}
+                  />
+                )}
+              </div>
+              {third && (
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 text-center mb-3">
+                    3rd Place
+                  </div>
+                  <MatchCard
+                    match={third}
+                    team1={teamsMap[third.team1Id]}
+                    team2={teamsMap[third.team2Id]}
+                    onScoreChange={onScoreChange}
+                    isThirdPlace={true}
+                  />
+                </div>
               )}
             </div>
 
-            <div
-              style={{
-                paddingTop: matchHeight * 2 + r32Gap + r16Gap + qfGap + sfGap / 2 + 48,
-              }}
-            >
-              <BracketConnectors matchCount={1} startY={0} matchHeight={matchHeight} gap={sfGap} direction="left" />
+            {/* Connector: SF → Final (Right) */}
+            <div style={{ paddingTop: `${matchHeight * 1.5 + r32Gap + r16Gap + qfGap / 2 + 50}px` }}>
+              <StraightConnector matches={1} direction="left" gap={sfGap} />
             </div>
 
+            {/* Right Side - Semi Final */}
             <div
-              className="flex flex-col justify-center"
-              style={{ paddingTop: matchHeight * 1.5 + r32Gap + r16Gap + qfGap / 2 + 48 }}
+              className="flex flex-col"
+              style={{ paddingTop: `${matchHeight * 1.5 + r32Gap + r16Gap + qfGap / 2 + 50}px` }}
             >
               {rightSF.map((match) => (
                 <MatchCard
@@ -525,13 +596,15 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
               ))}
             </div>
 
-            <div style={{ paddingTop: matchHeight + r32Gap + r16Gap / 2 + 48 }}>
-              <BracketConnectors matchCount={2} startY={0} matchHeight={matchHeight} gap={qfGap} direction="left" />
+            {/* Connector: QF → SF (Right) */}
+            <div style={{ paddingTop: `${matchHeight + r32Gap + r16Gap / 2 + 50}px` }}>
+              <StraightConnector matches={2} direction="left" gap={qfGap} />
             </div>
 
+            {/* Right Side - Quarter Finals */}
             <div
-              className="flex flex-col justify-around"
-              style={{ gap: qfGap, paddingTop: matchHeight + r32Gap + r16Gap / 2 + 48 }}
+              className="flex flex-col"
+              style={{ gap: `${qfGap}px`, paddingTop: `${matchHeight + r32Gap + r16Gap / 2 + 50}px` }}
             >
               {rightQF.map((match) => (
                 <MatchCard
@@ -544,13 +617,15 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
               ))}
             </div>
 
-            <div style={{ paddingTop: matchHeight / 2 + r32Gap / 2 + 48 }}>
-              <BracketConnectors matchCount={4} startY={0} matchHeight={matchHeight} gap={r16Gap} direction="left" />
+            {/* Connector: R16 → QF (Right) */}
+            <div style={{ paddingTop: `${matchHeight / 2 + r32Gap / 2 + 50}px` }}>
+              <StraightConnector matches={4} direction="left" gap={r16Gap} />
             </div>
 
+            {/* Right Side - Round of 16 */}
             <div
-              className="flex flex-col justify-around"
-              style={{ gap: r16Gap, paddingTop: matchHeight / 2 + r32Gap / 2 + 48 }}
+              className="flex flex-col"
+              style={{ gap: `${r16Gap}px`, paddingTop: `${matchHeight / 2 + r32Gap / 2 + 50}px` }}
             >
               {rightR16.map((match) => (
                 <MatchCard
@@ -563,12 +638,14 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
               ))}
             </div>
 
-            <div className="pt-12">
-              <BracketConnectors matchCount={8} startY={0} matchHeight={matchHeight} gap={r32Gap} direction="left" />
+            {/* Connector: R32 → R16 (Right) */}
+            <div style={{ paddingTop: "50px" }}>
+              <StraightConnector matches={8} direction="left" gap={r32Gap} />
             </div>
 
-            <div className="flex flex-col gap-3">
-              <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground text-center mb-2 bg-slate-200/60 dark:bg-slate-700/60 px-3 py-1.5 rounded-full w-full">
+            {/* Right Side - Round of 32 */}
+            <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
+              <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 text-center mb-2">
                 Round of 32
               </div>
               {rightR32.map((match) => (
@@ -583,64 +660,94 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
             </div>
           </div>
         </div>
+
+        {/* Champion Display */}
+        {champion && (
+          <div className="mt-6 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950 dark:to-yellow-950 border-2 border-amber-400 dark:border-amber-600 rounded-lg">
+            <div className="flex items-center justify-center gap-4">
+              <Trophy className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+              <div className="text-center">
+                <div className="text-sm font-semibold text-amber-800 dark:text-amber-200 uppercase tracking-wider">
+                  World Cup Champion
+                </div>
+                <div className="text-2xl font-bold text-amber-900 dark:text-amber-100 flex items-center gap-2 mt-1">
+                  <span className="text-3xl">{teamsMap[champion].flag}</span>
+                  {teamsMap[champion].name}
+                </div>
+              </div>
+              <Trophy className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+            </div>
+          </div>
+        )}
       </div>
 
+      {/* Mobile View */}
       <div className="lg:hidden space-y-4">
-        <div className="flex items-center justify-between bg-gradient-to-r from-primary/10 to-transparent rounded-lg p-3 border border-primary/20">
+        <h2 className="text-2xl font-bold">Knockout Stage</h2>
+
+        <div className="flex items-center justify-between border-b">
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setMobileRound((prev) => Math.max(0, prev - 1))}
+            onClick={() => setMobileRound(Math.max(0, mobileRound - 1))}
             disabled={mobileRound === 0}
-            className="hover:bg-primary/20"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-sm font-bold text-foreground text-center flex-1">
-            {mobileRounds[mobileRound].title}
-          </span>
+          <h3 className="text-lg font-semibold">{mobileRounds[mobileRound].title}</h3>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setMobileRound((prev) => Math.min(mobileRounds.length - 1, prev + 1))}
+            onClick={() => setMobileRound(Math.min(mobileRounds.length - 1, mobileRound + 1))}
             disabled={mobileRound === mobileRounds.length - 1}
-            className="hover:bg-primary/20"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
 
-        <div className="flex justify-center gap-2">
-          {mobileRounds.map((_, idx) => (
+        <div className="flex justify-center gap-1.5 py-2">
+          {mobileRounds.map((_, index) => (
             <button
-              key={idx}
-              onClick={() => setMobileRound(idx)}
+              key={index}
+              onClick={() => setMobileRound(index)}
               className={cn(
-                "w-2.5 h-2.5 rounded-full transition-all duration-200",
-                idx === mobileRound ? "bg-primary w-8" : "bg-muted-foreground/40 hover:bg-muted-foreground/60",
+                "h-2 rounded-full transition-all",
+                index === mobileRound ? "w-8 bg-primary" : "w-2 bg-slate-300 dark:bg-slate-600",
               )}
             />
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-gradient-to-b from-slate-50 to-slate-100/50 dark:from-slate-900/50 dark:to-slate-950/50 rounded-xl border border-slate-200 dark:border-slate-700">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {mobileRounds[mobileRound].matches.map((match) => (
-            <div key={match.id} className="flex justify-center">
-              <MatchCard
-                match={match}
-                team1={teamsMap[match.team1Id]}
-                team2={teamsMap[match.team2Id]}
-                onScoreChange={onScoreChange}
-                isFinal={match.stage === "final"}
-                isThirdPlace={match.stage === "third"}
-              />
-            </div>
+            <MatchCard
+              key={match.id}
+              match={match}
+              team1={teamsMap[match.team1Id]}
+              team2={teamsMap[match.team2Id]}
+              onScoreChange={onScoreChange}
+              isFinal={match.stage === "final"}
+              isThirdPlace={match.stage === "third"}
+            />
           ))}
         </div>
 
-        <div className="text-center text-xs font-medium text-muted-foreground">
-          Round {mobileRound + 1} of {mobileRounds.length}
-        </div>
+        {champion && (
+          <div className="mt-6 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950 dark:to-yellow-950 border-2 border-amber-400 dark:border-amber-600 rounded-lg">
+            <div className="flex flex-col items-center gap-3">
+              <Trophy className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+              <div className="text-center">
+                <div className="text-sm font-semibold text-amber-800 dark:text-amber-200 uppercase tracking-wider">
+                  World Cup Champion
+                </div>
+                <div className="text-xl font-bold text-amber-900 dark:text-amber-100 flex items-center justify-center gap-2 mt-1">
+                  <span className="text-2xl">{teamsMap[champion].flag}</span>
+                  {teamsMap[champion].name}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
