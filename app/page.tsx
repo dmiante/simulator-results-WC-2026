@@ -1,4 +1,4 @@
-import { WorldCupSimulator } from "@/components/world-cup-simulator"
+import { WorldCupSimulator } from "@/features/simulator/components/world-cup-simulator";
 
 export default function Home() {
   return (

@@ -2,15 +2,7 @@
 
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import type { Match, Team } from "@/lib/tournament-data"
-
-interface MatchInputProps {
-  match: Match
-  team1: Team | undefined
-  team2: Team | undefined
-  onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
-  compact?: boolean
-}
+import { MatchInputProps } from "../types"
 
 export function MatchInput({ match, team1, team2, onScoreChange, compact = false }: MatchInputProps) {
   const handleChange = (team: "team1" | "team2", value: string) => {

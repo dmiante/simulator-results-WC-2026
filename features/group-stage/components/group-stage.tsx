@@ -2,18 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MatchInput } from "@/components/match-input"
-import { StandingsTable } from "@/components/standings-table"
-import type { Match, Team, GroupStanding } from "@/lib/tournament-data"
 
-interface GroupStageProps {
-  groups: Record<string, string[]>
-  groupMatches: Match[]
-  groupStandings: Record<string, GroupStanding[]>
-  teamsMap: Record<string, Team>
-  onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
-  qualifiedTeams: { first: string[]; second: string[]; thirdBest: string[] }
-}
+import { MatchInput } from "@/features/group-stage/components/match-input"
+import { StandingsTable } from "@/features/group-stage/components/standings-table"
+
+import { GroupStageProps } from "../types"
+
 
 export function GroupStage({
   groups,

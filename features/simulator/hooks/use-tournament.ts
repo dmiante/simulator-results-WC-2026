@@ -1,13 +1,6 @@
-"use client"
-
-import { useState, useMemo } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Trophy, Users, GitBranch, RotateCcw, Sparkles } from "lucide-react"
-import { GroupStage } from "@/components/group-stage"
-import { KnockoutBracket } from "@/components/knockout-bracket"
-import { TournamentHeader } from "@/components/tournament-header"
-import { teams, groups, generateGroupMatches, calculateStandings, type Match, type Team } from "@/lib/tournament-data"
+import { calculateStandings, generateGroupMatches, groups, teams } from "@/db/tournament-data"
+import { Match, Team } from "@/lib/types"
+import { useMemo, useState } from "react"
 
 function generateRandomScore(): number {
   const weights = [25, 30, 25, 12, 5, 3] // 0, 1, 2, 3, 4, 5 goals
@@ -27,7 +20,9 @@ function getWinner(team1Id: string, team2Id: string, score1: number, score2: num
   return Math.random() > 0.5 ? team1Id : team2Id
 }
 
-export function WorldCupSimulator() {
+
+export function useTournament() {
+
   const [groupMatches, setGroupMatches] = useState<Match[]>(() => generateGroupMatches())
   const [knockoutMatches, setKnockoutMatches] = useState<Match[]>([])
   const [activeTab, setActiveTab] = useState("groups")
@@ -247,6 +242,7 @@ export function WorldCupSimulator() {
     setActiveTab("knockout")
   }
 
+
   const generateKnockoutBracket = () => {
     const { first, second, thirdBest } = qualifiedTeams
     if (first.length !== 12 || second.length !== 12 || thirdBest.length !== 8) return
@@ -338,67 +334,25 @@ export function WorldCupSimulator() {
   const groupsComplete =
     qualifiedTeams.first.length === 12 && qualifiedTeams.second.length === 12 && qualifiedTeams.thirdBest.length === 8
 
-  return (
-    <div className="min-h-screen bg-background">
-      <TournamentHeader />
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-2">
-            <Trophy className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">Tournament Simulator</h2>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={simulateTournament} className="gap-2" variant="default">
-              <Sparkles className="h-4 w-4" />
-              Simulate
-            </Button>
-            {groupsComplete && knockoutMatches.length === 0 && (
-              <Button onClick={generateKnockoutBracket} className="gap-2" variant="secondary">
-                <GitBranch className="h-4 w-4" />
-                Generate Knockout
-              </Button>
-            )}
-            <Button variant="outline" onClick={resetTournament} className="gap-2 bg-transparent">
-              <RotateCcw className="h-4 w-4" />
-              Reset
-            </Button>
-          </div>
-        </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="groups" className="gap-2">
-              <Users className="h-4 w-4" />
-              Group Stage
-            </TabsTrigger>
-            <TabsTrigger value="knockout" className="gap-2" disabled={knockoutMatches.length === 0}>
-              <GitBranch className="h-4 w-4" />
-              Knockout
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="groups" className="mt-6">
-            <GroupStage
-              groups={groups}
-              groupMatches={groupMatches}
-              groupStandings={groupStandings}
-              teamsMap={teamsMap}
-              onScoreChange={handleScoreChange}
-              qualifiedTeams={qualifiedTeams}
-            />
-          </TabsContent>
-
-          <TabsContent value="knockout" className="mt-6">
-            <KnockoutBracket
-              matches={knockoutMatches}
-              setMatches={setKnockoutMatches}
-              teamsMap={teamsMap}
-              onScoreChange={handleKnockoutScoreChange}
-            />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
-  )
+  return {
+    groupMatches,
+    knockoutMatches,
+    activeTab,
+    teamsMap,
+    groupStandings,
+    qualifiedTeams,
+    groupsComplete,
+    setKnockoutMatches,
+    setActiveTab,
+    handleKnockoutScoreChange,
+    handleScoreChange,
+    simulateTournament,
+    generateKnockoutBracket,
+    resetTournament
+  }
 }
+
+
+
+

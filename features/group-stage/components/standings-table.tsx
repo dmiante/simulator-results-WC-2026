@@ -1,13 +1,8 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import type { Team, GroupStanding } from "@/lib/tournament-data"
+import { StandingsTableProps } from "../types"
 
-interface StandingsTableProps {
-  standings: GroupStanding[]
-  teamsMap: Record<string, Team>
-  qualifiedTeams: { first: string[]; second: string[]; thirdBest: string[] }
-}
 
 export function StandingsTable({ standings, teamsMap, qualifiedTeams }: StandingsTableProps) {
   const getQualificationStatus = (teamId: string, position: number) => {
