@@ -1,17 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { GitBranch, RotateCcw, Sparkles, Trophy } from "lucide-react";
-import { useTournament } from "../hooks/use-tournament";
+import { TournamentSimulatorProps } from "../types";
 
 
-export default function TournamentSimulator() {
-
-  const { 
-    simulateTournament,
-    groupsComplete,
-    generateKnockoutBracket,
-    resetTournament,
-    knockoutMatches
-  } = useTournament()
+export default function TournamentSimulator({
+  simulateTournament,
+  generateKnockoutBracket,
+  groupsComplete,
+  knockoutMatches,
+  resetTournament
+}: TournamentSimulatorProps) {
   
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">

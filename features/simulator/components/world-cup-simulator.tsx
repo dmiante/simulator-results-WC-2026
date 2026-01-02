@@ -18,10 +18,14 @@ export function WorldCupSimulator() {
     knockoutMatches,
     qualifiedTeams,
     teamsMap,
+    groupsComplete,
     handleKnockoutScoreChange,
     handleScoreChange,
     setKnockoutMatches,
-    setActiveTab
+    setActiveTab,
+    generateKnockoutBracket,
+    resetTournament,
+    simulateTournament
   } = useTournament()
   
 
@@ -29,7 +33,13 @@ export function WorldCupSimulator() {
     <div className="min-h-screen bg-background">
       <TournamentHeader />
       <div className="container mx-auto px-4 py-6">
-        <TournamentSimulator />
+        <TournamentSimulator 
+          generateKnockoutBracket={generateKnockoutBracket}
+          groupsComplete={groupsComplete}
+          resetTournament={resetTournament}
+          simulateTournament={simulateTournament}
+          knockoutMatches={knockoutMatches}
+        />
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="groups" className="gap-2">
