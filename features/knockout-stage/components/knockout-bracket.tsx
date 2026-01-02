@@ -1,19 +1,15 @@
 "use client"
-import { useState, useEffect, useRef } from "react"
-import type React from "react"
 
-import { Trophy, ZoomIn, ZoomOut, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react"
+import type React from "react"
+import { useState, useEffect, useRef } from "react"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
-import type { Match, Team } from "@/lib/types"
+import { Trophy, ZoomIn, ZoomOut, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react"
 
-interface KnockoutBracketProps {
-  matches: Match[]
-  setMatches: React.Dispatch<React.SetStateAction<Match[]>>
-  teamsMap: Record<string, Team>
-  onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
-}
+import { cn } from "@/lib/utils"
+import { KnockoutBracketProps } from "../types"
+import { Match, Team } from "@/lib/types"
 
 function MatchCard({
   match,
@@ -83,7 +79,7 @@ function MatchCard({
               onScoreChange(match.id, "team1", val)
             }}
             className={cn(
-              "w-10 h-6 text-center text-xs font-bold bg-slate-100 border-slate-300 text-slate-800",
+              "w-12 h-7 text-center text-sm p-0 font-bold bg-slate-100 border-slate-300 text-slate-800",
               winner === "team1" && "bg-emerald-100 border-emerald-400",
             )}
             placeholder="-"
@@ -117,7 +113,7 @@ function MatchCard({
               onScoreChange(match.id, "team2", val)
             }}
             className={cn(
-              "w-10 h-6 text-center text-xs font-bold bg-slate-100 border-slate-300 text-slate-800",
+              "w-12 h-7 text-center text-sm p-0 font-bold bg-slate-100 border-slate-300 text-slate-800",
               winner === "team2" && "bg-emerald-100 border-emerald-400",
             )}
             placeholder="-"
