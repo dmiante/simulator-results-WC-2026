@@ -6,8 +6,8 @@ import { GroupStage } from "@/features/group-stage/components/group-stage"
 import { KnockoutBracket } from "@/features/knockout-stage/components/knockout-bracket"
 import { TournamentHeader } from "@/components/layout/tournament-header"
 import { groups } from "@/db/tournament-data"
-import TournamentSimulator from "./tournament-simulator"
 import { useTournament } from "../hooks/use-tournament"
+import TournamentSimulatorButton from "./tournament-simulator"
 
 export function WorldCupSimulator() {
 
@@ -18,8 +18,8 @@ export function WorldCupSimulator() {
     knockoutMatches,
     qualifiedTeams,
     teamsMap,
-    groupsComplete,
     handleKnockoutScoreChange,
+    groupsComplete,
     handleScoreChange,
     setKnockoutMatches,
     setActiveTab,
@@ -33,7 +33,7 @@ export function WorldCupSimulator() {
     <div className="min-h-screen bg-background">
       <TournamentHeader />
       <div className="container mx-auto px-4 py-6">
-        <TournamentSimulator 
+        <TournamentSimulatorButton 
           generateKnockoutBracket={generateKnockoutBracket}
           groupsComplete={groupsComplete}
           resetTournament={resetTournament}
@@ -46,7 +46,7 @@ export function WorldCupSimulator() {
               <Users className="h-4 w-4" />
               Group Stage
             </TabsTrigger>
-            <TabsTrigger value="knockout" className="gap-2" disabled={knockoutMatches.length === 0}>
+            <TabsTrigger value="knockout" className="gap-2">
               <GitBranch className="h-4 w-4" />
               Knockout
             </TabsTrigger>
