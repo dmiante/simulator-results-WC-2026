@@ -46,7 +46,7 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
             winner === "team2" && "text-muted-foreground",
           )}
         >
-          {team1.code}
+          {team1.name}
         </span>
       </div>
 
@@ -92,7 +92,7 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
             winner === "team1" && "text-muted-foreground",
           )}
         >
-          {team2.code}
+          {team2.name}
         </span>
         <span className={cn("text-base", compact && "text-sm")}>{team2.flag}</span>
       </div>

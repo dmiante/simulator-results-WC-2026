@@ -61,7 +61,7 @@ export function StandingsTable({ standings, teamsMap, qualifiedTeams }: Standing
                 <td className="py-2">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">{team?.flag}</span>
-                    <span className="font-medium text-foreground truncate max-w-[100px]">{team?.code}</span>
+                    <span className="font-medium text-foreground truncate max-w-[100px]">{team?.name}</span>
                   </div>
                 </td>
                 <td className="text-center py-2 text-muted-foreground">{standing.played}</td>
