@@ -1,4 +1,5 @@
-import { calculateStandings, generateGroupMatches, groups, teams } from "@/db/tournament-data"
+import { calculateStandings, generateGroupMatches } from "@/db/matches"
+import { groups, teams } from "@/db/tournament-data"
 import { Match, Team } from "@/lib/types"
 import { useMemo, useState } from "react"
 
