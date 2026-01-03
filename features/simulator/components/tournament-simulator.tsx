@@ -3,7 +3,7 @@ import { GitBranch, RotateCcw, Sparkles, Trophy } from "lucide-react";
 import { TournamentSimulatorProps } from "../types";
 
 
-export default function TournamentSimulator({
+export default function TournamentSimulatorButton({
   simulateTournament,
   generateKnockoutBracket,
   groupsComplete,
