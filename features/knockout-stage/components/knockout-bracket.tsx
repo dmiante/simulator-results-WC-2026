@@ -188,14 +188,6 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
     containerRef.current.scrollTop = scrollStart.y - dy
   }
 
-  const handleMouseUp = () => {
-    setIsDragging(false)
-  }
-
-  const handleMouseLeave = () => {
-    setIsDragging(false)
-  }
-
   const champion =
     final &&
     (() => {
@@ -259,8 +251,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
           style={{ maxHeight: "85vh" }}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave}
+          onMouseUp={() => setIsDragging(false)}
+          onMouseLeave={() => setIsDragging(false)}
         >
           {/* Wrapper that reserves space for scaled content */}
           <div 
