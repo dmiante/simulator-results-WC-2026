@@ -1,4 +1,4 @@
-import { GroupStanding, Match, Team } from "../lib/types"
+import { Team } from "../lib/types"
 
 // FIFA World Cup 2026 - 48 Teams (12 groups of 4)
 // Official draw results from FIFA - December 2024
@@ -18,7 +18,7 @@ export const teams: Team[] = [
   { id: "bra", name: "Brazil", code: "BRA", flag: "🇧🇷", confederation: "CONMEBOL" },
   { id: "mar", name: "Morocco", code: "MAR", flag: "🇲🇦", confederation: "CAF" },
   { id: "hai", name: "Haiti", code: "HAI", flag: "🇭🇹", confederation: "CONCACAF" },
-  { id: "sco", name: "Scotland", code: "SCO", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", confederation: "UEFA" },
+  { id: "sco", name: "Scotland", code: "SCO", flag: "🏴", confederation: "UEFA" },
   // Group D
   { id: "usa", name: "United States", code: "USA", flag: "🇺🇸", confederation: "CONCACAF" },
   { id: "par", name: "Paraguay", code: "PAR", flag: "🇵🇾", confederation: "CONMEBOL" },
@@ -60,7 +60,7 @@ export const teams: Team[] = [
   { id: "uzb", name: "Uzbekistan", code: "UZB", flag: "🇺🇿", confederation: "AFC" },
   { id: "col", name: "Colombia", code: "COL", flag: "🇨🇴", confederation: "CONMEBOL" },
   // Group L
-  { id: "eng", name: "England", code: "ENG", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", confederation: "UEFA" },
+  { id: "eng", name: "England", code: "ENG", flag: "🏴", confederation: "UEFA" },
   { id: "cro", name: "Croatia", code: "CRO", flag: "🇭🇷", confederation: "UEFA" },
   { id: "gha", name: "Ghana", code: "GHA", flag: "🇬🇭", confederation: "CAF" },
   { id: "pan", name: "Panama", code: "PAN", flag: "🇵🇦", confederation: "CONCACAF" },
@@ -81,84 +81,99 @@ export const groups: Record<string, string[]> = {
   L: ["eng", "cro", "gha", "pan"],
 }
 
-export function generateGroupMatches(): Match[] {
-  const matches: Match[] = []
-  let matchNumber = 1
+export const officialMatches: Array<{
+  team1Id: string
+  team2Id: string
+  group: string
+  date: string
+  matchNumber: number
+}> = [
+  // Jornada 1 - 11 de junio 2026
+  { team1Id: "mex", team2Id: "rsa", group: "A", date: "2026-06-11", matchNumber: 1 },
+  // Jornada 1 - 12 de junio 2026
+  { team1Id: "kor", team2Id: "uefad", group: "A", date: "2026-06-12", matchNumber: 2 },
+  { team1Id: "can", team2Id: "uefaa", group: "B", date: "2026-06-12", matchNumber: 3 },
+  { team1Id: "qat", team2Id: "sui", group: "B", date: "2026-06-12", matchNumber: 4 },
+  { team1Id: "bra", team2Id: "mar", group: "C", date: "2026-06-12", matchNumber: 5 },
+  { team1Id: "hai", team2Id: "sco", group: "C", date: "2026-06-12", matchNumber: 6 },
+  // Jornada 1 - 13 de junio 2026
+  { team1Id: "usa", team2Id: "par", group: "D", date: "2026-06-13", matchNumber: 7 },
+  { team1Id: "aus", team2Id: "uefac", group: "D", date: "2026-06-13", matchNumber: 8 },
+  { team1Id: "ger", team2Id: "cur", group: "E", date: "2026-06-13", matchNumber: 9 },
+  { team1Id: "civ", team2Id: "ecu", group: "E", date: "2026-06-13", matchNumber: 10 },
+  { team1Id: "ned", team2Id: "jpn", group: "F", date: "2026-06-13", matchNumber: 11 },
+  { team1Id: "uefab", team2Id: "tun", group: "F", date: "2026-06-13", matchNumber: 12 },
+  // Jornada 1 - 14 de junio 2026
+  { team1Id: "bel", team2Id: "egy", group: "G", date: "2026-06-14", matchNumber: 13 },
+  { team1Id: "irn", team2Id: "nzl", group: "G", date: "2026-06-14", matchNumber: 14 },
+  { team1Id: "esp", team2Id: "cpv", group: "H", date: "2026-06-14", matchNumber: 15 },
+  { team1Id: "sau", team2Id: "uru", group: "H", date: "2026-06-14", matchNumber: 16 },
+  { team1Id: "fra", team2Id: "sen", group: "I", date: "2026-06-14", matchNumber: 17 },
+  { team1Id: "icp2", team2Id: "nor", group: "I", date: "2026-06-14", matchNumber: 18 },
+  // Jornada 1 - 15 de junio 2026
+  { team1Id: "arg", team2Id: "alg", group: "J", date: "2026-06-15", matchNumber: 19 },
+  { team1Id: "aut", team2Id: "jor", group: "J", date: "2026-06-15", matchNumber: 20 },
+  { team1Id: "por", team2Id: "icp1", group: "K", date: "2026-06-15", matchNumber: 21 },
+  { team1Id: "uzb", team2Id: "col", group: "K", date: "2026-06-15", matchNumber: 22 },
+  { team1Id: "eng", team2Id: "cro", group: "L", date: "2026-06-15", matchNumber: 23 },
+  { team1Id: "gha", team2Id: "pan", group: "L", date: "2026-06-15", matchNumber: 24 },
 
-  Object.entries(groups).forEach(([groupName, teamIds]) => {
-    // Each team plays against every other team in the group (round-robin)
-    for (let i = 0; i < teamIds.length; i++) {
-      for (let j = i + 1; j < teamIds.length; j++) {
-        matches.push({
-          id: `group-${groupName}-${matchNumber}`,
-          team1Id: teamIds[i],
-          team2Id: teamIds[j],
-          team1Score: null,
-          team2Score: null,
-          stage: "group",
-          group: groupName,
-          matchNumber: matchNumber++,
-        })
-      }
-    }
-  })
+  // Jornada 2 - 16 de junio 2026
+  { team1Id: "mex", team2Id: "kor", group: "A", date: "2026-06-16", matchNumber: 25 },
+  { team1Id: "rsa", team2Id: "uefad", group: "A", date: "2026-06-16", matchNumber: 26 },
+  { team1Id: "can", team2Id: "qat", group: "B", date: "2026-06-16", matchNumber: 27 },
+  { team1Id: "uefaa", team2Id: "sui", group: "B", date: "2026-06-16", matchNumber: 28 },
+  { team1Id: "bra", team2Id: "hai", group: "C", date: "2026-06-16", matchNumber: 29 },
+  { team1Id: "mar", team2Id: "sco", group: "C", date: "2026-06-16", matchNumber: 30 },
+  // Jornada 2 - 17 de junio 2026
+  { team1Id: "usa", team2Id: "aus", group: "D", date: "2026-06-17", matchNumber: 31 },
+  { team1Id: "par", team2Id: "uefac", group: "D", date: "2026-06-17", matchNumber: 32 },
+  { team1Id: "ger", team2Id: "civ", group: "E", date: "2026-06-17", matchNumber: 33 },
+  { team1Id: "cur", team2Id: "ecu", group: "E", date: "2026-06-17", matchNumber: 34 },
+  { team1Id: "ned", team2Id: "uefab", group: "F", date: "2026-06-17", matchNumber: 35 },
+  { team1Id: "jpn", team2Id: "tun", group: "F", date: "2026-06-17", matchNumber: 36 },
+  // Jornada 2 - 18 de junio 2026
+  { team1Id: "bel", team2Id: "irn", group: "G", date: "2026-06-18", matchNumber: 37 },
+  { team1Id: "egy", team2Id: "nzl", group: "G", date: "2026-06-18", matchNumber: 38 },
+  { team1Id: "esp", team2Id: "sau", group: "H", date: "2026-06-18", matchNumber: 39 },
+  { team1Id: "cpv", team2Id: "uru", group: "H", date: "2026-06-18", matchNumber: 40 },
+  { team1Id: "fra", team2Id: "icp2", group: "I", date: "2026-06-18", matchNumber: 41 },
+  { team1Id: "sen", team2Id: "nor", group: "I", date: "2026-06-18", matchNumber: 42 },
+  // Jornada 2 - 19 de junio 2026
+  { team1Id: "arg", team2Id: "aut", group: "J", date: "2026-06-19", matchNumber: 43 },
+  { team1Id: "alg", team2Id: "jor", group: "J", date: "2026-06-19", matchNumber: 44 },
+  { team1Id: "por", team2Id: "uzb", group: "K", date: "2026-06-19", matchNumber: 45 },
+  { team1Id: "icp1", team2Id: "col", group: "K", date: "2026-06-19", matchNumber: 46 },
+  { team1Id: "eng", team2Id: "gha", group: "L", date: "2026-06-19", matchNumber: 47 },
+  { team1Id: "cro", team2Id: "pan", group: "L", date: "2026-06-19", matchNumber: 48 },
 
-  return matches
-}
+  // Jornada 3 - 20 de junio 2026
+  { team1Id: "mex", team2Id: "uefad", group: "A", date: "2026-06-20", matchNumber: 49 },
+  { team1Id: "rsa", team2Id: "kor", group: "A", date: "2026-06-20", matchNumber: 50 },
+  { team1Id: "can", team2Id: "sui", group: "B", date: "2026-06-20", matchNumber: 51 },
+  { team1Id: "uefaa", team2Id: "qat", group: "B", date: "2026-06-20", matchNumber: 52 },
+  { team1Id: "bra", team2Id: "sco", group: "C", date: "2026-06-20", matchNumber: 53 },
+  { team1Id: "mar", team2Id: "hai", group: "C", date: "2026-06-20", matchNumber: 54 },
+  // Jornada 3 - 21 de junio 2026
+  { team1Id: "usa", team2Id: "uefac", group: "D", date: "2026-06-21", matchNumber: 55 },
+  { team1Id: "par", team2Id: "aus", group: "D", date: "2026-06-21", matchNumber: 56 },
+  { team1Id: "ger", team2Id: "ecu", group: "E", date: "2026-06-21", matchNumber: 57 },
+  { team1Id: "cur", team2Id: "civ", group: "E", date: "2026-06-21", matchNumber: 58 },
+  { team1Id: "ned", team2Id: "tun", group: "F", date: "2026-06-21", matchNumber: 59 },
+  { team1Id: "jpn", team2Id: "uefab", group: "F", date: "2026-06-21", matchNumber: 60 },
+  // Jornada 3 - 22 de junio 2026
+  { team1Id: "bel", team2Id: "nzl", group: "G", date: "2026-06-22", matchNumber: 61 },
+  { team1Id: "egy", team2Id: "irn", group: "G", date: "2026-06-22", matchNumber: 62 },
+  { team1Id: "esp", team2Id: "uru", group: "H", date: "2026-06-22", matchNumber: 63 },
+  { team1Id: "cpv", team2Id: "sau", group: "H", date: "2026-06-22", matchNumber: 64 },
+  { team1Id: "fra", team2Id: "nor", group: "I", date: "2026-06-22", matchNumber: 65 },
+  { team1Id: "sen", team2Id: "icp2", group: "I", date: "2026-06-22", matchNumber: 66 },
+  // Jornada 3 - 23 de junio 2026
+  { team1Id: "arg", team2Id: "jor", group: "J", date: "2026-06-23", matchNumber: 67 },
+  { team1Id: "alg", team2Id: "aut", group: "J", date: "2026-06-23", matchNumber: 68 },
+  { team1Id: "por", team2Id: "col", group: "K", date: "2026-06-23", matchNumber: 69 },
+  { team1Id: "icp1", team2Id: "uzb", group: "K", date: "2026-06-23", matchNumber: 70 },
+  { team1Id: "eng", team2Id: "pan", group: "L", date: "2026-06-23", matchNumber: 71 },
+  { team1Id: "cro", team2Id: "gha", group: "L", date: "2026-06-23", matchNumber: 72 },
+]
 
-export function calculateStandings(groupTeams: string[], matches: Match[]): GroupStanding[] {
-  const standings: Record<string, GroupStanding> = {}
-
-  groupTeams.forEach((teamId) => {
-    standings[teamId] = {
-      teamId,
-      played: 0,
-      won: 0,
-      drawn: 0,
-      lost: 0,
-      goalsFor: 0,
-      goalsAgainst: 0,
-      goalDifference: 0,
-      points: 0,
-    }
-  })
-
-  matches.forEach((match) => {
-    if (match.team1Score === null || match.team2Score === null) return
-    if (!standings[match.team1Id] || !standings[match.team2Id]) return
-
-    const s1 = standings[match.team1Id]
-    const s2 = standings[match.team2Id]
-
-    s1.played++
-    s2.played++
-    s1.goalsFor += match.team1Score
-    s1.goalsAgainst += match.team2Score
-    s2.goalsFor += match.team2Score
-    s2.goalsAgainst += match.team1Score
-
-    if (match.team1Score > match.team2Score) {
-      s1.won++
-      s1.points += 3
-      s2.lost++
-    } else if (match.team1Score < match.team2Score) {
-      s2.won++
-      s2.points += 3
-      s1.lost++
-    } else {
-      s1.drawn++
-      s2.drawn++
-      s1.points += 1
-      s2.points += 1
-    }
-
-    s1.goalDifference = s1.goalsFor - s1.goalsAgainst
-    s2.goalDifference = s2.goalsFor - s2.goalsAgainst
-  })
-
-  return Object.values(standings).sort((a, b) => {
-    if (b.points !== a.points) return b.points - a.points
-    if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference
-    return b.goalsFor - a.goalsFor
-  })
-}

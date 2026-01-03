@@ -15,6 +15,7 @@ export interface Match {
   stage: "group" | "round32" | "round16" | "quarter" | "semi" | "third" | "final"
   group?: string
   matchNumber: number
+  date?: string // Fecha del partido en formato YYYY-MM-DD
 }
 
 export interface GroupStanding {
