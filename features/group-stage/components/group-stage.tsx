@@ -28,12 +28,8 @@ export function GroupStage({
           </Badge>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-green-500" />
-          <span className="text-xs text-muted-foreground">1st Place</span>
-        </div>
-        <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-blue-500" />
-          <span className="text-xs text-muted-foreground">2nd Place</span>
+          <span className="text-xs text-muted-foreground">1st & 2nd Place</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-amber-500" />

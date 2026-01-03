@@ -40,16 +40,16 @@ export function StandingsTable({ standings, teamsMap, qualifiedTeams }: Standing
                 key={standing.teamId}
                 className={cn(
                   "border-b border-border/50 last:border-0",
-                  status === "first" && "bg-green-500/10",
+                  status === "first" && "bg-blue-500/10",
                   status === "second" && "bg-blue-500/10",
                   status === "third" && "bg-amber-500/10",
                 )}
               >
-                <td className="py-2">
+                <td className="py-3 flex justify-center items-center">
                   <div
                     className={cn(
                       "w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium",
-                      status === "first" && "bg-green-500 text-white",
+                      status === "first" && "bg-blue-500 text-white",
                       status === "second" && "bg-blue-500 text-white",
                       status === "third" && "bg-amber-500 text-white",
                       !status && "bg-muted text-muted-foreground",
