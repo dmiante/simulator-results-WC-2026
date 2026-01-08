@@ -17,6 +17,7 @@ export function WorldCupSimulator() {
     groupStandings,
     knockoutMatches,
     qualifiedTeams,
+    thirdPlaceRanking,
     teamsMap,
     handleKnockoutScoreChange,
     groupsComplete,
@@ -60,6 +61,7 @@ export function WorldCupSimulator() {
               teamsMap={teamsMap}
               onScoreChange={handleScoreChange}
               qualifiedTeams={qualifiedTeams}
+              thirdPlaceRanking={thirdPlaceRanking}
             />
           </TabsContent>
 
