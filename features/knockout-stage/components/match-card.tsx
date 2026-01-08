@@ -9,6 +9,8 @@ export function MatchCard({
   onScoreChange,
   isFinal = false,
   isThirdPlace = false,
+  placeholder1,
+  placeholder2,
 }: {
   match: Match
   team1: Team
@@ -16,9 +18,15 @@ export function MatchCard({
   onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
   isFinal?: boolean
   isThirdPlace?: boolean
+  placeholder1?: string
+  placeholder2?: string
 }) {
   const isTeam1TBD = !team1 || team1.name === "TBD"
   const isTeam2TBD = !team2 || team2.name === "TBD"
+  
+  // Display text for teams
+  const team1Display = isTeam1TBD ? (placeholder1 || "TBD") : team1.name
+  const team2Display = isTeam2TBD ? (placeholder2 || "TBD") : team2.name
 
   const getWinner = () => {
     if (match.team1Score === null || match.team2Score === null) return null
@@ -52,12 +60,12 @@ export function MatchCard({
             {!isTeam1TBD && <span className="text-base shrink-0">{team1.flag}</span>}
             <span
               className={cn(
-                "text-sm font-medium truncate text-slate-700",
+                "text-sm font-medium text-slate-700",
                 isTeam1TBD && "text-slate-400 italic",
                 winner === "team1" && "font-bold text-emerald-600",
               )}
             >
-              {team1?.name || "TBD"}
+              {team1Display}
             </span>
           </div>
           <Input
@@ -86,12 +94,12 @@ export function MatchCard({
             {!isTeam2TBD && <span className="text-base shrink-0">{team2.flag}</span>}
             <span
               className={cn(
-                "text-sm font-medium truncate text-slate-700",
+                "text-sm font-medium text-slate-700",
                 isTeam2TBD && "text-slate-400 italic",
                 winner === "team2" && "font-bold text-emerald-600",
               )}
             >
-              {team2?.name || "TBD"}
+              {team2Display}
             </span>
           </div>
           <Input
