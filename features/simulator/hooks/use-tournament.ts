@@ -1,6 +1,6 @@
 import { calculateStandings, generateGroupMatches } from "@/db/matches"
 import { groups, teams } from "@/db/tournament-data"
-import { Match, Team } from "@/lib/types"
+import { GroupStanding, Match, Team } from "@/lib/types"
 import { useMemo, useState } from "react"
 
 function generateRandomScore(): number {
@@ -43,6 +43,40 @@ export function useTournament() {
     return standings
   }, [groupMatches])
 
+  const thirdPlaceRanking = useMemo(() => {
+    const allThirdPlaces: GroupStanding[] = []
+
+    Object.entries(groupStandings).forEach(([, standings]) => {
+      const third = standings[2]
+      if (third) {
+        allThirdPlaces.push({
+          teamId: third.teamId,
+          points: third.points,
+          goalDifference: third.goalDifference,
+          goalsFor: third.goalsFor,
+          goalsAgainst: third.goalsAgainst,
+          played: third.played,
+          won: third.won,
+          drawn: third.drawn,
+          lost: third.lost,
+        })
+      }
+    })
+
+    // Ordenar según criterios FIFA
+    const sorted = allThirdPlaces.sort((a, b) => {
+      if (b.points !== a.points) return b.points - a.points
+      if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference
+      return b.goalsFor - a.goalsFor
+    })
+
+    return {
+      all: sorted,
+      qualified: sorted.filter(t => t.played === 3).slice(0, 8),
+      eliminated: sorted.filter(t => t.played === 3).slice(8),
+    }
+  }, [groupStandings])
+
   const qualifiedTeams = useMemo(() => {
     const qualified: { first: string[]; second: string[]; thirdBest: string[] } = {
       first: [],
@@ -57,19 +91,7 @@ export function useTournament() {
       }
     })
 
-    // Get best 8 third-placed teams
-    const thirdPlaced = Object.values(groupStandings)
-      .map((s) => s[2])
-      .filter((s) => s?.played === 3)
-      .sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points
-        if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference
-        return b.goalsFor - a.goalsFor
-      })
-      .slice(0, 8)
-      .map((s) => s.teamId)
-
-    qualified.thirdBest = thirdPlaced
+    qualified.thirdBest = thirdPlaceRanking.qualified.map(teams => teams.teamId)
 
     return qualified
   }, [groupStandings])
@@ -342,6 +364,7 @@ export function useTournament() {
     activeTab,
     teamsMap,
     groupStandings,
+    thirdPlaceRanking,
     qualifiedTeams,
     groupsComplete,
     setKnockoutMatches,
