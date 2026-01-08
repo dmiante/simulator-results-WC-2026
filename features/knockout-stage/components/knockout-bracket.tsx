@@ -1,14 +1,14 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Trophy, ZoomIn, ZoomOut, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { KnockoutBracketProps } from "../types"
-import { Match } from "@/lib/types"
+import { GroupStanding, Match, Team } from "@/lib/types"
 import { MatchCard } from "./match-card"
 import { BracketConnector } from "./bracket-connector"
 import { SingleConnector } from "./single-connector"
@@ -70,8 +70,63 @@ function getMatchPlaceholders(match: Match): { team1: string; team2: string } {
   return { team1: "TBD", team2: "TBD" }
 }
 
+// Function to resolve a placeholder like "1A", "2B" to the actual qualified team
+// Only returns the team if they have played all 3 group matches (fully qualified)
+function resolveQualifiedTeam(
+  placeholder: string,
+  groupStandings: Record<string, GroupStanding[]>,
+  thirdPlaceRanking: { qualified: GroupStanding[] },
+  teamsMap: Record<string, Team>
+): Team | null {
+  // Check if it's a third place placeholder (e.g., "3º ABCDF")
+  if (placeholder.startsWith("3º")) {
+    // Only show third place teams that are fully qualified (played all 3 matches)
+    const qualifiedThirds = thirdPlaceRanking.qualified
+    if (qualifiedThirds.length > 0) {
+      // Get groups that could provide this third place
+      const possibleGroups = placeholder.replace("3º ", "").split("")
+      
+      // Find a qualified third from one of these groups
+      for (const third of qualifiedThirds) {
+        // Only show if played all 3 matches
+        if (third.played !== 3) continue
+        
+        const teamInfo = teamsMap[third.teamId]
+        if (teamInfo) {
+          // Check if this team's group is in the possible groups
+          for (const [groupName, standings] of Object.entries(groupStandings)) {
+            const thirdInGroup = standings[2]
+            if (thirdInGroup && thirdInGroup.teamId === third.teamId && possibleGroups.includes(groupName)) {
+              return teamInfo
+            }
+          }
+        }
+      }
+    }
+    return null
+  }
 
-export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }: KnockoutBracketProps) {
+  // Parse position and group (e.g., "1A" -> position 1, group A)
+  const match = placeholder.match(/^(\d)([A-L])$/)
+  if (!match) return null
+
+  const position = parseInt(match[1]) - 1 // 0-indexed
+  const group = match[2]
+
+  const standings = groupStandings[group]
+  if (!standings || !standings[position]) return null
+
+  // Only show if the team has played all 3 matches (fully qualified)
+  const standing = standings[position]
+  if (standing.played !== 3) {
+    return null // Don't show provisional - only fully qualified
+  }
+
+  return teamsMap[standing.teamId] || null
+}
+
+
+export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, groupStandings, thirdPlaceRanking }: KnockoutBracketProps) {
   const [zoom, setZoom] = useState(1)
   const [mobileRound, setMobileRound] = useState(0)
   const bracketRef = useRef<HTMLDivElement>(null)
@@ -108,6 +163,20 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
     { title: "Semi-Finals", matches: semis },
     { title: "Finals", matches: [final, third].filter(Boolean) as Match[] },
   ]
+
+  // Resolve qualified teams for R32 placeholders in real-time
+  const resolvedTeams = useMemo(() => {
+    const resolved: Record<string, { team1: Team | null; team2: Team | null }> = {}
+    
+    Object.entries(r32Placeholders).forEach(([matchId, placeholders]) => {
+      resolved[matchId] = {
+        team1: resolveQualifiedTeam(placeholders.team1, groupStandings, thirdPlaceRanking, teamsMap),
+        team2: resolveQualifiedTeam(placeholders.team2, groupStandings, thirdPlaceRanking, teamsMap),
+      }
+    })
+    
+    return resolved
+  }, [groupStandings, thirdPlaceRanking, teamsMap])
 
   // Auto-advance winners
   useEffect(() => {
@@ -334,6 +403,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                 <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
                   {leftR32.map((match) => {
                     const placeholders = getMatchPlaceholders(match)
+                    const resolved = resolvedTeams[match.id]
                     return (
                       <MatchCard
                         key={match.id}
@@ -343,6 +413,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                         onScoreChange={onScoreChange}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
+                        resolvedTeam1={resolved?.team1}
+                        resolvedTeam2={resolved?.team2}
                       />
                     )
                   })}
@@ -633,6 +705,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                 <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
                   {rightR32.map((match) => {
                     const placeholders = getMatchPlaceholders(match)
+                    const resolved = resolvedTeams[match.id]
                     return (
                       <MatchCard
                         key={match.id}
@@ -642,6 +715,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                         onScoreChange={onScoreChange}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
+                        resolvedTeam1={resolved?.team1}
+                        resolvedTeam2={resolved?.team2}
                       />
                     )
                   })}
@@ -704,6 +779,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
         <div className="grid gap-3">
           {mobileRounds[mobileRound].matches.map((match) => {
             const placeholders = getMatchPlaceholders(match)
+            const resolved = match.stage === "round32" ? resolvedTeams[match.id] : undefined
             return (
               <MatchCard
                 key={match.id}
@@ -715,6 +791,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                 isThirdPlace={match.stage === "third"}
                 placeholder1={placeholders.team1}
                 placeholder2={placeholders.team2}
+                resolvedTeam1={resolved?.team1}
+                resolvedTeam2={resolved?.team2}
               />
             )
           })}
