@@ -4,7 +4,6 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Trophy, ZoomIn, ZoomOut, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -13,6 +12,63 @@ import { Match } from "@/lib/types"
 import { MatchCard } from "./match-card"
 import { BracketConnector } from "./bracket-connector"
 import { SingleConnector } from "./single-connector"
+
+const r32Placeholders: Record<string, { team1: string; team2: string }> = {
+  "round32-1": { team1: "1E", team2: "3º ABCDF" },
+  "round32-2": { team1: "1I", team2: "3º CDFGH" },
+  "round32-3": { team1: "2A", team2: "2B" },
+  "round32-4": { team1: "1F", team2: "2C" },
+  "round32-5": { team1: "2K", team2: "2L" },
+  "round32-6": { team1: "1H", team2: "2J" },
+  "round32-7": { team1: "1D", team2: "3º BEFIJ" },
+  "round32-8": { team1: "1G", team2: "3º AEHIJ" },
+  "round32-9": { team1: "1C", team2: "2F" },
+  "round32-10": { team1: "2E", team2: "2I" },
+  "round32-11": { team1: "1A", team2: "3º CEFHI" },
+  "round32-12": { team1: "1L", team2: "3º EHIJK" },
+  "round32-13": { team1: "1J", team2: "2H" },
+  "round32-14": { team1: "2D", team2: "2G" },
+  "round32-15": { team1: "1B", team2: "3º EFGIJ" },
+  "round32-16": { team1: "1K", team2: "3º DEIJL" },
+}
+
+// Function to get placeholder for any match based on stage
+function getMatchPlaceholders(match: Match): { team1: string; team2: string } {
+  if (match.stage === "round32") {
+    return r32Placeholders[match.id] || { team1: "TBD", team2: "TBD" }
+  }
+  
+  // For later rounds, show winner references
+  const matchNum = parseInt(match.id.split("-")[1])
+  
+  if (match.stage === "round16") {
+    const r32Match1 = `R32-${matchNum * 2 - 1}`
+    const r32Match2 = `R32-${matchNum * 2}`
+    return { team1: `W${r32Match1}`, team2: `W${r32Match2}` }
+  }
+  
+  if (match.stage === "quarter") {
+    const r16Match1 = `R16-${matchNum * 2 - 1}`
+    const r16Match2 = `R16-${matchNum * 2}`
+    return { team1: `W${r16Match1}`, team2: `W${r16Match2}` }
+  }
+  
+  if (match.stage === "semi") {
+    const qfMatch1 = `QF${matchNum * 2 - 1}`
+    const qfMatch2 = `QF${matchNum * 2}`
+    return { team1: `W${qfMatch1}`, team2: `W${qfMatch2}` }
+  }
+  
+  if (match.stage === "final") {
+    return { team1: "WSF1", team2: "WSF2" }
+  }
+  
+  if (match.stage === "third") {
+    return { team1: "LSF1", team2: "LSF2" }
+  }
+  
+  return { team1: "TBD", team2: "TBD" }
+}
 
 
 export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }: KnockoutBracketProps) {
@@ -276,15 +332,20 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   Round of 32
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
-                  {leftR32.map((match) => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      team1={teamsMap[match.team1Id]}
-                      team2={teamsMap[match.team2Id]}
-                      onScoreChange={onScoreChange}
-                    />
-                  ))}
+                  {leftR32.map((match) => {
+                    const placeholders = getMatchPlaceholders(match)
+                    return (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        team1={teamsMap[match.team1Id]}
+                        team2={teamsMap[match.team2Id]}
+                        onScoreChange={onScoreChange}
+                        placeholder1={placeholders.team1}
+                        placeholder2={placeholders.team2}
+                      />
+                    )
+                  })}
                 </div>
               </div>
 
@@ -299,15 +360,20 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   Round of 16
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r16Gap}px`, paddingTop: `${r16Offset}px` }}>
-                  {leftR16.map((match) => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      team1={teamsMap[match.team1Id]}
-                      team2={teamsMap[match.team2Id]}
-                      onScoreChange={onScoreChange}
-                    />
-                  ))}
+                  {leftR16.map((match) => {
+                    const placeholders = getMatchPlaceholders(match)
+                    return (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        team1={teamsMap[match.team1Id]}
+                        team2={teamsMap[match.team2Id]}
+                        onScoreChange={onScoreChange}
+                        placeholder1={placeholders.team1}
+                        placeholder2={placeholders.team2}
+                      />
+                    )
+                  })}
                 </div>
               </div>
 
@@ -327,15 +393,20 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   Quarter-Finals
                 </div>
                 <div className="flex flex-col" style={{ gap: `${qfGap + 80}px`, paddingTop: `${qfOffset}px` }}>
-                  {leftQF.map((match) => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      team1={teamsMap[match.team1Id]}
-                      team2={teamsMap[match.team2Id]}
-                      onScoreChange={onScoreChange}
-                    />
-                  ))}
+                  {leftQF.map((match) => {
+                    const placeholders = getMatchPlaceholders(match)
+                    return (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        team1={teamsMap[match.team1Id]}
+                        team2={teamsMap[match.team2Id]}
+                        onScoreChange={onScoreChange}
+                        placeholder1={placeholders.team1}
+                        placeholder2={placeholders.team2}
+                      />
+                    )
+                  })}
                 </div>
               </div>
 
@@ -355,15 +426,20 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   Semi-Finals
                 </div>
                 <div style={{ paddingTop: `${sfOffset + 40}px` }}>
-                  {leftSF.map((match) => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      team1={teamsMap[match.team1Id]}
-                      team2={teamsMap[match.team2Id]}
-                      onScoreChange={onScoreChange}
-                    />
-                  ))}
+                  {leftSF.map((match) => {
+                    const placeholders = getMatchPlaceholders(match)
+                    return (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        team1={teamsMap[match.team1Id]}
+                        team2={teamsMap[match.team2Id]}
+                        onScoreChange={onScoreChange}
+                        placeholder1={placeholders.team1}
+                        placeholder2={placeholders.team2}
+                      />
+                    )
+                  })}
                 </div>
               </div>
 
@@ -398,29 +474,39 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   )}
 
                   {/* Final Match */}
-                  {final && (
-                    <MatchCard
-                      match={final}
-                      team1={teamsMap[final.team1Id]}
-                      team2={teamsMap[final.team2Id]}
-                      onScoreChange={onScoreChange}
-                      isFinal
-                    />
-                  )}
+                  {final && (() => {
+                    const placeholders = getMatchPlaceholders(final)
+                    return (
+                      <MatchCard
+                        match={final}
+                        team1={teamsMap[final.team1Id]}
+                        team2={teamsMap[final.team2Id]}
+                        onScoreChange={onScoreChange}
+                        isFinal
+                        placeholder1={placeholders.team1}
+                        placeholder2={placeholders.team2}
+                      />
+                    )
+                  })()}
 
                   {/* 3rd Place Match */}
-                  {third && (
-                    <div className="mt-8">
-                      <div className="text-xs uppercase tracking-widest text-slate-400 text-center mb-2">3rd Place</div>
-                      <MatchCard
-                        match={third}
-                        team1={teamsMap[third.team1Id]}
-                        team2={teamsMap[third.team2Id]}
-                        onScoreChange={onScoreChange}
-                        isThirdPlace
-                      />
-                    </div>
-                  )}
+                  {third && (() => {
+                    const placeholders = getMatchPlaceholders(third)
+                    return (
+                      <div className="mt-8">
+                        <div className="text-xs uppercase tracking-widest text-slate-400 text-center mb-2">3rd Place</div>
+                        <MatchCard
+                          match={third}
+                          team1={teamsMap[third.team1Id]}
+                          team2={teamsMap[third.team2Id]}
+                          onScoreChange={onScoreChange}
+                          isThirdPlace
+                          placeholder1={placeholders.team1}
+                          placeholder2={placeholders.team2}
+                        />
+                      </div>
+                    )
+                  })()}
                 </div>
               </div>
 
@@ -444,15 +530,20 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   Semi-Finals
                 </div>
                 <div style={{ paddingTop: `${sfOffset + 40}px` }}>
-                  {rightSF.map((match) => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      team1={teamsMap[match.team1Id]}
-                      team2={teamsMap[match.team2Id]}
-                      onScoreChange={onScoreChange}
-                    />
-                  ))}
+                  {rightSF.map((match) => {
+                    const placeholders = getMatchPlaceholders(match)
+                    return (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        team1={teamsMap[match.team1Id]}
+                        team2={teamsMap[match.team2Id]}
+                        onScoreChange={onScoreChange}
+                        placeholder1={placeholders.team1}
+                        placeholder2={placeholders.team2}
+                      />
+                    )
+                  })}
                 </div>
               </div>
 
@@ -472,15 +563,20 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   Quarter-Finals
                 </div>
                 <div className="flex flex-col" style={{ gap: `${qfGap + 80}px`, paddingTop: `${qfOffset}px` }}>
-                  {rightQF.map((match) => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      team1={teamsMap[match.team1Id]}
-                      team2={teamsMap[match.team2Id]}
-                      onScoreChange={onScoreChange}
-                    />
-                  ))}
+                  {rightQF.map((match) => {
+                    const placeholders = getMatchPlaceholders(match)
+                    return (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        team1={teamsMap[match.team1Id]}
+                        team2={teamsMap[match.team2Id]}
+                        onScoreChange={onScoreChange}
+                        placeholder1={placeholders.team1}
+                        placeholder2={placeholders.team2}
+                      />
+                    )
+                  })}
                 </div>
               </div>
 
@@ -501,15 +597,20 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   Round of 16
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r16Gap}px`, paddingTop: `${r16Offset}px` }}>
-                  {rightR16.map((match) => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      team1={teamsMap[match.team1Id]}
-                      team2={teamsMap[match.team2Id]}
-                      onScoreChange={onScoreChange}
-                    />
-                  ))}
+                  {rightR16.map((match) => {
+                    const placeholders = getMatchPlaceholders(match)
+                    return (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        team1={teamsMap[match.team1Id]}
+                        team2={teamsMap[match.team2Id]}
+                        onScoreChange={onScoreChange}
+                        placeholder1={placeholders.team1}
+                        placeholder2={placeholders.team2}
+                      />
+                    )
+                  })}
                 </div>
               </div>
 
@@ -530,15 +631,20 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
                   Round of 32
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
-                  {rightR32.map((match) => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      team1={teamsMap[match.team1Id]}
-                      team2={teamsMap[match.team2Id]}
-                      onScoreChange={onScoreChange}
-                    />
-                  ))}
+                  {rightR32.map((match) => {
+                    const placeholders = getMatchPlaceholders(match)
+                    return (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        team1={teamsMap[match.team1Id]}
+                        team2={teamsMap[match.team2Id]}
+                        onScoreChange={onScoreChange}
+                        placeholder1={placeholders.team1}
+                        placeholder2={placeholders.team2}
+                      />
+                    )
+                  })}
                 </div>
               </div>
             </div>
@@ -596,17 +702,22 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange }
 
         {/* Mobile Matches Grid */}
         <div className="grid gap-3">
-          {mobileRounds[mobileRound].matches.map((match) => (
-            <MatchCard
-              key={match.id}
-              match={match}
-              team1={teamsMap[match.team1Id]}
-              team2={teamsMap[match.team2Id]}
-              onScoreChange={onScoreChange}
-              isFinal={match.stage === "final"}
-              isThirdPlace={match.stage === "third"}
-            />
-          ))}
+          {mobileRounds[mobileRound].matches.map((match) => {
+            const placeholders = getMatchPlaceholders(match)
+            return (
+              <MatchCard
+                key={match.id}
+                match={match}
+                team1={teamsMap[match.team1Id]}
+                team2={teamsMap[match.team2Id]}
+                onScoreChange={onScoreChange}
+                isFinal={match.stage === "final"}
+                isThirdPlace={match.stage === "third"}
+                placeholder1={placeholders.team1}
+                placeholder2={placeholders.team2}
+              />
+            )
+          })}
         </div>
       </div>
     </div>
