@@ -11,6 +11,8 @@ export function MatchCard({
   isThirdPlace = false,
   placeholder1,
   placeholder2,
+  resolvedTeam1,
+  resolvedTeam2,
 }: {
   match: Match
   team1: Team
@@ -20,13 +22,23 @@ export function MatchCard({
   isThirdPlace?: boolean
   placeholder1?: string
   placeholder2?: string
+  resolvedTeam1?: Team | null
+  resolvedTeam2?: Team | null
 }) {
   const isTeam1TBD = !team1 || team1.name === "TBD"
   const isTeam2TBD = !team2 || team2.name === "TBD"
   
-  // Display text for teams
-  const team1Display = isTeam1TBD ? (placeholder1 || "TBD") : team1.name
-  const team2Display = isTeam2TBD ? (placeholder2 || "TBD") : team2.name
+  // Check if we have resolved teams from group stage
+  const hasResolvedTeam1 = resolvedTeam1 && isTeam1TBD
+  const hasResolvedTeam2 = resolvedTeam2 && isTeam2TBD
+  
+  // Display text for teams - show resolved team if available, otherwise placeholder
+  const team1Display = isTeam1TBD 
+    ? (hasResolvedTeam1 ? resolvedTeam1.name : (placeholder1 || "TBD"))
+    : team1.name
+  const team2Display = isTeam2TBD 
+    ? (hasResolvedTeam2 ? resolvedTeam2.name : (placeholder2 || "TBD"))
+    : team2.name
 
   const getWinner = () => {
     if (match.team1Score === null || match.team2Score === null) return null
@@ -54,16 +66,23 @@ export function MatchCard({
           className={cn(
             "flex items-center justify-between px-3 py-2 border-b border-slate-200 h-1/2",
             winner === "team1" && "bg-emerald-100",
+            hasResolvedTeam1 && !winner && "bg-blue-50",
           )}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            {!isTeam1TBD && <span className="text-base shrink-0">{team1.flag}</span>}
+            {(!isTeam1TBD || hasResolvedTeam1) && (
+              <span className="text-base shrink-0">
+                {hasResolvedTeam1 ? resolvedTeam1.flag : team1.flag}
+              </span>
+            )}
             <span
               className={cn(
-                "text-sm font-medium text-slate-700",
-                isTeam1TBD && "text-slate-400 italic",
+                "text-sm font-medium text-slate-700 truncate",
+                isTeam1TBD && !hasResolvedTeam1 && "text-slate-400 italic",
+                hasResolvedTeam1 && "text-blue-600 font-semibold",
                 winner === "team1" && "font-bold text-emerald-600",
               )}
+              title={hasResolvedTeam1 ? `${placeholder1}: ${resolvedTeam1.name}` : undefined}
             >
               {team1Display}
             </span>
@@ -88,16 +107,26 @@ export function MatchCard({
 
         {/* Team 2 */}
         <div
-          className={cn("flex items-center justify-between px-3 py-2 h-1/2", winner === "team2" && "bg-emerald-100")}
+          className={cn(
+            "flex items-center justify-between px-3 py-2 h-1/2", 
+            winner === "team2" && "bg-emerald-100",
+            hasResolvedTeam2 && !winner && "bg-blue-50",
+          )}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            {!isTeam2TBD && <span className="text-base shrink-0">{team2.flag}</span>}
+            {(!isTeam2TBD || hasResolvedTeam2) && (
+              <span className="text-base shrink-0">
+                {hasResolvedTeam2 ? resolvedTeam2.flag : team2.flag}
+              </span>
+            )}
             <span
               className={cn(
-                "text-sm font-medium text-slate-700",
-                isTeam2TBD && "text-slate-400 italic",
+                "text-sm font-medium text-slate-700 truncate",
+                isTeam2TBD && !hasResolvedTeam2 && "text-slate-400 italic",
+                hasResolvedTeam2 && "text-blue-600 font-semibold",
                 winner === "team2" && "font-bold text-emerald-600",
               )}
+              title={hasResolvedTeam2 ? `${placeholder2}: ${resolvedTeam2.name}` : undefined}
             >
               {team2Display}
             </span>
