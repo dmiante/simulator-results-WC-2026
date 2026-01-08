@@ -7,6 +7,11 @@ export interface GroupStageProps {
   teamsMap: Record<string, Team>
   onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
   qualifiedTeams: { first: string[]; second: string[]; thirdBest: string[] }
+  thirdPlaceRanking: {
+    all: GroupStanding[]
+    qualified: GroupStanding[]
+    eliminated: GroupStanding[]
+  }
 }
 
 export interface MatchInputProps {
