@@ -21,11 +21,83 @@ function getWinner(team1Id: string, team2Id: string, score1: number, score2: num
   return Math.random() > 0.5 ? team1Id : team2Id
 }
 
+// Generate empty knockout bracket structure
+function generateEmptyKnockoutBracket(): Match[] {
+  const round32Matches: Match[] = Array.from({ length: 16 }, (_, i) => ({
+    id: `round32-${i + 1}`,
+    team1Id: "",
+    team2Id: "",
+    team1Score: null,
+    team2Score: null,
+    stage: "round32" as const,
+    matchNumber: i + 1,
+  }))
+
+  const round16Matches: Match[] = Array.from({ length: 8 }, (_, i) => ({
+    id: `round16-${i + 1}`,
+    team1Id: "",
+    team2Id: "",
+    team1Score: null,
+    team2Score: null,
+    stage: "round16" as const,
+    matchNumber: i + 1,
+  }))
+
+  const quarterMatches: Match[] = Array.from({ length: 4 }, (_, i) => ({
+    id: `quarter-${i + 1}`,
+    team1Id: "",
+    team2Id: "",
+    team1Score: null,
+    team2Score: null,
+    stage: "quarter" as const,
+    matchNumber: i + 1,
+  }))
+
+  const semiMatches: Match[] = Array.from({ length: 2 }, (_, i) => ({
+    id: `semi-${i + 1}`,
+    team1Id: "",
+    team2Id: "",
+    team1Score: null,
+    team2Score: null,
+    stage: "semi" as const,
+    matchNumber: i + 1,
+  }))
+
+  const thirdPlace: Match = {
+    id: "third-1",
+    team1Id: "",
+    team2Id: "",
+    team1Score: null,
+    team2Score: null,
+    stage: "third",
+    matchNumber: 1,
+  }
+
+  const finalMatch: Match = {
+    id: "final-1",
+    team1Id: "",
+    team2Id: "",
+    team1Score: null,
+    team2Score: null,
+    stage: "final",
+    matchNumber: 1,
+  }
+
+  return [
+    ...round32Matches,
+    ...round16Matches,
+    ...quarterMatches,
+    ...semiMatches,
+    thirdPlace,
+    finalMatch,
+  ]
+}
+
 
 export function useTournament() {
 
   const [groupMatches, setGroupMatches] = useState<Match[]>(() => generateGroupMatches())
-  const [knockoutMatches, setKnockoutMatches] = useState<Match[]>([])
+  const [knockoutMatches, setKnockoutMatches] = useState<Match[]>(() => generateEmptyKnockoutBracket())
   const [activeTab, setActiveTab] = useState("groups")
 
   const teamsMap = useMemo(() => {
@@ -350,7 +422,7 @@ export function useTournament() {
 
   const resetTournament = () => {
     setGroupMatches(generateGroupMatches())
-    setKnockoutMatches([])
+    setKnockoutMatches(generateEmptyKnockoutBracket())
     setActiveTab("groups")
   }
 
