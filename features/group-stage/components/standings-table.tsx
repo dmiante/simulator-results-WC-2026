@@ -20,7 +20,7 @@ export function StandingsTable({ standings, teamsMap, qualifiedTeams }: Standing
       <table className="w-full text-sm">
         <thead>
           <tr className="text-xs text-muted-foreground border-b border-border">
-            <th className="text-left py-2 font-medium">#</th>
+            <th className="text-center py-2 font-medium">#</th>
             <th className="text-left py-2 font-medium">Team</th>
             <th className="text-center py-2 font-medium">P</th>
             <th className="text-center py-2 font-medium">W</th>
@@ -39,7 +39,7 @@ export function StandingsTable({ standings, teamsMap, qualifiedTeams }: Standing
               <tr
                 key={standing.teamId}
                 className={cn(
-                  "border-b border-border/50 last:border-0",
+                  "border-b border-border last:border-0",
                   status === "first" && "bg-blue-500/10",
                   status === "second" && "bg-blue-500/10",
                   status === "third" && "bg-amber-500/10",
