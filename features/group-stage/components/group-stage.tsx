@@ -7,6 +7,7 @@ import { MatchInput } from "@/features/group-stage/components/match-input"
 import { StandingsTable } from "@/features/group-stage/components/standings-table"
 
 import { GroupStageProps } from "../types"
+import { ThirdPlaceTable } from "./third-place-table"
 
 
 export function GroupStage({
@@ -16,6 +17,7 @@ export function GroupStage({
   teamsMap,
   onScoreChange,
   qualifiedTeams,
+  thirdPlaceRanking
 }: GroupStageProps) {
   return (
     <div className="space-y-8">
@@ -77,6 +79,7 @@ export function GroupStage({
           )
         })}
       </div>
+      <ThirdPlaceTable ranking={thirdPlaceRanking} teamsMap={teamsMap} />
     </div>
   )
 }
