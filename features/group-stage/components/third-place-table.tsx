@@ -104,12 +104,6 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
                     "border-b border-border last:border-0 transition-colors",
                     // Completado y clasificado
                     hasCompleted && qualified && "bg-blue-500/10",
-                    // Completado y eliminado
-                    hasCompleted && eliminated && "bg-red-500/10",
-                    // No completado pero en zona de clasificación
-                    !hasCompleted && inQualifyingZone && "bg-blue-500/10",
-                    // No completado y fuera de zona
-                    !hasCompleted && !inQualifyingZone && "bg-muted/30"
                   )}
                 >
                   <td className="py-3 px-2">
@@ -118,9 +112,6 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
                         className={cn(
                           "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
                           hasCompleted && qualified && "bg-blue-500 text-white",
-                          hasCompleted && eliminated && "bg-red-500 text-white",
-                          !hasCompleted && inQualifyingZone && "bg-blue-500 text-white",
-                          !hasCompleted && !inQualifyingZone && "bg-muted text-muted-foreground"
                         )}
                       >
                         {index + 1}
@@ -142,10 +133,7 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
                   <td className="text-center py-3 px-2 text-muted-foreground">{team.goalsFor}</td>
                   <td className="text-center py-3 px-2 text-muted-foreground">{team.goalsAgainst}</td>
                   <td className="text-center py-3 px-2 text-muted-foreground">
-                    <span className={cn(
-                      team.goalDifference > 0 && "text-green-500",
-                      team.goalDifference < 0 && "text-red-500"
-                    )}>
+                    <span>
                       {team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference}
                     </span>
                   </td>
