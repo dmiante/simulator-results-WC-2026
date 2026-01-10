@@ -1,7 +1,12 @@
 import { calculateStandings, generateGroupMatches } from "@/db/matches"
-import { groups, teams } from "@/db/tournament-data"
+import { groups, teams, r32Placeholders } from "@/db/tournament-data"
 import { GroupStanding, Match, Team } from "@/lib/types"
 import { useMemo, useState } from "react"
+import { 
+  assignThirdPlaceTeams, 
+  buildThirdPlaceTeams,
+  type ThirdPlaceTeam 
+} from "../utils/third-place-assignment"
 
 function generateRandomScore(): number {
   const weights = [25, 30, 25, 12, 5, 3] // 0, 1, 2, 3, 4, 5 goals
@@ -116,9 +121,9 @@ export function useTournament() {
   }, [groupMatches])
 
   const thirdPlaceRanking = useMemo(() => {
-    const allThirdPlaces: GroupStanding[] = []
+    const allThirdPlaces: (GroupStanding & { group: string })[] = []
 
-    Object.entries(groupStandings).forEach(([, standings]) => {
+    Object.entries(groupStandings).forEach(([groupName, standings]) => {
       const third = standings[2]
       if (third) {
         allThirdPlaces.push({
@@ -131,6 +136,7 @@ export function useTournament() {
           won: third.won,
           drawn: third.drawn,
           lost: third.lost,
+          group: groupName,
         })
       }
     })
@@ -150,23 +156,35 @@ export function useTournament() {
   }, [groupStandings])
 
   const qualifiedTeams = useMemo(() => {
-    const qualified: { first: string[]; second: string[]; thirdBest: string[] } = {
-      first: [],
-      second: [],
-      thirdBest: [],
-    }
+    const firstByGroup = new Map<string, string>()
+    const secondByGroup = new Map<string, string>()
 
-    Object.entries(groupStandings).forEach(([, standings]) => {
+    Object.entries(groupStandings).forEach(([groupName, standings]) => {
       if (standings[0]?.played === 3) {
-        qualified.first.push(standings[0].teamId)
-        qualified.second.push(standings[1].teamId)
+        firstByGroup.set(groupName, standings[0].teamId)
+        secondByGroup.set(groupName, standings[1].teamId)
       }
     })
 
-    qualified.thirdBest = thirdPlaceRanking.qualified.map(teams => teams.teamId)
+    // Build third place teams with group info for FIFA assignment
+    const thirdPlaceTeams: ThirdPlaceTeam[] = thirdPlaceRanking.qualified.map(t => ({
+      teamId: t.teamId,
+      group: t.group,
+      points: t.points,
+      goalDifference: t.goalDifference,
+      goalsFor: t.goalsFor,
+    }))
 
-    return qualified
-  }, [groupStandings])
+    return {
+      first: Array.from(firstByGroup.values()),
+      second: Array.from(secondByGroup.values()),
+      thirdBest: thirdPlaceTeams.map(t => t.teamId),
+      // New structured data for FIFA bracket rules
+      firstByGroup,
+      secondByGroup,
+      thirdPlaceTeams,
+    }
+  }, [groupStandings, thirdPlaceRanking])
 
   const handleScoreChange = (matchId: string, team: "team1" | "team2", score: number | null) => {
     setGroupMatches((prev) =>
@@ -180,59 +198,77 @@ export function useTournament() {
     )
   }
 
-  const simulateTournament = () => {
-    // Step 1: Simulate all group matches
+  const simulateGroupStage = () => {
+    // Simulate all group matches
     const simulatedGroupMatches = groupMatches.map((match) => ({
       ...match,
       team1Score: generateRandomScore(),
       team2Score: generateRandomScore(),
     }))
     setGroupMatches(simulatedGroupMatches)
+  }
 
-    // Step 2: Calculate standings from simulated matches
-    const simulatedStandings: Record<string, ReturnType<typeof calculateStandings>> = {}
-    Object.entries(groups).forEach(([groupName, teamIds]) => {
-      const groupMatchList = simulatedGroupMatches.filter((m) => m.group === groupName)
-      simulatedStandings[groupName] = calculateStandings(teamIds, groupMatchList)
-    })
+  const simulateKnockoutStage = () => {
+    const { firstByGroup, secondByGroup, thirdPlaceTeams } = qualifiedTeams
+    if (firstByGroup.size !== 12 || secondByGroup.size !== 12 || thirdPlaceTeams.length !== 8) return
 
-    // Step 3: Get qualified teams
-    const first: string[] = []
-    const second: string[] = []
-    Object.values(simulatedStandings).forEach((standings) => {
-      first.push(standings[0].teamId)
-      second.push(standings[1].teamId)
-    })
+    // Get third-place assignments using FIFA rules
+    const thirdPlaceAssignments = assignThirdPlaceTeams(thirdPlaceTeams)
+    if (!thirdPlaceAssignments) {
+      console.error("Could not determine third-place assignments")
+      return
+    }
 
-    const thirdBest = Object.values(simulatedStandings)
-      .map((s) => s[2])
-      .sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points
-        if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference
-        return b.goalsFor - a.goalsFor
-      })
-      .slice(0, 8)
-      .map((s) => s.teamId)
-
-    const allQualified = [...first, ...second, ...thirdBest]
-
-    // Step 4: Generate and simulate Round of 32
+    // Build Round of 32 matchups according to r32Placeholders structure
     const round32Matches: Match[] = []
-    for (let i = 0; i < 16; i++) {
+    for (let i = 1; i <= 16; i++) {
+      const matchId = `round32-${i}`
+      const placeholder = r32Placeholders[matchId]
+      
+      let team1Id = ""
+      let team2Id = ""
+      
+      // Resolve team1 (always a first or second place)
+      const team1Match = placeholder.team1.match(/^(\d)([A-L])$/)
+      if (team1Match) {
+        const position = parseInt(team1Match[1])
+        const group = team1Match[2]
+        team1Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
+      }
+      
+      // Resolve team2 (can be first, second, or third place)
+      if (placeholder.team2.startsWith("3º")) {
+        // This is a third place - get from FIFA assignment
+        // Find which first-place group this match has
+        const firstPlaceMatch = placeholder.team1.match(/^1([A-L])$/)
+        if (firstPlaceMatch) {
+          const firstPlaceGroup = firstPlaceMatch[1]
+          team2Id = thirdPlaceAssignments[firstPlaceGroup] || ""
+        }
+      } else {
+        // Regular first or second place
+        const team2Match = placeholder.team2.match(/^(\d)([A-L])$/)
+        if (team2Match) {
+          const position = parseInt(team2Match[1])
+          const group = team2Match[2]
+          team2Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
+        }
+      }
+      
       const score1 = generateRandomScore()
       const score2 = generateRandomScore()
       round32Matches.push({
-        id: `round32-${i + 1}`,
-        team1Id: allQualified[i] || "",
-        team2Id: allQualified[31 - i] || "",
+        id: matchId,
+        team1Id,
+        team2Id,
         team1Score: score1,
         team2Score: score2,
         stage: "round32",
-        matchNumber: i + 1,
+        matchNumber: i,
       })
     }
 
-    // Step 5: Generate and simulate Round of 16
+    // Step 2: Generate and simulate Round of 16
     const round16Matches: Match[] = []
     for (let i = 0; i < 8; i++) {
       const match1 = round32Matches[i * 2]
@@ -252,7 +288,7 @@ export function useTournament() {
       })
     }
 
-    // Step 6: Generate and simulate Quarter-finals
+    // Step 3: Generate and simulate Quarter-finals
     const quarterMatches: Match[] = []
     for (let i = 0; i < 4; i++) {
       const match1 = round16Matches[i * 2]
@@ -272,7 +308,7 @@ export function useTournament() {
       })
     }
 
-    // Step 7: Generate and simulate Semi-finals
+    // Step 4: Generate and simulate Semi-finals
     const semiMatches: Match[] = []
     for (let i = 0; i < 2; i++) {
       const match1 = quarterMatches[i * 2]
@@ -292,7 +328,7 @@ export function useTournament() {
       })
     }
 
-    // Step 8: Determine finalists and 3rd place contestants
+    // Step 5: Determine finalists and 3rd place contestants
     const semi1 = semiMatches[0]
     const semi2 = semiMatches[1]
     const finalist1 = getWinner(semi1.team1Id, semi1.team2Id, semi1.team1Score!, semi1.team2Score!)
@@ -300,7 +336,7 @@ export function useTournament() {
     const thirdPlace1 = semi1.team1Id === finalist1 ? semi1.team2Id : semi1.team1Id
     const thirdPlace2 = semi2.team1Id === finalist2 ? semi2.team2Id : semi2.team1Id
 
-    // Step 9: Generate Third Place match
+    // Step 6: Generate Third Place match
     const thirdPlaceScore1 = generateRandomScore()
     const thirdPlaceScore2 = generateRandomScore()
     const thirdPlaceMatch: Match = {
@@ -313,7 +349,7 @@ export function useTournament() {
       matchNumber: 1,
     }
 
-    // Step 10: Generate Final match
+    // Step 7: Generate Final match
     const finalScore1 = generateRandomScore()
     const finalScore2 = generateRandomScore()
     const finalMatch: Match = {
@@ -337,24 +373,250 @@ export function useTournament() {
     setActiveTab("knockout")
   }
 
+  const simulateTournament = () => {
+    // Calculate standings from current group matches after simulation
+    const simulatedGroupMatches = groupMatches.map((match) => ({
+      ...match,
+      team1Score: generateRandomScore(),
+      team2Score: generateRandomScore(),
+    }))
+    setGroupMatches(simulatedGroupMatches)
+
+    const simulatedStandings: Record<string, ReturnType<typeof calculateStandings>> = {}
+    Object.entries(groups).forEach(([groupName, teamIds]) => {
+      const groupMatchList = simulatedGroupMatches.filter((m) => m.group === groupName)
+      simulatedStandings[groupName] = calculateStandings(teamIds, groupMatchList)
+    })
+
+    // Build firstByGroup and secondByGroup maps
+    const firstByGroup = new Map<string, string>()
+    const secondByGroup = new Map<string, string>()
+    Object.entries(simulatedStandings).forEach(([groupName, standings]) => {
+      firstByGroup.set(groupName, standings[0].teamId)
+      secondByGroup.set(groupName, standings[1].teamId)
+    })
+
+    // Build third place teams with group info
+    const thirdPlaceTeamsWithGroup: ThirdPlaceTeam[] = Object.entries(simulatedStandings)
+      .map(([groupName, standings]) => ({
+        teamId: standings[2].teamId,
+        group: groupName,
+        points: standings[2].points,
+        goalDifference: standings[2].goalDifference,
+        goalsFor: standings[2].goalsFor,
+      }))
+      .sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points
+        if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference
+        return b.goalsFor - a.goalsFor
+      })
+      .slice(0, 8)
+
+    // Get third-place assignments using FIFA rules
+    const thirdPlaceAssignments = assignThirdPlaceTeams(thirdPlaceTeamsWithGroup)
+    if (!thirdPlaceAssignments) {
+      console.error("Could not determine third-place assignments")
+      return
+    }
+
+    // Build Round of 32 matchups according to r32Placeholders structure
+    const round32Matches: Match[] = []
+    for (let i = 1; i <= 16; i++) {
+      const matchId = `round32-${i}`
+      const placeholder = r32Placeholders[matchId]
+      
+      let team1Id = ""
+      let team2Id = ""
+      
+      // Resolve team1 (always a first or second place)
+      const team1Match = placeholder.team1.match(/^(\d)([A-L])$/)
+      if (team1Match) {
+        const position = parseInt(team1Match[1])
+        const group = team1Match[2]
+        team1Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
+      }
+      
+      // Resolve team2 (can be first, second, or third place)
+      if (placeholder.team2.startsWith("3º")) {
+        // This is a third place - get from FIFA assignment
+        const firstPlaceMatch = placeholder.team1.match(/^1([A-L])$/)
+        if (firstPlaceMatch) {
+          const firstPlaceGroup = firstPlaceMatch[1]
+          team2Id = thirdPlaceAssignments[firstPlaceGroup] || ""
+        }
+      } else {
+        // Regular first or second place
+        const team2Match = placeholder.team2.match(/^(\d)([A-L])$/)
+        if (team2Match) {
+          const position = parseInt(team2Match[1])
+          const group = team2Match[2]
+          team2Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
+        }
+      }
+      
+      const score1 = generateRandomScore()
+      const score2 = generateRandomScore()
+      round32Matches.push({
+        id: matchId,
+        team1Id,
+        team2Id,
+        team1Score: score1,
+        team2Score: score2,
+        stage: "round32",
+        matchNumber: i,
+      })
+    }
+
+    const round16Matches: Match[] = []
+    for (let i = 0; i < 8; i++) {
+      const match1 = round32Matches[i * 2]
+      const match2 = round32Matches[i * 2 + 1]
+      const team1 = getWinner(match1.team1Id, match1.team2Id, match1.team1Score!, match1.team2Score!)
+      const team2 = getWinner(match2.team1Id, match2.team2Id, match2.team1Score!, match2.team2Score!)
+      const score1 = generateRandomScore()
+      const score2 = generateRandomScore()
+      round16Matches.push({
+        id: `round16-${i + 1}`,
+        team1Id: team1,
+        team2Id: team2,
+        team1Score: score1,
+        team2Score: score2,
+        stage: "round16",
+        matchNumber: i + 1,
+      })
+    }
+
+    const quarterMatches: Match[] = []
+    for (let i = 0; i < 4; i++) {
+      const match1 = round16Matches[i * 2]
+      const match2 = round16Matches[i * 2 + 1]
+      const team1 = getWinner(match1.team1Id, match1.team2Id, match1.team1Score!, match1.team2Score!)
+      const team2 = getWinner(match2.team1Id, match2.team2Id, match2.team1Score!, match2.team2Score!)
+      const score1 = generateRandomScore()
+      const score2 = generateRandomScore()
+      quarterMatches.push({
+        id: `quarter-${i + 1}`,
+        team1Id: team1,
+        team2Id: team2,
+        team1Score: score1,
+        team2Score: score2,
+        stage: "quarter",
+        matchNumber: i + 1,
+      })
+    }
+
+    const semiMatches: Match[] = []
+    for (let i = 0; i < 2; i++) {
+      const match1 = quarterMatches[i * 2]
+      const match2 = quarterMatches[i * 2 + 1]
+      const team1 = getWinner(match1.team1Id, match1.team2Id, match1.team1Score!, match1.team2Score!)
+      const team2 = getWinner(match2.team1Id, match2.team2Id, match2.team1Score!, match2.team2Score!)
+      const score1 = generateRandomScore()
+      const score2 = generateRandomScore()
+      semiMatches.push({
+        id: `semi-${i + 1}`,
+        team1Id: team1,
+        team2Id: team2,
+        team1Score: score1,
+        team2Score: score2,
+        stage: "semi",
+        matchNumber: i + 1,
+      })
+    }
+
+    const semi1 = semiMatches[0]
+    const semi2 = semiMatches[1]
+    const finalist1 = getWinner(semi1.team1Id, semi1.team2Id, semi1.team1Score!, semi1.team2Score!)
+    const finalist2 = getWinner(semi2.team1Id, semi2.team2Id, semi2.team1Score!, semi2.team2Score!)
+    const thirdPlace1 = semi1.team1Id === finalist1 ? semi1.team2Id : semi1.team1Id
+    const thirdPlace2 = semi2.team1Id === finalist2 ? semi2.team2Id : semi2.team1Id
+
+    const thirdPlaceMatch: Match = {
+      id: "third-1",
+      team1Id: thirdPlace1,
+      team2Id: thirdPlace2,
+      team1Score: generateRandomScore(),
+      team2Score: generateRandomScore(),
+      stage: "third",
+      matchNumber: 1,
+    }
+
+    const finalMatch: Match = {
+      id: "final-1",
+      team1Id: finalist1,
+      team2Id: finalist2,
+      team1Score: generateRandomScore(),
+      team2Score: generateRandomScore(),
+      stage: "final",
+      matchNumber: 1,
+    }
+
+    setKnockoutMatches([
+      ...round32Matches,
+      ...round16Matches,
+      ...quarterMatches,
+      ...semiMatches,
+      thirdPlaceMatch,
+      finalMatch,
+    ])
+    setActiveTab("knockout")
+  }
+
 
   const generateKnockoutBracket = () => {
-    const { first, second, thirdBest } = qualifiedTeams
-    if (first.length !== 12 || second.length !== 12 || thirdBest.length !== 8) return
+    const { firstByGroup, secondByGroup, thirdPlaceTeams } = qualifiedTeams
+    if (firstByGroup.size !== 12 || secondByGroup.size !== 12 || thirdPlaceTeams.length !== 8) return
 
-    const allQualified = [...first, ...second, ...thirdBest]
+    // Get third-place assignments using FIFA rules
+    const thirdPlaceAssignments = assignThirdPlaceTeams(thirdPlaceTeams)
+    if (!thirdPlaceAssignments) {
+      console.error("Could not determine third-place assignments")
+      return
+    }
+
+    // Build Round of 32 matchups according to r32Placeholders structure
     const round32Matches: Match[] = []
-
-    // Generate Round of 32 matchups (simplified bracket)
-    for (let i = 0; i < 16; i++) {
+    for (let i = 1; i <= 16; i++) {
+      const matchId = `round32-${i}`
+      const placeholder = r32Placeholders[matchId]
+      
+      let team1Id = ""
+      let team2Id = ""
+      
+      // Resolve team1 (always a first or second place)
+      const team1Match = placeholder.team1.match(/^(\d)([A-L])$/)
+      if (team1Match) {
+        const position = parseInt(team1Match[1])
+        const group = team1Match[2]
+        team1Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
+      }
+      
+      // Resolve team2 (can be first, second, or third place)
+      if (placeholder.team2.startsWith("3º")) {
+        // This is a third place - get from FIFA assignment
+        const firstPlaceMatch = placeholder.team1.match(/^1([A-L])$/)
+        if (firstPlaceMatch) {
+          const firstPlaceGroup = firstPlaceMatch[1]
+          team2Id = thirdPlaceAssignments[firstPlaceGroup] || ""
+        }
+      } else {
+        // Regular first or second place
+        const team2Match = placeholder.team2.match(/^(\d)([A-L])$/)
+        if (team2Match) {
+          const position = parseInt(team2Match[1])
+          const group = team2Match[2]
+          team2Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
+        }
+      }
+      
       round32Matches.push({
-        id: `round32-${i + 1}`,
-        team1Id: allQualified[i] || "",
-        team2Id: allQualified[31 - i] || "",
+        id: matchId,
+        team1Id,
+        team2Id,
         team1Score: null,
         team2Score: null,
         stage: "round32",
-        matchNumber: i + 1,
+        matchNumber: i,
       })
     }
 
@@ -443,6 +705,8 @@ export function useTournament() {
     setActiveTab,
     handleKnockoutScoreChange,
     handleScoreChange,
+    simulateGroupStage,
+    simulateKnockoutStage,
     simulateTournament,
     generateKnockoutBracket,
     resetTournament
