@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { GitBranch, RotateCcw, Sparkles, Trophy } from "lucide-react";
+import { Dices, GitBranch, RotateCcw, Sparkles, Trophy, Swords } from "lucide-react";
 import { TournamentSimulatorProps } from "../types";
 
 
-export default function TournamentSimulatorButton({
+export default function ButtonSimulator({
   simulateTournament,
+  simulateGroupStage,
+  simulateKnockoutStage,
   generateKnockoutBracket,
   groupsComplete,
   knockoutMatches,
@@ -20,10 +22,20 @@ export default function TournamentSimulatorButton({
       <div className="flex flex-wrap gap-2">
         <Button onClick={simulateTournament} className="gap-2" variant="default">
           <Sparkles className="h-4 w-4" />
-          Simulate
+          Simulate All
         </Button>
+        <Button onClick={simulateGroupStage} className="gap-2" variant="secondary">
+          <Dices className="h-4 w-4" />
+          Simulate Groups
+        </Button>
+        {groupsComplete && (
+          <Button onClick={simulateKnockoutStage} className="gap-2" variant="secondary">
+            <Swords className="h-4 w-4" />
+            Simulate Knockout
+          </Button>
+        )}
         {groupsComplete && knockoutMatches.length === 0 && (
-          <Button onClick={generateKnockoutBracket} className="gap-2" variant="secondary">
+          <Button onClick={generateKnockoutBracket} className="gap-2" variant="outline">
             <GitBranch className="h-4 w-4" />
             Generate Knockout
           </Button>
