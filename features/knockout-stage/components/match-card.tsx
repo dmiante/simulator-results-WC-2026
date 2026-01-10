@@ -32,6 +32,10 @@ export function MatchCard({
   const hasResolvedTeam1 = resolvedTeam1 && isTeam1TBD
   const hasResolvedTeam2 = resolvedTeam2 && isTeam2TBD
   
+  // Determine if inputs should be disabled - only disable if TBD AND no resolved team
+  const isTeam1InputDisabled = isTeam1TBD && !hasResolvedTeam1
+  const isTeam2InputDisabled = isTeam2TBD && !hasResolvedTeam2
+  
   // Display text for teams - show resolved team if available, otherwise placeholder
   const team1Display = isTeam1TBD 
     ? (hasResolvedTeam1 ? resolvedTeam1.name : (placeholder1 || "TBD"))
@@ -101,7 +105,7 @@ export function MatchCard({
               winner === "team1" && "bg-emerald-100 border-emerald-400",
             )}
             placeholder="-"
-            disabled={isTeam1TBD}
+            disabled={isTeam1InputDisabled}
           />
         </div>
 
@@ -145,7 +149,7 @@ export function MatchCard({
               winner === "team2" && "bg-emerald-100 border-emerald-400",
             )}
             placeholder="-"
-            disabled={isTeam2TBD}
+            disabled={isTeam2InputDisabled}
           />
         </div>
       </div>
