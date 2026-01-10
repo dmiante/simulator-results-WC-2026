@@ -7,7 +7,7 @@ import { KnockoutBracket } from "@/features/knockout-stage/components/knockout-b
 import { TournamentHeader } from "@/components/layout/tournament-header"
 import { groups } from "@/db/tournament-data"
 import { useTournament } from "../hooks/use-tournament"
-import TournamentSimulatorButton from "./tournament-simulator"
+import ButtonSimulator from "./button-simulator"
 
 export function WorldCupSimulator() {
 
@@ -26,7 +26,9 @@ export function WorldCupSimulator() {
     setActiveTab,
     generateKnockoutBracket,
     resetTournament,
-    simulateTournament
+    simulateTournament,
+    simulateGroupStage,
+    simulateKnockoutStage
   } = useTournament()
   
 
@@ -34,11 +36,13 @@ export function WorldCupSimulator() {
     <div className="min-h-screen bg-background">
       <TournamentHeader />
       <div className="container mx-auto px-4 py-6">
-        <TournamentSimulatorButton 
+        <ButtonSimulator
           generateKnockoutBracket={generateKnockoutBracket}
           groupsComplete={groupsComplete}
           resetTournament={resetTournament}
           simulateTournament={simulateTournament}
+          simulateGroupStage={simulateGroupStage}
+          simulateKnockoutStage={simulateKnockoutStage}
           knockoutMatches={knockoutMatches}
         />
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -71,6 +75,8 @@ export function WorldCupSimulator() {
               setMatches={setKnockoutMatches}
               teamsMap={teamsMap}
               onScoreChange={handleKnockoutScoreChange}
+              groupStandings={groupStandings}
+              thirdPlaceRanking={thirdPlaceRanking}
             />
           </TabsContent>
         </Tabs>
