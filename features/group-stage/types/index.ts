@@ -8,9 +8,9 @@ export interface GroupStageProps {
   onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
   qualifiedTeams: { first: string[]; second: string[]; thirdBest: string[] }
   thirdPlaceRanking: {
-    all: GroupStanding[]
-    qualified: GroupStanding[]
-    eliminated: GroupStanding[]
+    all: (GroupStanding & { group: string })[]
+    qualified: (GroupStanding & { group: string })[]
+    eliminated: (GroupStanding & { group: string })[]
   }
 }
 
