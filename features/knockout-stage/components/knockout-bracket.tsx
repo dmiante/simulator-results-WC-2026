@@ -12,25 +12,7 @@ import { GroupStanding, Match, Team } from "@/lib/types"
 import { MatchCard } from "./match-card"
 import { BracketConnector } from "./bracket-connector"
 import { SingleConnector } from "./single-connector"
-
-const r32Placeholders: Record<string, { team1: string; team2: string }> = {
-  "round32-1": { team1: "1E", team2: "3º ABCDF" },
-  "round32-2": { team1: "1I", team2: "3º CDFGH" },
-  "round32-3": { team1: "2A", team2: "2B" },
-  "round32-4": { team1: "1F", team2: "2C" },
-  "round32-5": { team1: "2K", team2: "2L" },
-  "round32-6": { team1: "1H", team2: "2J" },
-  "round32-7": { team1: "1D", team2: "3º BEFIJ" },
-  "round32-8": { team1: "1G", team2: "3º AEHIJ" },
-  "round32-9": { team1: "1C", team2: "2F" },
-  "round32-10": { team1: "2E", team2: "2I" },
-  "round32-11": { team1: "1A", team2: "3º CEFHI" },
-  "round32-12": { team1: "1L", team2: "3º EHIJK" },
-  "round32-13": { team1: "1J", team2: "2H" },
-  "round32-14": { team1: "2D", team2: "2G" },
-  "round32-15": { team1: "1B", team2: "3º EFGIJ" },
-  "round32-16": { team1: "1K", team2: "3º DEIJL" },
-}
+import { r32Placeholders, THIRD_PLACE_COMBINATIONS } from "@/db/tournament-data"
 
 // Function to get placeholder for any match based on stage
 function getMatchPlaceholders(match: Match): { team1: string; team2: string } {
@@ -70,40 +52,63 @@ function getMatchPlaceholders(match: Match): { team1: string; team2: string } {
   return { team1: "TBD", team2: "TBD" }
 }
 
+// Groups whose winners play against third-place teams (in FIFA table order)
+// The THIRD_PLACE_COMBINATIONS array values correspond to: [vs1A, vs1B, vs1D, vs1E, vs1G, vs1I, vs1K, vs1L]
+const GROUPS_VS_THIRD_PLACE = ["A", "B", "D", "E", "G", "I", "K", "L"] as const
+
+// Map from match ID to which first-place group plays in that match (for third-place assignments)
+const THIRD_PLACE_MATCH_MAP: Record<string, string> = {
+  "round32-1": "E",   // 1E vs 3rd
+  "round32-2": "I",   // 1I vs 3rd
+  "round32-7": "D",   // 1D vs 3rd
+  "round32-8": "G",   // 1G vs 3rd
+  "round32-11": "A",  // 1A vs 3rd
+  "round32-12": "L",  // 1L vs 3rd
+  "round32-15": "B",  // 1B vs 3rd
+  "round32-16": "K",  // 1K vs 3rd
+}
+
 // Function to resolve a placeholder like "1A", "2B" to the actual qualified team
 // Only returns the team if they have played all 3 group matches (fully qualified)
 function resolveQualifiedTeam(
   placeholder: string,
+  matchId: string,
   groupStandings: Record<string, GroupStanding[]>,
-  thirdPlaceRanking: { qualified: GroupStanding[] },
+  thirdPlaceRanking: { qualified: (GroupStanding & { group: string })[] },
   teamsMap: Record<string, Team>
 ): Team | null {
   // Check if it's a third place placeholder (e.g., "3º ABCDF")
   if (placeholder.startsWith("3º")) {
-    // Only show third place teams that are fully qualified (played all 3 matches)
+    // Check if all groups have completed their matches
     const qualifiedThirds = thirdPlaceRanking.qualified
-    if (qualifiedThirds.length > 0) {
-      // Get groups that could provide this third place
-      const possibleGroups = placeholder.replace("3º ", "").split("")
-      
-      // Find a qualified third from one of these groups
-      for (const third of qualifiedThirds) {
-        // Only show if played all 3 matches
-        if (third.played !== 3) continue
-        
-        const teamInfo = teamsMap[third.teamId]
-        if (teamInfo) {
-          // Check if this team's group is in the possible groups
-          for (const [groupName, standings] of Object.entries(groupStandings)) {
-            const thirdInGroup = standings[2]
-            if (thirdInGroup && thirdInGroup.teamId === third.teamId && possibleGroups.includes(groupName)) {
-              return teamInfo
-            }
-          }
-        }
-      }
-    }
-    return null
+    if (qualifiedThirds.length !== 8) return null
+
+    // Get the combination key (sorted group letters)
+    const combinationKey = qualifiedThirds
+      .map(t => t.group)
+      .sort()
+      .join("")
+
+    // Look up the assignment in FIFA's official table
+    const assignment = THIRD_PLACE_COMBINATIONS[combinationKey]
+    if (!assignment) return null
+
+    // Get which first-place group this match has
+    const firstPlaceGroup = THIRD_PLACE_MATCH_MAP[matchId]
+    if (!firstPlaceGroup) return null
+
+    // Find the index in GROUPS_VS_THIRD_PLACE
+    const index = GROUPS_VS_THIRD_PLACE.indexOf(firstPlaceGroup as typeof GROUPS_VS_THIRD_PLACE[number])
+    if (index === -1) return null
+
+    // Get which third-place group should play in this match
+    const thirdPlaceGroup = assignment[index]
+    
+    // Find the third-place team from that group
+    const thirdTeam = qualifiedThirds.find(t => t.group === thirdPlaceGroup)
+    if (!thirdTeam) return null
+
+    return teamsMap[thirdTeam.teamId] || null
   }
 
   // Parse position and group (e.g., "1A" -> position 1, group A)
@@ -170,8 +175,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
     
     Object.entries(r32Placeholders).forEach(([matchId, placeholders]) => {
       resolved[matchId] = {
-        team1: resolveQualifiedTeam(placeholders.team1, groupStandings, thirdPlaceRanking, teamsMap),
-        team2: resolveQualifiedTeam(placeholders.team2, groupStandings, thirdPlaceRanking, teamsMap),
+        team1: resolveQualifiedTeam(placeholders.team1, matchId, groupStandings, thirdPlaceRanking, teamsMap),
+        team2: resolveQualifiedTeam(placeholders.team2, matchId, groupStandings, thirdPlaceRanking, teamsMap),
       }
     })
     
@@ -180,105 +185,137 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
   // Auto-advance winners
   useEffect(() => {
-    const getWinner = (match: Match): string => {
-      if (match.team1Score === null || match.team2Score === null) return ""
-      if (match.team1Score > match.team2Score) return match.team1Id
-      if (match.team2Score > match.team1Score) return match.team2Id
+    // Helper to get the actual team ID, considering resolved teams from group stage
+    const getActualTeamId = (match: Match, team: "team1" | "team2"): string => {
+      const teamId = team === "team1" ? match.team1Id : match.team2Id
+      if (teamId) return teamId
+      
+      // For R32 matches, check resolved teams
+      if (match.stage === "round32") {
+        const resolved = resolvedTeams[match.id]
+        if (resolved) {
+          const resolvedTeam = team === "team1" ? resolved.team1 : resolved.team2
+          if (resolvedTeam) return resolvedTeam.id
+        }
+      }
       return ""
     }
 
-    setMatches((currentMatches: Match[]) => {
-      const updatedMatches = [...currentMatches]
-      let hasChanges = false
+    const getWinner = (match: Match): string => {
+      if (match.team1Score === null || match.team2Score === null) return ""
+      const team1Id = getActualTeamId(match, "team1")
+      const team2Id = getActualTeamId(match, "team2")
+      if (match.team1Score > match.team2Score) return team1Id
+      if (match.team2Score > match.team1Score) return team2Id
+      return ""
+    }
 
-      // Round of 16 from Round of 32
-      for (let i = 0; i < 8; i++) {
-        const r16Match = updatedMatches.find((m) => m.id === `round16-${i + 1}`)
-        const r32Match1 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 1}`)
-        const r32Match2 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 2}`)
-        if (r16Match && r32Match1 && r32Match2) {
-          const winner1 = getWinner(r32Match1)
-          const winner2 = getWinner(r32Match2)
-          if (r16Match.team1Id !== winner1 || r16Match.team2Id !== winner2) {
-            r16Match.team1Id = winner1
-            r16Match.team2Id = winner2
-            hasChanges = true
-          }
-        }
-      }
+    const getLoser = (match: Match): string => {
+      if (match.team1Score === null || match.team2Score === null) return ""
+      const team1Id = getActualTeamId(match, "team1")
+      const team2Id = getActualTeamId(match, "team2")
+      if (match.team1Score > match.team2Score) return team2Id
+      if (match.team2Score > match.team1Score) return team1Id
+      return ""
+    }
 
-      // Quarter-finals from Round of 16
-      for (let i = 0; i < 4; i++) {
-        const qMatch = updatedMatches.find((m) => m.id === `quarter-${i + 1}`)
-        const r16Match1 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 1}`)
-        const r16Match2 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 2}`)
-        if (qMatch && r16Match1 && r16Match2) {
-          const winner1 = getWinner(r16Match1)
-          const winner2 = getWinner(r16Match2)
-          if (qMatch.team1Id !== winner1 || qMatch.team2Id !== winner2) {
-            qMatch.team1Id = winner1
-            qMatch.team2Id = winner2
-            hasChanges = true
-          }
-        }
-      }
+    const updatedMatches = [...matches]
+    let hasChanges = false
 
-      // Semi-finals from Quarter-finals
-      for (let i = 0; i < 2; i++) {
-        const sMatch = updatedMatches.find((m) => m.id === `semi-${i + 1}`)
-        const qMatch1 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 1}`)
-        const qMatch2 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 2}`)
-        if (sMatch && qMatch1 && qMatch2) {
-          const winner1 = getWinner(qMatch1)
-          const winner2 = getWinner(qMatch2)
-          if (sMatch.team1Id !== winner1 || sMatch.team2Id !== winner2) {
-            sMatch.team1Id = winner1
-            sMatch.team2Id = winner2
-            hasChanges = true
-          }
-        }
-      }
-
-      // Final from Semi-finals
-      const semi1 = updatedMatches.find((m) => m.id === "semi-1")
-      const semi2 = updatedMatches.find((m) => m.id === "semi-2")
-      const finalMatch = updatedMatches.find((m) => m.id === "final-1")
-      const thirdMatch = updatedMatches.find((m) => m.id === "third-1")
-
-      if (finalMatch && semi1 && semi2) {
-        const winner1 = getWinner(semi1)
-        const winner2 = getWinner(semi2)
-        if (finalMatch.team1Id !== winner1 || finalMatch.team2Id !== winner2) {
-          finalMatch.team1Id = winner1
-          finalMatch.team2Id = winner2
+    // Round of 16 from Round of 32
+    for (let i = 0; i < 8; i++) {
+      const r16Match = updatedMatches.find((m) => m.id === `round16-${i + 1}`)
+      const r32Match1 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 1}`)
+      const r32Match2 = updatedMatches.find((m) => m.id === `round32-${i * 2 + 2}`)
+      if (r16Match && r32Match1 && r32Match2) {
+        const winner1 = getWinner(r32Match1)
+        const winner2 = getWinner(r32Match2)
+        if (r16Match.team1Id !== winner1 || r16Match.team2Id !== winner2) {
+          // Reset scores when teams change
+          if (r16Match.team1Id !== winner1) r16Match.team1Score = null
+          if (r16Match.team2Id !== winner2) r16Match.team2Score = null
+          r16Match.team1Id = winner1
+          r16Match.team2Id = winner2
           hasChanges = true
         }
       }
+    }
 
-      // Third Place match (losers from Semi-finals)
-      if (thirdMatch && semi1 && semi2) {
-        const loser1 =
-          semi1.team1Score === null || semi1.team2Score === null
-            ? ""
-            : semi1.team1Score > semi1.team2Score
-              ? semi1.team2Id
-              : semi1.team1Id
-        const loser2 =
-          semi2.team1Score === null || semi2.team2Score === null
-            ? ""
-            : semi2.team1Score > semi2.team2Score
-              ? semi2.team2Id
-              : semi2.team1Id
-        if (thirdMatch.team1Id !== loser1 || thirdMatch.team2Id !== loser2) {
-          thirdMatch.team1Id = loser1
-          thirdMatch.team2Id = loser2
+    // Quarter-finals from Round of 16
+    for (let i = 0; i < 4; i++) {
+      const qMatch = updatedMatches.find((m) => m.id === `quarter-${i + 1}`)
+      const r16Match1 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 1}`)
+      const r16Match2 = updatedMatches.find((m) => m.id === `round16-${i * 2 + 2}`)
+      if (qMatch && r16Match1 && r16Match2) {
+        const winner1 = getWinner(r16Match1)
+        const winner2 = getWinner(r16Match2)
+        if (qMatch.team1Id !== winner1 || qMatch.team2Id !== winner2) {
+          // Reset scores when teams change
+          if (qMatch.team1Id !== winner1) qMatch.team1Score = null
+          if (qMatch.team2Id !== winner2) qMatch.team2Score = null
+          qMatch.team1Id = winner1
+          qMatch.team2Id = winner2
           hasChanges = true
         }
       }
+    }
 
-      return hasChanges ? updatedMatches : currentMatches
-    })
-  }, [setMatches])
+    // Semi-finals from Quarter-finals
+    for (let i = 0; i < 2; i++) {
+      const sMatch = updatedMatches.find((m) => m.id === `semi-${i + 1}`)
+      const qMatch1 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 1}`)
+      const qMatch2 = updatedMatches.find((m) => m.id === `quarter-${i * 2 + 2}`)
+      if (sMatch && qMatch1 && qMatch2) {
+        const winner1 = getWinner(qMatch1)
+        const winner2 = getWinner(qMatch2)
+        if (sMatch.team1Id !== winner1 || sMatch.team2Id !== winner2) {
+          // Reset scores when teams change
+          if (sMatch.team1Id !== winner1) sMatch.team1Score = null
+          if (sMatch.team2Id !== winner2) sMatch.team2Score = null
+          sMatch.team1Id = winner1
+          sMatch.team2Id = winner2
+          hasChanges = true
+        }
+      }
+    }
+
+    // Final from Semi-finals
+    const semi1 = updatedMatches.find((m) => m.id === "semi-1")
+    const semi2 = updatedMatches.find((m) => m.id === "semi-2")
+    const finalMatch = updatedMatches.find((m) => m.id === "final-1")
+    const thirdMatch = updatedMatches.find((m) => m.id === "third-1")
+
+    if (finalMatch && semi1 && semi2) {
+      const winner1 = getWinner(semi1)
+      const winner2 = getWinner(semi2)
+      if (finalMatch.team1Id !== winner1 || finalMatch.team2Id !== winner2) {
+        // Reset scores when teams change
+        if (finalMatch.team1Id !== winner1) finalMatch.team1Score = null
+        if (finalMatch.team2Id !== winner2) finalMatch.team2Score = null
+        finalMatch.team1Id = winner1
+        finalMatch.team2Id = winner2
+        hasChanges = true
+      }
+    }
+
+    // Third Place match (losers from Semi-finals)
+    if (thirdMatch && semi1 && semi2) {
+      const loser1 = getLoser(semi1)
+      const loser2 = getLoser(semi2)
+      if (thirdMatch.team1Id !== loser1 || thirdMatch.team2Id !== loser2) {
+        // Reset scores when teams change
+        if (thirdMatch.team1Id !== loser1) thirdMatch.team1Score = null
+        if (thirdMatch.team2Id !== loser2) thirdMatch.team2Score = null
+        thirdMatch.team1Id = loser1
+        thirdMatch.team2Id = loser2
+        hasChanges = true
+      }
+    }
+
+    if (hasChanges) {
+      setMatches(updatedMatches)
+    }
+  }, [matches, resolvedTeams, setMatches])
 
   // Measure bracket size for proper scrolling when zoomed
   useEffect(() => {
