@@ -7,8 +7,8 @@ export interface KnockoutBracketProps {
   onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
   groupStandings: Record<string, GroupStanding[]>
   thirdPlaceRanking: {
-    all: GroupStanding[]
-    qualified: GroupStanding[]
-    eliminated: GroupStanding[]
+    all: (GroupStanding & { group: string })[]
+    qualified: (GroupStanding & { group: string })[]
+    eliminated: (GroupStanding & { group: string })[]
   }
 }
