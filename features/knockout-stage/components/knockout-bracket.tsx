@@ -11,8 +11,8 @@ import { KnockoutBracketProps } from "../types"
 import { GroupStanding, Match, Team } from "@/lib/types"
 import { MatchCard } from "./match-card"
 import { BracketConnector } from "./bracket-connector"
-import { SingleConnector } from "./single-connector"
 import { r32Placeholders, THIRD_PLACE_COMBINATIONS } from "@/db/tournament-data"
+import ZoomControl from "./zoom-control"
 
 // Function to get placeholder for any match based on stage
 function getMatchPlaceholders(match: Match): { team1: string; team2: string } {
@@ -375,35 +375,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
     <div className="space-y-6">
       {/* Desktop View */}
       <div className="hidden lg:block">
-        {/* Zoom Controls */}
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
-            className="bg-white border-slate-300 text-slate-700 hover:bg-slate-100"
-          >
-            <ZoomOut className="h-4 w-4" />
-          </Button>
-          <span className="text-sm font-medium min-w-[60px] text-center text-slate-600">{Math.round(zoom * 100)}%</span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setZoom(Math.min(1.5, zoom + 0.1))}
-            className="bg-white border-slate-300 text-slate-700 hover:bg-slate-100"
-          >
-            <ZoomIn className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setZoom(1)}
-            className="bg-white border-slate-300 text-slate-700 hover:bg-slate-100"
-          >
-            <RotateCcw className="h-4 w-4" />
-          </Button>
-        </div>
-
+        <ZoomControl zoom={zoom} setZoom={setZoom} />
         <div
           ref={containerRef}
           className={cn(
@@ -521,11 +493,11 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Connector QF -> SF */}
               <div style={{ paddingTop: `${qfOffset + 36}px` }}>
-                <SingleConnector
+                <BracketConnector
+                  matchCount={2}
                   matchHeight={matchHeight}
                   gap={qfGap + 80}
                   connectorWidth={connectorWidth}
-                  direction="right"
                 />
               </div>
 
@@ -658,7 +630,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Connector SF -> QF (right) */}
               <div style={{ paddingTop: `${qfOffset + 36}px` }}>
-                <SingleConnector
+                <BracketConnector
+                  matchCount={2}
                   matchHeight={matchHeight}
                   gap={qfGap + 80}
                   connectorWidth={connectorWidth}
