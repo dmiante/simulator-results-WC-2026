@@ -1,0 +1,33 @@
+# Todo+ Cheat Sheet
+
+# Shortcuts:
+
+# Cmd/Ctrl+Enter - Toggle todo box
+# Alt+D - Mark as done (✔)
+# Alt+C - Mark as cancelled (✘)
+# Alt+S - Toggle start (enables timer)
+# Cmd/Ctrl+Shift+A - Archive completed todos
+
+# Symbols:
+# ☐ Pending ✔ Done ✘ Cancelled
+
+# Tags:
+# @critical @high @low @today
+# @est(2h) or @2h30m - Time estimates
+# @started @done @lasted - Auto timekeeping
+
+# Projects:
+# Use "ProjectName:" to create sections
+# Nested items use indentation
+
+simulator-world-2026.v1.0:
+  ☐ styling winner world cup on knockout bracke stage @high
+  ☐ feat: add remaining spots playoffs logic @critical
+  ☐ feat: add tab of the remaining spots playoffs @critical
+  ☐ fix: change color loser team in round 32 @high
+  ☐ feat: add flag images for all countries @high
+  ☐ fix: add name of the group in the table of third places @high
+  optionals:
+    ☐ feat: add fifa ranking to each country
+    ☐ feat: add stadium for each matches
+    ☐ feat: add confederation for each country in group stage
