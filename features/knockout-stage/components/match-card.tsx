@@ -81,7 +81,7 @@ export function MatchCard({
             )}
             <span
               className={cn(
-                "text-sm font-medium text-slate-700 truncate",
+                "text-sm font-medium text-slate-700",
                 isTeam1TBD && !hasResolvedTeam1 && "text-slate-400 italic",
                 hasResolvedTeam1 && "text-blue-600 font-semibold",
                 winner === "team1" && "font-bold text-emerald-600",
@@ -125,7 +125,7 @@ export function MatchCard({
             )}
             <span
               className={cn(
-                "text-sm font-medium text-slate-700 truncate",
+                "text-sm font-medium text-slate-700",
                 isTeam2TBD && !hasResolvedTeam2 && "text-slate-400 italic",
                 hasResolvedTeam2 && "text-blue-600 font-semibold",
                 winner === "team2" && "font-bold text-emerald-600",
