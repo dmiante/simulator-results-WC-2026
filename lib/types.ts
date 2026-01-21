@@ -16,6 +16,7 @@ export interface Match {
   group?: string
   matchNumber: number
   date?: string // Fecha del partido en formato YYYY-MM-DD
+  penaltyWinnerId?: string // ID del equipo ganador en caso de empate (penales) - solo para fase de eliminación
 }
 
 export interface GroupStanding {

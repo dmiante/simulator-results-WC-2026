@@ -3,8 +3,7 @@ import { groups, teams, r32Placeholders } from "@/db/tournament-data"
 import { GroupStanding, Match, Team } from "@/lib/types"
 import { useMemo, useState } from "react"
 import { 
-  assignThirdPlaceTeams, 
-  buildThirdPlaceTeams,
+  assignThirdPlaceTeams,
   type ThirdPlaceTeam 
 } from "../utils/third-place-assignment"
 
@@ -19,11 +18,209 @@ function generateRandomScore(): number {
   return 0
 }
 
-function getWinner(team1Id: string, team2Id: string, score1: number, score2: number): string {
-  if (score1 > score2) return team1Id
-  if (score2 > score1) return team2Id
-  // For knockout matches, randomly pick a winner (simulating penalties)
-  return Math.random() > 0.5 ? team1Id : team2Id
+// Get the winner from a knockout match, considering penaltyWinnerId for draws
+function getMatchWinnerFromSimulated(match: Match): string {
+  if (match.team1Score === null || match.team2Score === null) return ""
+  if (match.team1Score > match.team2Score) return match.team1Id
+  if (match.team2Score > match.team1Score) return match.team2Id
+  // Draw - use penaltyWinnerId
+  return match.penaltyWinnerId || ""
+}
+
+// Get the loser from a knockout match, considering penaltyWinnerId for draws
+function getMatchLoserFromSimulated(match: Match): string {
+  if (match.team1Score === null || match.team2Score === null) return ""
+  if (match.team1Score > match.team2Score) return match.team2Id
+  if (match.team2Score > match.team1Score) return match.team1Id
+  // Draw - the loser is the one who is NOT the penalty winner
+  if (match.penaltyWinnerId) {
+    return match.penaltyWinnerId === match.team1Id ? match.team2Id : match.team1Id
+  }
+  return ""
+}
+
+// Simulate a knockout match - returns scores and penaltyWinnerId if there's a draw
+function simulateKnockoutMatch(
+  team1Id: string,
+  team2Id: string
+): { score1: number; score2: number; penaltyWinnerId?: string } {
+  const score1 = generateRandomScore()
+  const score2 = generateRandomScore()
+  
+  // If it's a draw, determine a penalty winner
+  if (score1 === score2) {
+    const penaltyWinnerId = Math.random() > 0.5 ? team1Id : team2Id
+    return { score1, score2, penaltyWinnerId }
+  }
+  
+  return { score1, score2 }
+}
+
+// Resolve Round 32 teams based on group standings and third-place assignments
+function resolveRound32Teams(
+  firstByGroup: Map<string, string>,
+  secondByGroup: Map<string, string>,
+  thirdPlaceAssignments: Record<string, string>
+): Match[] {
+  const round32Matches: Match[] = []
+  
+  for (let i = 1; i <= 16; i++) {
+    const matchId = `round32-${i}`
+    const placeholder = r32Placeholders[matchId]
+    
+    let team1Id = ""
+    let team2Id = ""
+    
+    // Resolve team1 (always a first or second place)
+    const team1Match = placeholder.team1.match(/^(\d)([A-L])$/)
+    if (team1Match) {
+      const position = parseInt(team1Match[1])
+      const group = team1Match[2]
+      team1Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
+    }
+    
+    // Resolve team2 (can be first, second, or third place)
+    if (placeholder.team2.startsWith("3º")) {
+      // This is a third place - get from FIFA assignment
+      const firstPlaceMatch = placeholder.team1.match(/^1([A-L])$/)
+      if (firstPlaceMatch) {
+        const firstPlaceGroup = firstPlaceMatch[1]
+        team2Id = thirdPlaceAssignments[firstPlaceGroup] || ""
+      }
+    } else {
+      // Regular first or second place
+      const team2Match = placeholder.team2.match(/^(\d)([A-L])$/)
+      if (team2Match) {
+        const position = parseInt(team2Match[1])
+        const group = team2Match[2]
+        team2Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
+      }
+    }
+    
+    round32Matches.push({
+      id: matchId,
+      team1Id,
+      team2Id,
+      team1Score: null,
+      team2Score: null,
+      stage: "round32",
+      matchNumber: i,
+    })
+  }
+  
+  return round32Matches
+}
+
+// Simulate all knockout matches from Round 32 to Final
+function simulateAllKnockoutMatches(round32Matches: Match[]): Match[] {
+  // Simulate Round 32 scores
+  const simulatedR32 = round32Matches.map(match => {
+    const { score1, score2, penaltyWinnerId } = simulateKnockoutMatch(match.team1Id, match.team2Id)
+    return { ...match, team1Score: score1, team2Score: score2, penaltyWinnerId }
+  })
+
+  // Generate and simulate Round of 16
+  const round16Matches: Match[] = []
+  for (let i = 0; i < 8; i++) {
+    const match1 = simulatedR32[i * 2]
+    const match2 = simulatedR32[i * 2 + 1]
+    const team1 = getMatchWinnerFromSimulated(match1)
+    const team2 = getMatchWinnerFromSimulated(match2)
+    const { score1, score2, penaltyWinnerId } = simulateKnockoutMatch(team1, team2)
+    round16Matches.push({
+      id: `round16-${i + 1}`,
+      team1Id: team1,
+      team2Id: team2,
+      team1Score: score1,
+      team2Score: score2,
+      stage: "round16",
+      matchNumber: i + 1,
+      penaltyWinnerId,
+    })
+  }
+
+  // Generate and simulate Quarter-finals
+  const quarterMatches: Match[] = []
+  for (let i = 0; i < 4; i++) {
+    const match1 = round16Matches[i * 2]
+    const match2 = round16Matches[i * 2 + 1]
+    const team1 = getMatchWinnerFromSimulated(match1)
+    const team2 = getMatchWinnerFromSimulated(match2)
+    const { score1, score2, penaltyWinnerId } = simulateKnockoutMatch(team1, team2)
+    quarterMatches.push({
+      id: `quarter-${i + 1}`,
+      team1Id: team1,
+      team2Id: team2,
+      team1Score: score1,
+      team2Score: score2,
+      stage: "quarter",
+      matchNumber: i + 1,
+      penaltyWinnerId,
+    })
+  }
+
+  // Generate and simulate Semi-finals
+  const semiMatches: Match[] = []
+  for (let i = 0; i < 2; i++) {
+    const match1 = quarterMatches[i * 2]
+    const match2 = quarterMatches[i * 2 + 1]
+    const team1 = getMatchWinnerFromSimulated(match1)
+    const team2 = getMatchWinnerFromSimulated(match2)
+    const { score1, score2, penaltyWinnerId } = simulateKnockoutMatch(team1, team2)
+    semiMatches.push({
+      id: `semi-${i + 1}`,
+      team1Id: team1,
+      team2Id: team2,
+      team1Score: score1,
+      team2Score: score2,
+      stage: "semi",
+      matchNumber: i + 1,
+      penaltyWinnerId,
+    })
+  }
+
+  // Determine finalists and 3rd place contestants
+  const semi1 = semiMatches[0]
+  const semi2 = semiMatches[1]
+  const finalist1 = getMatchWinnerFromSimulated(semi1)
+  const finalist2 = getMatchWinnerFromSimulated(semi2)
+  const thirdPlace1 = getMatchLoserFromSimulated(semi1)
+  const thirdPlace2 = getMatchLoserFromSimulated(semi2)
+
+  // Generate Third Place match
+  const thirdPlaceResult = simulateKnockoutMatch(thirdPlace1, thirdPlace2)
+  const thirdPlaceMatch: Match = {
+    id: "third-1",
+    team1Id: thirdPlace1,
+    team2Id: thirdPlace2,
+    team1Score: thirdPlaceResult.score1,
+    team2Score: thirdPlaceResult.score2,
+    stage: "third",
+    matchNumber: 1,
+    penaltyWinnerId: thirdPlaceResult.penaltyWinnerId,
+  }
+
+  // Generate Final match
+  const finalResult = simulateKnockoutMatch(finalist1, finalist2)
+  const finalMatch: Match = {
+    id: "final-1",
+    team1Id: finalist1,
+    team2Id: finalist2,
+    team1Score: finalResult.score1,
+    team2Score: finalResult.score2,
+    stage: "final",
+    matchNumber: 1,
+    penaltyWinnerId: finalResult.penaltyWinnerId,
+  }
+
+  return [
+    ...simulatedR32,
+    ...round16Matches,
+    ...quarterMatches,
+    ...semiMatches,
+    thirdPlaceMatch,
+    finalMatch,
+  ]
 }
 
 // Generate empty knockout bracket structure
@@ -194,7 +391,33 @@ export function useTournament() {
 
   const handleKnockoutScoreChange = (matchId: string, team: "team1" | "team2", score: number | null) => {
     setKnockoutMatches((prev) =>
-      prev.map((m) => (m.id === matchId ? { ...m, [team === "team1" ? "team1Score" : "team2Score"]: score } : m)),
+      prev.map((m) => {
+        if (m.id !== matchId) return m
+        
+        const updatedMatch = { 
+          ...m, 
+          [team === "team1" ? "team1Score" : "team2Score"]: score 
+        }
+        
+        // Check if the new scores result in a draw
+        const newTeam1Score = team === "team1" ? score : m.team1Score
+        const newTeam2Score = team === "team2" ? score : m.team2Score
+        
+        if (newTeam1Score !== null && newTeam2Score !== null && newTeam1Score === newTeam2Score) {
+          // It's a draw - assign a random penalty winner if not already set
+          // Use team IDs if available, otherwise keep empty
+          const team1Id = m.team1Id
+          const team2Id = m.team2Id
+          if (team1Id && team2Id) {
+            updatedMatch.penaltyWinnerId = Math.random() > 0.5 ? team1Id : team2Id
+          }
+        } else if (newTeam1Score !== null && newTeam2Score !== null) {
+          // Not a draw - clear any existing penalty winner
+          updatedMatch.penaltyWinnerId = undefined
+        }
+        
+        return updatedMatch
+      }),
     )
   }
 
@@ -219,162 +442,16 @@ export function useTournament() {
       return
     }
 
-    // Build Round of 32 matchups according to r32Placeholders structure
-    const round32Matches: Match[] = []
-    for (let i = 1; i <= 16; i++) {
-      const matchId = `round32-${i}`
-      const placeholder = r32Placeholders[matchId]
-      
-      let team1Id = ""
-      let team2Id = ""
-      
-      // Resolve team1 (always a first or second place)
-      const team1Match = placeholder.team1.match(/^(\d)([A-L])$/)
-      if (team1Match) {
-        const position = parseInt(team1Match[1])
-        const group = team1Match[2]
-        team1Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
-      }
-      
-      // Resolve team2 (can be first, second, or third place)
-      if (placeholder.team2.startsWith("3º")) {
-        // This is a third place - get from FIFA assignment
-        // Find which first-place group this match has
-        const firstPlaceMatch = placeholder.team1.match(/^1([A-L])$/)
-        if (firstPlaceMatch) {
-          const firstPlaceGroup = firstPlaceMatch[1]
-          team2Id = thirdPlaceAssignments[firstPlaceGroup] || ""
-        }
-      } else {
-        // Regular first or second place
-        const team2Match = placeholder.team2.match(/^(\d)([A-L])$/)
-        if (team2Match) {
-          const position = parseInt(team2Match[1])
-          const group = team2Match[2]
-          team2Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
-        }
-      }
-      
-      const score1 = generateRandomScore()
-      const score2 = generateRandomScore()
-      round32Matches.push({
-        id: matchId,
-        team1Id,
-        team2Id,
-        team1Score: score1,
-        team2Score: score2,
-        stage: "round32",
-        matchNumber: i,
-      })
-    }
+    // Resolve Round 32 teams and simulate all knockout matches
+    const round32Matches = resolveRound32Teams(firstByGroup, secondByGroup, thirdPlaceAssignments)
+    const allKnockoutMatches = simulateAllKnockoutMatches(round32Matches)
 
-    // Step 2: Generate and simulate Round of 16
-    const round16Matches: Match[] = []
-    for (let i = 0; i < 8; i++) {
-      const match1 = round32Matches[i * 2]
-      const match2 = round32Matches[i * 2 + 1]
-      const team1 = getWinner(match1.team1Id, match1.team2Id, match1.team1Score!, match1.team2Score!)
-      const team2 = getWinner(match2.team1Id, match2.team2Id, match2.team1Score!, match2.team2Score!)
-      const score1 = generateRandomScore()
-      const score2 = generateRandomScore()
-      round16Matches.push({
-        id: `round16-${i + 1}`,
-        team1Id: team1,
-        team2Id: team2,
-        team1Score: score1,
-        team2Score: score2,
-        stage: "round16",
-        matchNumber: i + 1,
-      })
-    }
-
-    // Step 3: Generate and simulate Quarter-finals
-    const quarterMatches: Match[] = []
-    for (let i = 0; i < 4; i++) {
-      const match1 = round16Matches[i * 2]
-      const match2 = round16Matches[i * 2 + 1]
-      const team1 = getWinner(match1.team1Id, match1.team2Id, match1.team1Score!, match1.team2Score!)
-      const team2 = getWinner(match2.team1Id, match2.team2Id, match2.team1Score!, match2.team2Score!)
-      const score1 = generateRandomScore()
-      const score2 = generateRandomScore()
-      quarterMatches.push({
-        id: `quarter-${i + 1}`,
-        team1Id: team1,
-        team2Id: team2,
-        team1Score: score1,
-        team2Score: score2,
-        stage: "quarter",
-        matchNumber: i + 1,
-      })
-    }
-
-    // Step 4: Generate and simulate Semi-finals
-    const semiMatches: Match[] = []
-    for (let i = 0; i < 2; i++) {
-      const match1 = quarterMatches[i * 2]
-      const match2 = quarterMatches[i * 2 + 1]
-      const team1 = getWinner(match1.team1Id, match1.team2Id, match1.team1Score!, match1.team2Score!)
-      const team2 = getWinner(match2.team1Id, match2.team2Id, match2.team1Score!, match2.team2Score!)
-      const score1 = generateRandomScore()
-      const score2 = generateRandomScore()
-      semiMatches.push({
-        id: `semi-${i + 1}`,
-        team1Id: team1,
-        team2Id: team2,
-        team1Score: score1,
-        team2Score: score2,
-        stage: "semi",
-        matchNumber: i + 1,
-      })
-    }
-
-    // Step 5: Determine finalists and 3rd place contestants
-    const semi1 = semiMatches[0]
-    const semi2 = semiMatches[1]
-    const finalist1 = getWinner(semi1.team1Id, semi1.team2Id, semi1.team1Score!, semi1.team2Score!)
-    const finalist2 = getWinner(semi2.team1Id, semi2.team2Id, semi2.team1Score!, semi2.team2Score!)
-    const thirdPlace1 = semi1.team1Id === finalist1 ? semi1.team2Id : semi1.team1Id
-    const thirdPlace2 = semi2.team1Id === finalist2 ? semi2.team2Id : semi2.team1Id
-
-    // Step 6: Generate Third Place match
-    const thirdPlaceScore1 = generateRandomScore()
-    const thirdPlaceScore2 = generateRandomScore()
-    const thirdPlaceMatch: Match = {
-      id: "third-1",
-      team1Id: thirdPlace1,
-      team2Id: thirdPlace2,
-      team1Score: thirdPlaceScore1,
-      team2Score: thirdPlaceScore2,
-      stage: "third",
-      matchNumber: 1,
-    }
-
-    // Step 7: Generate Final match
-    const finalScore1 = generateRandomScore()
-    const finalScore2 = generateRandomScore()
-    const finalMatch: Match = {
-      id: "final-1",
-      team1Id: finalist1,
-      team2Id: finalist2,
-      team1Score: finalScore1,
-      team2Score: finalScore2,
-      stage: "final",
-      matchNumber: 1,
-    }
-
-    setKnockoutMatches([
-      ...round32Matches,
-      ...round16Matches,
-      ...quarterMatches,
-      ...semiMatches,
-      thirdPlaceMatch,
-      finalMatch,
-    ])
+    setKnockoutMatches(allKnockoutMatches)
     setActiveTab("knockout")
   }
 
   const simulateTournament = () => {
-    // Calculate standings from current group matches after simulation
+    // Simulate group matches
     const simulatedGroupMatches = groupMatches.map((match) => ({
       ...match,
       team1Score: generateRandomScore(),
@@ -382,6 +459,7 @@ export function useTournament() {
     }))
     setGroupMatches(simulatedGroupMatches)
 
+    // Calculate standings from simulated group matches
     const simulatedStandings: Record<string, ReturnType<typeof calculateStandings>> = {}
     Object.entries(groups).forEach(([groupName, teamIds]) => {
       const groupMatchList = simulatedGroupMatches.filter((m) => m.group === groupName)
@@ -419,146 +497,11 @@ export function useTournament() {
       return
     }
 
-    // Build Round of 32 matchups according to r32Placeholders structure
-    const round32Matches: Match[] = []
-    for (let i = 1; i <= 16; i++) {
-      const matchId = `round32-${i}`
-      const placeholder = r32Placeholders[matchId]
-      
-      let team1Id = ""
-      let team2Id = ""
-      
-      // Resolve team1 (always a first or second place)
-      const team1Match = placeholder.team1.match(/^(\d)([A-L])$/)
-      if (team1Match) {
-        const position = parseInt(team1Match[1])
-        const group = team1Match[2]
-        team1Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
-      }
-      
-      // Resolve team2 (can be first, second, or third place)
-      if (placeholder.team2.startsWith("3º")) {
-        // This is a third place - get from FIFA assignment
-        const firstPlaceMatch = placeholder.team1.match(/^1([A-L])$/)
-        if (firstPlaceMatch) {
-          const firstPlaceGroup = firstPlaceMatch[1]
-          team2Id = thirdPlaceAssignments[firstPlaceGroup] || ""
-        }
-      } else {
-        // Regular first or second place
-        const team2Match = placeholder.team2.match(/^(\d)([A-L])$/)
-        if (team2Match) {
-          const position = parseInt(team2Match[1])
-          const group = team2Match[2]
-          team2Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
-        }
-      }
-      
-      const score1 = generateRandomScore()
-      const score2 = generateRandomScore()
-      round32Matches.push({
-        id: matchId,
-        team1Id,
-        team2Id,
-        team1Score: score1,
-        team2Score: score2,
-        stage: "round32",
-        matchNumber: i,
-      })
-    }
+    // Resolve Round 32 teams and simulate all knockout matches
+    const round32Matches = resolveRound32Teams(firstByGroup, secondByGroup, thirdPlaceAssignments)
+    const allKnockoutMatches = simulateAllKnockoutMatches(round32Matches)
 
-    const round16Matches: Match[] = []
-    for (let i = 0; i < 8; i++) {
-      const match1 = round32Matches[i * 2]
-      const match2 = round32Matches[i * 2 + 1]
-      const team1 = getWinner(match1.team1Id, match1.team2Id, match1.team1Score!, match1.team2Score!)
-      const team2 = getWinner(match2.team1Id, match2.team2Id, match2.team1Score!, match2.team2Score!)
-      const score1 = generateRandomScore()
-      const score2 = generateRandomScore()
-      round16Matches.push({
-        id: `round16-${i + 1}`,
-        team1Id: team1,
-        team2Id: team2,
-        team1Score: score1,
-        team2Score: score2,
-        stage: "round16",
-        matchNumber: i + 1,
-      })
-    }
-
-    const quarterMatches: Match[] = []
-    for (let i = 0; i < 4; i++) {
-      const match1 = round16Matches[i * 2]
-      const match2 = round16Matches[i * 2 + 1]
-      const team1 = getWinner(match1.team1Id, match1.team2Id, match1.team1Score!, match1.team2Score!)
-      const team2 = getWinner(match2.team1Id, match2.team2Id, match2.team1Score!, match2.team2Score!)
-      const score1 = generateRandomScore()
-      const score2 = generateRandomScore()
-      quarterMatches.push({
-        id: `quarter-${i + 1}`,
-        team1Id: team1,
-        team2Id: team2,
-        team1Score: score1,
-        team2Score: score2,
-        stage: "quarter",
-        matchNumber: i + 1,
-      })
-    }
-
-    const semiMatches: Match[] = []
-    for (let i = 0; i < 2; i++) {
-      const match1 = quarterMatches[i * 2]
-      const match2 = quarterMatches[i * 2 + 1]
-      const team1 = getWinner(match1.team1Id, match1.team2Id, match1.team1Score!, match1.team2Score!)
-      const team2 = getWinner(match2.team1Id, match2.team2Id, match2.team1Score!, match2.team2Score!)
-      const score1 = generateRandomScore()
-      const score2 = generateRandomScore()
-      semiMatches.push({
-        id: `semi-${i + 1}`,
-        team1Id: team1,
-        team2Id: team2,
-        team1Score: score1,
-        team2Score: score2,
-        stage: "semi",
-        matchNumber: i + 1,
-      })
-    }
-
-    const semi1 = semiMatches[0]
-    const semi2 = semiMatches[1]
-    const finalist1 = getWinner(semi1.team1Id, semi1.team2Id, semi1.team1Score!, semi1.team2Score!)
-    const finalist2 = getWinner(semi2.team1Id, semi2.team2Id, semi2.team1Score!, semi2.team2Score!)
-    const thirdPlace1 = semi1.team1Id === finalist1 ? semi1.team2Id : semi1.team1Id
-    const thirdPlace2 = semi2.team1Id === finalist2 ? semi2.team2Id : semi2.team1Id
-
-    const thirdPlaceMatch: Match = {
-      id: "third-1",
-      team1Id: thirdPlace1,
-      team2Id: thirdPlace2,
-      team1Score: generateRandomScore(),
-      team2Score: generateRandomScore(),
-      stage: "third",
-      matchNumber: 1,
-    }
-
-    const finalMatch: Match = {
-      id: "final-1",
-      team1Id: finalist1,
-      team2Id: finalist2,
-      team1Score: generateRandomScore(),
-      team2Score: generateRandomScore(),
-      stage: "final",
-      matchNumber: 1,
-    }
-
-    setKnockoutMatches([
-      ...round32Matches,
-      ...round16Matches,
-      ...quarterMatches,
-      ...semiMatches,
-      thirdPlaceMatch,
-      finalMatch,
-    ])
+    setKnockoutMatches(allKnockoutMatches)
     setActiveTab("knockout")
   }
 
@@ -574,111 +517,15 @@ export function useTournament() {
       return
     }
 
-    // Build Round of 32 matchups according to r32Placeholders structure
-    const round32Matches: Match[] = []
-    for (let i = 1; i <= 16; i++) {
-      const matchId = `round32-${i}`
-      const placeholder = r32Placeholders[matchId]
-      
-      let team1Id = ""
-      let team2Id = ""
-      
-      // Resolve team1 (always a first or second place)
-      const team1Match = placeholder.team1.match(/^(\d)([A-L])$/)
-      if (team1Match) {
-        const position = parseInt(team1Match[1])
-        const group = team1Match[2]
-        team1Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
-      }
-      
-      // Resolve team2 (can be first, second, or third place)
-      if (placeholder.team2.startsWith("3º")) {
-        // This is a third place - get from FIFA assignment
-        const firstPlaceMatch = placeholder.team1.match(/^1([A-L])$/)
-        if (firstPlaceMatch) {
-          const firstPlaceGroup = firstPlaceMatch[1]
-          team2Id = thirdPlaceAssignments[firstPlaceGroup] || ""
-        }
-      } else {
-        // Regular first or second place
-        const team2Match = placeholder.team2.match(/^(\d)([A-L])$/)
-        if (team2Match) {
-          const position = parseInt(team2Match[1])
-          const group = team2Match[2]
-          team2Id = position === 1 ? (firstByGroup.get(group) || "") : (secondByGroup.get(group) || "")
-        }
-      }
-      
-      round32Matches.push({
-        id: matchId,
-        team1Id,
-        team2Id,
-        team1Score: null,
-        team2Score: null,
-        stage: "round32",
-        matchNumber: i,
-      })
-    }
+    // Build Round 32 with resolved teams (without scores)
+    const round32Matches = resolveRound32Teams(firstByGroup, secondByGroup, thirdPlaceAssignments)
 
-    // Generate placeholder matches for later rounds
-    const round16Matches: Match[] = Array.from({ length: 8 }, (_, i) => ({
-      id: `round16-${i + 1}`,
-      team1Id: "",
-      team2Id: "",
-      team1Score: null,
-      team2Score: null,
-      stage: "round16" as const,
-      matchNumber: i + 1,
-    }))
+    // Generate empty matches for later rounds
+    const emptyLaterRounds = generateEmptyKnockoutBracket().filter(
+      m => m.stage !== "round32"
+    )
 
-    const quarterMatches: Match[] = Array.from({ length: 4 }, (_, i) => ({
-      id: `quarter-${i + 1}`,
-      team1Id: "",
-      team2Id: "",
-      team1Score: null,
-      team2Score: null,
-      stage: "quarter" as const,
-      matchNumber: i + 1,
-    }))
-
-    const semiMatches: Match[] = Array.from({ length: 2 }, (_, i) => ({
-      id: `semi-${i + 1}`,
-      team1Id: "",
-      team2Id: "",
-      team1Score: null,
-      team2Score: null,
-      stage: "semi" as const,
-      matchNumber: i + 1,
-    }))
-
-    const thirdPlace: Match = {
-      id: "third-1",
-      team1Id: "",
-      team2Id: "",
-      team1Score: null,
-      team2Score: null,
-      stage: "third",
-      matchNumber: 1,
-    }
-
-    const finalMatch: Match = {
-      id: "final-1",
-      team1Id: "",
-      team2Id: "",
-      team1Score: null,
-      team2Score: null,
-      stage: "final",
-      matchNumber: 1,
-    }
-
-    setKnockoutMatches([
-      ...round32Matches,
-      ...round16Matches,
-      ...quarterMatches,
-      ...semiMatches,
-      thirdPlace,
-      finalMatch,
-    ])
+    setKnockoutMatches([...round32Matches, ...emptyLaterRounds])
     setActiveTab("knockout")
   }
 

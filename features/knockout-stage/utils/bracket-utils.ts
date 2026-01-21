@@ -109,6 +109,7 @@ export function resolveQualifiedTeam(
 
 /**
  * Get the winner of a match (returns team ID or empty string)
+ * For knockout matches with a draw, uses penaltyWinnerId to determine the winner
  */
 export function getMatchWinner(
   match: Match,
@@ -119,11 +120,17 @@ export function getMatchWinner(
   const team2Id = getActualTeamId(match, "team2")
   if (match.team1Score > match.team2Score) return team1Id
   if (match.team2Score > match.team1Score) return team2Id
+  
+  // Draw - check for penalty winner (knockout stages only)
+  if (match.stage !== "group" && match.penaltyWinnerId) {
+    return match.penaltyWinnerId
+  }
   return ""
 }
 
 /**
  * Get the loser of a match (returns team ID or empty string)
+ * For knockout matches with a draw, uses penaltyWinnerId to determine the loser
  */
 export function getMatchLoser(
   match: Match,
@@ -134,6 +141,12 @@ export function getMatchLoser(
   const team2Id = getActualTeamId(match, "team2")
   if (match.team1Score > match.team2Score) return team2Id
   if (match.team2Score > match.team1Score) return team1Id
+  
+  // Draw - check for penalty winner (knockout stages only)
+  if (match.stage !== "group" && match.penaltyWinnerId) {
+    // Return the team that is NOT the penalty winner (the loser)
+    return match.penaltyWinnerId === team1Id ? team2Id : team1Id
+  }
   return ""
 }
 
