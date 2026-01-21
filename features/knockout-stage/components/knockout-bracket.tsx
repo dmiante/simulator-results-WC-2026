@@ -24,11 +24,11 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
   const bracketRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [bracketSize, setBracketSize] = useState({ width: 0, height: 0 })
-  
+
   const { isDragging, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useDragToPan(containerRef)
   const bracketMatches = useBracketMatches(matches)
   const resolvedTeams = useResolvedTeams(groupStandings, thirdPlaceRanking, teamsMap)
-  
+
   useAutoAdvanceWinners({ matches, setMatches, resolvedTeams })
 
   const { matchHeight, r32Gap, r16Gap, qfGap, connectorWidth, r16Offset, qfOffset, sfOffset } = getBracketLayoutValues()
@@ -67,8 +67,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
           onMouseLeave={handleMouseLeave}
         >
           {/* Wrapper that reserves space for scaled content */}
-          <div 
-            style={{ 
+          <div
+            style={{
               width: bracketSize.width > 0 ? `${bracketSize.width * zoom}px` : "auto",
               height: bracketSize.height > 0 ? `${bracketSize.height * zoom}px` : "auto",
               minWidth: "fit-content",
@@ -109,7 +109,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               </div>
 
               {/* Connector R32 -> R16 */}
-              <div style={{ paddingTop: "36px" }}>
+              <div style={{ paddingTop: "43px" }}>
                 <BracketConnector matchCount={8} matchHeight={matchHeight} gap={r32Gap} connectorWidth={connectorWidth} />
               </div>
 
@@ -137,7 +137,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               </div>
 
               {/* Connector R16 -> QF */}
-              <div style={{ paddingTop: `${r16Offset + 36}px` }}>
+              <div style={{ paddingTop: `${r16Offset + 43}px` }}>
                 <BracketConnector
                   matchCount={4}
                   matchHeight={matchHeight}
@@ -170,7 +170,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               </div>
 
               {/* Connector QF -> SF */}
-              <div style={{ paddingTop: `${qfOffset + 36}px` }}>
+              <div style={{ paddingTop: `${qfOffset + 43}px` }}>
                 <BracketConnector
                   matchCount={2}
                   matchHeight={matchHeight}
@@ -309,7 +309,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               </div>
 
               {/* Connector SF -> QF (right) */}
-              <div style={{ paddingTop: `${qfOffset + 36}px` }}>
+              <div style={{ paddingTop: `${qfOffset + 44}px` }}>
                 <BracketConnector
                   matchCount={2}
                   matchHeight={matchHeight}
@@ -343,7 +343,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               </div>
 
               {/* Connector QF -> R16 (right) */}
-              <div style={{ paddingTop: `${r16Offset + 36}px` }}>
+              <div style={{ paddingTop: `${r16Offset + 44}px` }}>
                 <BracketConnector
                   matchCount={4}
                   matchHeight={matchHeight}
@@ -377,7 +377,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               </div>
 
               {/* Connector R16 -> R32 (right) */}
-              <div style={{ paddingTop: "36px" }}>
+              <div style={{ paddingTop: "44px" }}>
                 <BracketConnector
                   matchCount={8}
                   matchHeight={matchHeight}

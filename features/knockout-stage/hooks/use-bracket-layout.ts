@@ -7,7 +7,7 @@ import { resolveQualifiedTeam } from "../utils/bracket-utils"
 export const BRACKET_LAYOUT = {
   matchHeight: 80,
   r32Gap: 16,
-  connectorWidth: 32,
+  connectorWidth: 50,
 } as const
 
 // Derived layout values
