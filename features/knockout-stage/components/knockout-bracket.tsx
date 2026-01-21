@@ -222,15 +222,17 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                   Final
                 </div>
                 <div className="flex flex-col items-center gap-8" style={{ paddingTop: `${sfOffset - 136}px` }}>
-                  {/* Champion Display */}
-                  {champion && teamsMap[champion] && (
-                    <div className="flex flex-col items-center gap-2 animate-in fade-in duration-500">
-                      <Trophy className="h-10 w-10 text-amber-500" />
-                      <div className="text-3xl">{teamsMap[champion].flag}</div>
-                      <div className="text-lg font-bold text-amber-600">{teamsMap[champion].name.toUpperCase()}</div>
-                      <div className="text-xs uppercase tracking-widest text-slate-500">World Champion</div>
-                    </div>
-                  )}
+                  {/* Champion Display - always reserve space to prevent layout shift */}
+                  <div className="flex flex-col items-center gap-2" style={{ height: "144px", minHeight: "120px" }}>
+                    {champion && teamsMap[champion] && (
+                      <div className="flex flex-col items-center gap-2 animate-in fade-in duration-500">
+                        <Trophy className="h-10 w-10 text-amber-500" />
+                        <div className="text-3xl">{teamsMap[champion].flag}</div>
+                        <div className="text-lg font-bold text-amber-600">{teamsMap[champion].name.toUpperCase()}</div>
+                        <div className="text-xs uppercase tracking-widest text-slate-500">World Champion</div>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Final Match */}
                   {final && (() => {
