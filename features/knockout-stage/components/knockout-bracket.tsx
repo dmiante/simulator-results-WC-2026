@@ -203,7 +203,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               </div>
 
               {/* Connector SF -> Final (left) */}
-              <div style={{ paddingTop: `${sfOffset + 40 + 36}px` }}>
+              <div style={{ paddingTop: `${sfOffset + 83}px` }}>
                 <svg width={connectorWidth} height={matchHeight} className="shrink-0">
                   <line
                     x1={0}
@@ -221,13 +221,13 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                 <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
                   Final
                 </div>
-                <div className="flex flex-col items-center gap-8" style={{ paddingTop: `${sfOffset + 40}px` }}>
+                <div className="flex flex-col items-center gap-8" style={{ paddingTop: `${sfOffset - 136}px` }}>
                   {/* Champion Display */}
                   {champion && teamsMap[champion] && (
                     <div className="flex flex-col items-center gap-2 animate-in fade-in duration-500">
                       <Trophy className="h-10 w-10 text-amber-500" />
                       <div className="text-3xl">{teamsMap[champion].flag}</div>
-                      <div className="text-lg font-bold text-amber-600">{teamsMap[champion].name}</div>
+                      <div className="text-lg font-bold text-amber-600">{teamsMap[champion].name.toUpperCase()}</div>
                       <div className="text-xs uppercase tracking-widest text-slate-500">World Champion</div>
                     </div>
                   )}
@@ -270,7 +270,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               </div>
 
               {/* Connector Final -> SF (right) */}
-              <div style={{ paddingTop: `${sfOffset + 40 + 36}px` }}>
+              <div style={{ paddingTop: `${sfOffset + 83}px` }}>
                 <svg width={connectorWidth} height={matchHeight} className="shrink-0">
                   <line
                     x1={0}
