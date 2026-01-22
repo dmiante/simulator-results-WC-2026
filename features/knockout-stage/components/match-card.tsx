@@ -70,7 +70,7 @@ export function MatchCard({
           className={cn(
             "flex items-center justify-between px-3 py-2 border-b border-slate-200 h-1/2",
             winner === "team1" && "bg-emerald-100",
-            hasResolvedTeam1 && !winner && "bg-blue-50",
+            hasResolvedTeam1 && !winner && "bg-white",
           )}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -83,7 +83,7 @@ export function MatchCard({
               className={cn(
                 "text-sm font-medium text-slate-700",
                 isTeam1TBD && !hasResolvedTeam1 && "text-slate-400 italic",
-                hasResolvedTeam1 && "text-blue-600 font-semibold",
+                hasResolvedTeam1 && "font-semibold",
                 winner === "team1" && "font-bold text-emerald-600",
               )}
               title={hasResolvedTeam1 ? `${placeholder1}: ${resolvedTeam1.name}` : undefined}
@@ -114,7 +114,7 @@ export function MatchCard({
           className={cn(
             "flex items-center justify-between px-3 py-2 h-1/2", 
             winner === "team2" && "bg-emerald-100",
-            hasResolvedTeam2 && !winner && "bg-blue-50",
+            hasResolvedTeam2 && !winner && "bg-white",
           )}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -127,7 +127,7 @@ export function MatchCard({
               className={cn(
                 "text-sm font-medium text-slate-700",
                 isTeam2TBD && !hasResolvedTeam2 && "text-slate-400 italic",
-                hasResolvedTeam2 && "text-blue-600 font-semibold",
+                hasResolvedTeam2 && "font-semibold",
                 winner === "team2" && "font-bold text-emerald-600",
               )}
               title={hasResolvedTeam2 ? `${placeholder2}: ${resolvedTeam2.name}` : undefined}
