@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dices, GitBranch, RotateCcw, Sparkles, Trophy, Swords } from "lucide-react";
+import { Dices, GitBranch, RotateCcw, Sparkles, Trophy, Swords, Flag } from "lucide-react";
 import { TournamentSimulatorProps } from "../types";
 
 
@@ -10,7 +10,8 @@ export default function ButtonSimulator({
   generateKnockoutBracket,
   groupsComplete,
   knockoutMatches,
-  resetTournament
+  resetTournament,
+  simulatePlayoffs
 }: TournamentSimulatorProps) {
   
   return (
@@ -24,6 +25,12 @@ export default function ButtonSimulator({
           <Sparkles className="h-4 w-4" />
           Simulate All
         </Button>
+        {simulatePlayoffs && (
+          <Button onClick={simulatePlayoffs} className="gap-2" variant="secondary">
+            <Flag className="h-4 w-4" />
+            Simulate Playoffs
+          </Button>
+        )}
         <Button onClick={simulateGroupStage} className="gap-2" variant="secondary">
           <Dices className="h-4 w-4" />
           Simulate Groups
