@@ -1,15 +1,28 @@
 "use client"
 
+import { useMemo } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, GitBranch } from "lucide-react"
+import { Users, GitBranch, Swords } from "lucide-react"
 import { GroupStage } from "@/features/group-stage/components/group-stage"
 import { KnockoutBracket } from "@/features/knockout-stage/components/knockout-bracket"
 import { TournamentHeader } from "@/components/layout/tournament-header"
 import { groups } from "@/db/tournament-data"
 import { useTournament } from "../hooks/use-tournament"
 import ButtonSimulator from "./button-simulator"
+import { PlayoffsStage } from "@/features/playoffs-stage/components/playoffs-stage"
+import { usePlayoffs } from "@/features/playoffs-stage/hooks/use-playoffs"
+import { Team } from "@/lib/types"
 
 export function WorldCupSimulator() {
+  // Playoffs state (determines which teams go to groups)
+  const {
+    playoffsState,
+    handleMatchScoreChange: handlePlayoffScoreChange,
+    handlePenaltyWinner: handlePlayoffPenaltyWinner,
+    simulatePlayoffs,
+    resetPlayoffs,
+    winners: playoffWinners,
+  } = usePlayoffs()
 
   const {
     activeTab,
@@ -18,19 +31,58 @@ export function WorldCupSimulator() {
     knockoutMatches,
     qualifiedTeams,
     thirdPlaceRanking,
-    teamsMap,
+    teamsMap: baseTeamsMap,
     handleKnockoutScoreChange,
     groupsComplete,
     handleScoreChange,
     setKnockoutMatches,
     setActiveTab,
     generateKnockoutBracket,
-    resetTournament,
-    simulateTournament,
+    resetTournament: resetTournamentBase,
+    simulateTournament: simulateTournamentBase,
     simulateGroupStage,
     simulateKnockoutStage
   } = useTournament()
-  
+
+  // Create a dynamic teamsMap that replaces placeholders with playoff winners
+  const teamsMap = useMemo(() => {
+    const map: Record<string, Team> = { ...baseTeamsMap }
+    
+    // Map playoff slot IDs to their winner team data
+    const playoffTeamsById: Record<string, Team> = {}
+    playoffsState.playoffTeams.forEach((team) => {
+      playoffTeamsById[team.id] = team
+    })
+
+    // Replace placeholder teams with actual winners
+    Object.entries(playoffWinners).forEach(([slotId, winnerId]) => {
+      if (winnerId && playoffTeamsById[winnerId]) {
+        const winnerTeam = playoffTeamsById[winnerId]
+        // Update the placeholder entry with the winner's info
+        map[slotId] = {
+          id: slotId, // Keep the slot ID for group stage compatibility
+          name: winnerTeam.name,
+          code: winnerTeam.code,
+          flag: winnerTeam.flag,
+          confederation: winnerTeam.confederation,
+        }
+      }
+    })
+
+    return map
+  }, [baseTeamsMap, playoffsState.playoffTeams, playoffWinners])
+
+  // Combined reset function
+  const resetTournament = () => {
+    resetTournamentBase()
+    resetPlayoffs()
+  }
+
+  // Combined simulate function
+  const simulateTournament = () => {
+    simulatePlayoffs()
+    simulateTournamentBase()
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,9 +96,14 @@ export function WorldCupSimulator() {
           simulateGroupStage={simulateGroupStage}
           simulateKnockoutStage={simulateKnockoutStage}
           knockoutMatches={knockoutMatches}
+          simulatePlayoffs={simulatePlayoffs}
         />
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-xl grid-cols-3">
+            <TabsTrigger value="playoffs" className="gap-2">
+              <Swords className="h-4 w-4" />
+              PlayOffs
+            </TabsTrigger>
             <TabsTrigger value="groups" className="gap-2">
               <Users className="h-4 w-4" />
               Group Stage
@@ -56,6 +113,14 @@ export function WorldCupSimulator() {
               Knockout
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="playoffs" className="mt-6">
+            <PlayoffsStage 
+              playoffsState={playoffsState}
+              onMatchScoreChange={handlePlayoffScoreChange}
+              onPenaltyWinner={handlePlayoffPenaltyWinner}
+            />
+          </TabsContent>
 
           <TabsContent value="groups" className="mt-6">
             <GroupStage

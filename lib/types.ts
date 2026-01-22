@@ -34,3 +34,15 @@ export interface GroupStanding {
 export type ThirdPlaceCombination = {
   [key: string]: string[];
 };
+
+// Playoff types
+export type PlayoffSlotId = "uefaa" | "uefab" | "uefac" | "uefad" | "icp1" | "icp2"
+
+export interface PlayoffWinners {
+  uefaa: string | null  // Winner goes to Group B
+  uefab: string | null  // Winner goes to Group F
+  uefac: string | null  // Winner goes to Group D
+  uefad: string | null  // Winner goes to Group A
+  icp1: string | null   // Winner goes to Group K
+  icp2: string | null   // Winner goes to Group I
+}
