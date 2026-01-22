@@ -21,10 +21,10 @@
 # Nested items use indentation
 
 simulator-world-2026.v1.0:
-  ☐ style: styling winner world cup on knockout bracke stage @high @started(26-01-20 22:47)
-  ☐ feat: add remaining spots playoffs logic @critical
-  ☐ feat: add tab of the remaining spots playoffs @critical
-  ☐ fix: change color loser team in round 32 @high
+  ✔ style: styling winner world cup on knockout bracke stage @high @started(26-01-20 22:47) @done(26-01-21 02:05) @lasted(3h18m56s)
+  ✔ feat: add remaining spots playoffs logic @critical @started(26-01-21 14:02) @done(26-01-21 23:01) @lasted(8h59m13s)
+  ✔ feat: add tab of the remaining spots playoffs @critical @started(26-01-21 14:02) @done(26-01-21 23:01) @lasted(8h59m14s)
+  ✔ fix: change color loser team in round 32 @high @started(26-01-22 14:32) @done(26-01-22 14:50) @lasted(18m43s)
   ☐ feat: add flag images for all countries @high
   ☐ fix: add name of the group in the table of third places @high
   ☐ feat: save the results matches to localstorage @low
