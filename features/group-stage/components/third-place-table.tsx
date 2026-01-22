@@ -41,17 +41,8 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
     return ranking.qualified?.some(t => t.teamId === teamId) ?? false
   }
 
-  const isEliminated = (teamId: string) => {
-    return ranking.eliminated?.some(t => t.teamId === teamId) ?? false
-  }
+  console.log('ThirdPlaceTable ranking:', ranking)
 
-  // // Calcular posición provisional (para equipos que no han completado)
-  // const getProvisionalPosition = (teamId: string) => {
-  //   return ranking.all.findIndex(t => t.teamId === teamId) + 1
-  // }
-
-  // const completedCount = ranking.completedTeams?.length ?? 0
-  // const qualifiedCount = ranking.qualified?.length ?? 0
 
   return (
     <div className="rounded-lg border border-border bg-card overflow-hidden">
@@ -62,14 +53,6 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
           </span>
           Ranking Third Places
         </h3>
-        {/* <div className="flex flex-wrap gap-4 mt-2">
-          <p className="text-sm text-muted-foreground">
-            • Groups completed: <span className="font-semibold text-foreground">{completedCount}/12</span>
-          </p>
-          <p className="text-sm text-muted-foreground">
-            • Clasificados confirmados: <span className="font-semibold text-amber-500">{qualifiedCount}/8</span>
-          </p>
-        </div> */}
       </div>
 
       <div className="overflow-x-auto">
@@ -78,6 +61,7 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
             <tr className="text-xs text-muted-foreground border-b border-border bg-muted/20">
               <th className="text-center py-3 px-2 font-medium">#</th>
               <th className="text-left py-3 px-2 font-medium">Team</th>
+              <th className="text-center py-3 px-2 font-medium">Group</th>
               <th className="text-center py-3 px-2 font-medium">P</th>
               <th className="text-center py-3 px-2 font-medium">W</th>
               <th className="text-center py-3 px-2 font-medium">D</th>
@@ -93,9 +77,6 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
               const teamData = teamsMap[team.teamId]
               const hasCompleted = team.played === 3
               const qualified = isQualified(team.teamId)
-              const eliminated = isEliminated(team.teamId)
-              const provisionalPosition = index + 1
-              const inQualifyingZone = provisionalPosition <= 8
 
               return (
                 <tr
@@ -126,6 +107,7 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
                       </span>
                     </div>
                   </td>
+                  <td className="text-center py-3 px-2 text-muted-foreground">{team.group}</td>
                   <td className="text-center py-3 px-2 text-muted-foreground">{team.played}</td>
                   <td className="text-center py-3 px-2 text-muted-foreground">{team.won}</td>
                   <td className="text-center py-3 px-2 text-muted-foreground">{team.drawn}</td>
@@ -138,49 +120,19 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
                     </span>
                   </td>
                   <td className="text-center py-3 px-2 font-bold">{team.points}</td>
-                  {/* <td className="text-center py-3 px-2">
-                    {hasCompleted ? (
-                      qualified ? (
-                        <span className="text-xs font-medium text-amber-600 bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded">
-                          ✓ Clasificado
-                        </span>
-                      ) : (
-                        <span className="text-xs font-medium text-red-600 bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
-                          ✗ Eliminado
-                        </span>
-                      )
-                    ) : (
-                      <span className={cn(
-                        "text-xs font-medium px-2 py-1 rounded",
-                        inQualifyingZone 
-                          ? "text-amber-600 bg-amber-100/50 dark:bg-amber-900/20" 
-                          : "text-muted-foreground bg-muted"
-                      )}>
-                        {team.played}/3 jugados
-                      </span>
-                    )}
-                  </td> */}
                 </tr>
               )
             })}
           </tbody>
         </table>
       </div>
-{/* 
+
       <div className="p-3 border-t border-border flex flex-wrap gap-4 text-xs bg-muted/20">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-amber-500" />
+          <div className="w-3 h-3 rounded-full bg-blue-500" />
           <span className="text-muted-foreground">Clasificado (confirmado)</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-amber-500/30 border border-amber-500/50" />
-          <span className="text-muted-foreground">En zona de clasificación (provisional)</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500" />
-          <span className="text-muted-foreground">Eliminado</span>
-        </div>
-      </div> */}
+      </div>
     </div>
   )
 }

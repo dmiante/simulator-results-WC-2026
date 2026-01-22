@@ -29,6 +29,7 @@ export interface GroupStanding {
   goalsAgainst: number
   goalDifference: number
   points: number
+  group?: string
 }
 
 export type ThirdPlaceCombination = {
