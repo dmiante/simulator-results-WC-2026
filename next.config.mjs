@@ -5,6 +5,7 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    remotePatterns: [ new URL('https://flagcdn.com/') ],
   },
  
 }
