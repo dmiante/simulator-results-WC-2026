@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { GroupStanding, Team } from "@/lib/types"
+import { TeamFlag } from "@/components/team-flag"
 
 interface ThirdPlaceTableProps {
   ranking: {
@@ -40,8 +41,6 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
   const isQualified = (teamId: string) => {
     return ranking.qualified?.some(t => t.teamId === teamId) ?? false
   }
-
-  console.log('ThirdPlaceTable ranking:', ranking)
 
 
   return (
@@ -101,8 +100,8 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
                   </td>
                   <td className="py-3 px-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">{teamData?.flag}</span>
-                      <span className="font-medium truncate max-w-[120px]">
+                      <TeamFlag code={teamData?.code} name={teamData?.name || "Unknown"} />
+                      <span className="font-medium truncate">
                         {teamData?.name || team.teamId}
                       </span>
                     </div>

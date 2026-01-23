@@ -16,6 +16,7 @@ import { useBracketMatches, useResolvedTeams, getBracketLayoutValues } from "../
 import { useAutoAdvanceWinners } from "../hooks/use-auto-advance-winners"
 
 import { getMatchPlaceholders, getChampion } from "../utils/bracket-utils"
+import { TeamFlag } from "@/components/team-flag"
 
 
 export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, groupStandings, thirdPlaceRanking }: KnockoutBracketProps) {
@@ -109,7 +110,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               </div>
 
               {/* Connector R32 -> R16 */}
-              <div style={{ paddingTop: "43px" }}>
+              <div style={{ paddingTop: "44px" }}>
                 <BracketConnector matchCount={8} matchHeight={matchHeight} gap={r32Gap} connectorWidth={connectorWidth} />
               </div>
 
@@ -221,15 +222,17 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                 <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
                   Final
                 </div>
-                <div className="flex flex-col items-center gap-8" style={{ paddingTop: `${sfOffset - 136}px` }}>
+                <div className="flex flex-col items-center gap-8" style={{ paddingTop: `${sfOffset - 230}px` }}>
                   {/* Champion Display - always reserve space to prevent layout shift */}
-                  <div className="flex flex-col items-center gap-2" style={{ height: "144px", minHeight: "120px" }}>
+                  <div className="flex flex-col items-center gap-2" style={{ height: "237px", minHeight: "120px" }}>
                     {champion && teamsMap[champion] && (
-                      <div className="flex flex-col items-center gap-2 animate-in fade-in duration-500">
+                      <div className="flex flex-col items-center gap-6 animate-in fade-in duration-500">
                         <Trophy className="h-10 w-10 text-amber-500" />
-                        <div className="text-3xl">{teamsMap[champion].flag}</div>
-                        <div className="text-lg font-bold text-amber-600">{teamsMap[champion].name.toUpperCase()}</div>
-                        <div className="text-xs uppercase tracking-widest text-slate-500">World Champion</div>
+                        <TeamFlag code={teamsMap[champion].code} name={teamsMap[champion].name} width={160} height={50} widthImg={160} />
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-amber-600">{teamsMap[champion].name.toUpperCase()}</div>
+                          <div className="text-xs uppercase tracking-widest text-slate-500">World Champion</div>
+                        </div>
                       </div>
                     )}
                   </div>

@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils"
 import { PlayoffMatch, UEFAPlayoffPath, ICPlayoffPath, PlayoffTeam } from "../types"
 import { usePlayoffs } from "../hooks/use-playoffs"
 import { Trophy, Calendar, MapPin } from "lucide-react"
+import { TeamFlag } from "@/components/team-flag"
+
 
 interface PlayoffMatchCardProps {
   match: PlayoffMatch
@@ -64,7 +66,7 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
         )}>
           {team1 ? (
             <>
-              <span className="text-lg">{team1.flag}</span>
+              <TeamFlag code={team1.code} name={team1.name} />
               <span className={cn(
                 "text-sm truncate",
                 winner === "team2" && !match.penaltyWinnerId && "text-muted-foreground"
@@ -126,7 +128,7 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
               )}>
                 {team2.name}
               </span>
-              <span className="text-lg">{team2.flag}</span>
+              <TeamFlag code={team2.code} name={team2.name} />
             </>
           ) : (
             <span className="text-sm text-muted-foreground italic">
@@ -186,7 +188,8 @@ function UEFAPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }:
           {winnerTeam && (
             <Badge className="bg-green-500/20 text-green-600 border-green-500/30">
               <Trophy className="h-3 w-3 mr-1" />
-              {winnerTeam.flag} {winnerTeam.code}
+              <TeamFlag code={winnerTeam.code} name={winnerTeam.name} />
+              {winnerTeam.name}
             </Badge>
           )}
         </div>
@@ -254,7 +257,7 @@ function ICPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }: I
           {winnerTeam && (
             <Badge className="bg-green-500/20 text-green-600 border-green-500/30">
               <Trophy className="h-3 w-3 mr-1" />
-              {winnerTeam.flag} {winnerTeam.code}
+              <TeamFlag code={winnerTeam.code} name={winnerTeam.name} /> {winnerTeam.code}
             </Badge>
           )}
         </div>
@@ -390,19 +393,19 @@ export function PlayoffsStage({
                     winnerTeam ? "bg-green-500/10 border border-green-500/30" : "bg-muted/50 border border-dashed"
                   )}
                 >
-                  <div className="text-xs text-muted-foreground mb-1">
+                  <div className="text-xs text-muted-foreground mb-4">
                     {isUefa ? `UEFA Path ${pathLetter.toUpperCase()}` : `IC Path ${pathLetter}`}
                   </div>
                   {winnerTeam ? (
-                    <>
-                      <div className="text-2xl">{winnerTeam.flag}</div>
-                      <div className="text-sm font-medium">{winnerTeam.code}</div>
-                    </>
+                    <div className="flex flex-col items-center gap-2">
+                      <TeamFlag code={winnerTeam.code} name={winnerTeam.name} />
+                      <div className="text-sm font-medium">{winnerTeam.name}</div>
+                    </div>
                   ) : (
-                    <>
-                      <div className="text-2xl">🏳️</div>
+                    <div className="flex flex-col items-center gap-2">
+                      <img src="/fifa_flag.svg" alt="TBD" width={30} height={30} />
                       <div className="text-sm text-muted-foreground">TBD</div>
-                    </>
+                    </div>
                   )}
                 </div>
               )

@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { StandingsTableProps } from "../types"
+import { TeamFlag } from "@/components/team-flag"
 
 
 export function StandingsTable({ standings, teamsMap, qualifiedTeams }: StandingsTableProps) {
@@ -60,7 +61,7 @@ export function StandingsTable({ standings, teamsMap, qualifiedTeams }: Standing
                 </td>
                 <td className="py-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{team?.flag}</span>
+                    <TeamFlag code={team?.code || "xx"} name={team?.name || "Unknown"} />
                     <span className="font-medium text-foreground truncate max-w-[100px]">{team?.name}</span>
                   </div>
                 </td>

@@ -1,3 +1,4 @@
+import { TeamFlag } from "@/components/team-flag"
 import { Input } from "@/components/ui/input"
 import { Match, Team } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -62,7 +63,7 @@ export function MatchCard({
         isThirdPlace && "border-orange-500/50",
         !isFinal && !isThirdPlace && "hover:border-slate-400",
       )}
-      style={{ width: "200px", height: "80px" }}
+      style={{ width: "220px", height: "87px" }}
     >
       <div className="flex flex-col h-full">
         {/* Team 1 */}
@@ -75,9 +76,7 @@ export function MatchCard({
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
             {(!isTeam1TBD || hasResolvedTeam1) && (
-              <span className="text-base shrink-0">
-                {hasResolvedTeam1 ? resolvedTeam1.flag : team1.flag}
-              </span>
+              <TeamFlag code={hasResolvedTeam1 ? resolvedTeam1.code : team1.code} name={hasResolvedTeam1 ? resolvedTeam1.name : team1.name} />
             )}
             <span
               className={cn(
@@ -119,9 +118,7 @@ export function MatchCard({
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
             {(!isTeam2TBD || hasResolvedTeam2) && (
-              <span className="text-base shrink-0">
-                {hasResolvedTeam2 ? resolvedTeam2.flag : team2.flag}
-              </span>
+              <TeamFlag code={hasResolvedTeam2 ? resolvedTeam2.code : team2.code} name={hasResolvedTeam2 ? resolvedTeam2.name : team2.name} />
             )}
             <span
               className={cn(

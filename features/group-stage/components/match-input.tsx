@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { MatchInputProps } from "../types"
+import { TeamFlag } from "@/components/team-flag"
 
 export function MatchInput({ match, team1, team2, onScoreChange, compact = false }: MatchInputProps) {
   const handleChange = (team: "team1" | "team2", value: string) => {
@@ -37,8 +38,8 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
       )}
     >
       {/* Team 1 */}
-      <div className={cn("flex items-center gap-1.5 flex-1 min-w-0", winner === "team1" && "font-semibold")}>
-        <span className={cn("text-base", compact && "text-sm")}>{team1.flag}</span>
+      <div className={cn("flex items-center gap-2 flex-1 min-w-0", winner === "team1" && "font-semibold")}>
+        <TeamFlag code={team1.code} name={team1.name} />
         <span
           className={cn(
             "text-sm truncate text-foreground",
@@ -83,7 +84,7 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
 
       {/* Team 2 */}
       <div
-        className={cn("flex items-center gap-1.5 flex-1 min-w-0 justify-end", winner === "team2" && "font-semibold")}
+        className={cn("flex items-center gap-2 flex-1 min-w-0 justify-end", winner === "team2" && "font-semibold")}
       >
         <span
           className={cn(
@@ -94,7 +95,7 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
         >
           {team2.name}
         </span>
-        <span className={cn("text-base", compact && "text-sm")}>{team2.flag}</span>
+        <TeamFlag code={team2.code} name={team2.name} />
       </div>
     </div>
   )
