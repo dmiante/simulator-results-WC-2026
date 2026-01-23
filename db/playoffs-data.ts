@@ -6,28 +6,28 @@ import { PlayoffTeam, UEFAPlayoffPath, ICPlayoffPath, PlayoffsState } from "@/fe
 
 export const uefaPlayoffTeams: PlayoffTeam[] = [
   // POT 1 (Seeded - Semi-final hosts)
-  { id: "ita", name: "Italy", code: "ITA", flag: "🇮🇹", confederation: "UEFA", playoffPath: "A", playoffType: "uefa", pot: 1 },
-  { id: "ukr", name: "Ukraine", code: "UKR", flag: "🇺🇦", confederation: "UEFA", playoffPath: "B", playoffType: "uefa", pot: 1 },
-  { id: "tur", name: "Turkey", code: "TUR", flag: "🇹🇷", confederation: "UEFA", playoffPath: "C", playoffType: "uefa", pot: 1 },
-  { id: "den", name: "Denmark", code: "DEN", flag: "🇩🇰", confederation: "UEFA", playoffPath: "D", playoffType: "uefa", pot: 1 },
+  { id: "ita", name: "Italy", code: "IT", flag: "🇮🇹", confederation: "UEFA", playoffPath: "A", playoffType: "uefa", pot: 1 },
+  { id: "ukr", name: "Ukraine", code: "UA", flag: "🇺🇦", confederation: "UEFA", playoffPath: "B", playoffType: "uefa", pot: 1 },
+  { id: "tur", name: "Turkey", code: "TR", flag: "🇹🇷", confederation: "UEFA", playoffPath: "C", playoffType: "uefa", pot: 1 },
+  { id: "den", name: "Denmark", code: "DK", flag: "🇩🇰", confederation: "UEFA", playoffPath: "D", playoffType: "uefa", pot: 1 },
 
   // POT 2 (Seeded - Semi-final hosts)
-  { id: "wal", name: "Wales", code: "WAL", flag: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", confederation: "UEFA", playoffPath: "A", playoffType: "uefa", pot: 2 },
-  { id: "pol", name: "Poland", code: "POL", flag: "🇵🇱", confederation: "UEFA", playoffPath: "B", playoffType: "uefa", pot: 2 },
-  { id: "svk", name: "Slovakia", code: "SVK", flag: "🇸🇰", confederation: "UEFA", playoffPath: "C", playoffType: "uefa", pot: 2 },
-  { id: "cze", name: "Czech Republic", code: "CZE", flag: "🇨🇿", confederation: "UEFA", playoffPath: "D", playoffType: "uefa", pot: 2 },
+  { id: "wal", name: "Wales", code: "GB-WLS", flag: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", confederation: "UEFA", playoffPath: "A", playoffType: "uefa", pot: 2 },
+  { id: "pol", name: "Poland", code: "PL", flag: "🇵🇱", confederation: "UEFA", playoffPath: "B", playoffType: "uefa", pot: 2 },
+  { id: "svk", name: "Slovakia", code: "SK", flag: "🇸🇰", confederation: "UEFA", playoffPath: "C", playoffType: "uefa", pot: 2 },
+  { id: "cze", name: "Czech Republic", code: "CZ", flag: "🇨🇿", confederation: "UEFA", playoffPath: "D", playoffType: "uefa", pot: 2 },
 
   // POT 3 (Unseeded - Away teams for Pot 2)
-  { id: "bih", name: "Bosnia and Herzegovina", code: "BIH", flag: "🇧🇦", confederation: "UEFA", playoffPath: "A", playoffType: "uefa", pot: 3 },
-  { id: "alb", name: "Albania", code: "ALB", flag: "🇦🇱", confederation: "UEFA", playoffPath: "B", playoffType: "uefa", pot: 3 },
-  { id: "kos", name: "Kosovo", code: "KOS", flag: "🇽🇰", confederation: "UEFA", playoffPath: "C", playoffType: "uefa", pot: 3 },
-  { id: "irl", name: "Republic of Ireland", code: "IRL", flag: "🇮🇪", confederation: "UEFA", playoffPath: "D", playoffType: "uefa", pot: 3 },
+  { id: "bih", name: "Bosnia and Herzegovina", code: "BA", flag: "🇧🇦", confederation: "UEFA", playoffPath: "A", playoffType: "uefa", pot: 3 },
+  { id: "alb", name: "Albania", code: "AL", flag: "🇦🇱", confederation: "UEFA", playoffPath: "B", playoffType: "uefa", pot: 3 },
+  { id: "kos", name: "Kosovo", code: "XK", flag: "🇽🇰", confederation: "UEFA", playoffPath: "C", playoffType: "uefa", pot: 3 },
+  { id: "irl", name: "Republic of Ireland", code: "IE", flag: "🇮🇪", confederation: "UEFA", playoffPath: "D", playoffType: "uefa", pot: 3 },
 
   // POT 4 (Unseeded - Away teams for Pot 1, via Nations League)
-  { id: "nir", name: "Northern Ireland", code: "NIR", flag: "🇬🇧", confederation: "UEFA", playoffPath: "A", playoffType: "uefa", pot: 4 },
-  { id: "swe", name: "Sweden", code: "SWE", flag: "🇸🇪", confederation: "UEFA", playoffPath: "B", playoffType: "uefa", pot: 4 },
-  { id: "rou", name: "Romania", code: "ROU", flag: "🇷🇴", confederation: "UEFA", playoffPath: "C", playoffType: "uefa", pot: 4 },
-  { id: "mkd", name: "North Macedonia", code: "MKD", flag: "🇲🇰", confederation: "UEFA", playoffPath: "D", playoffType: "uefa", pot: 4 },
+  { id: "nir", name: "Northern Ireland", code: "GB-NIR", flag: "🇬🇧", confederation: "UEFA", playoffPath: "A", playoffType: "uefa", pot: 4 },
+  { id: "swe", name: "Sweden", code: "SE", flag: "🇸🇪", confederation: "UEFA", playoffPath: "B", playoffType: "uefa", pot: 4 },
+  { id: "rou", name: "Romania", code: "RO", flag: "🇷🇴", confederation: "UEFA", playoffPath: "C", playoffType: "uefa", pot: 4 },
+  { id: "mkd", name: "North Macedonia", code: "MK", flag: "🇲🇰", confederation: "UEFA", playoffPath: "D", playoffType: "uefa", pot: 4 },
 ]
 
 // ============================================
@@ -36,16 +36,16 @@ export const uefaPlayoffTeams: PlayoffTeam[] = [
 
 export const icPlayoffTeams: PlayoffTeam[] = [
   // Path 1 - Seeded
-  { id: "cod", name: "DR Congo", code: "COD", flag: "🇨🇩", confederation: "CAF", playoffPath: "1", playoffType: "intercontinental" },
+  { id: "cod", name: "DR Congo", code: "CD", flag: "🇨🇩", confederation: "CAF", playoffPath: "1", playoffType: "intercontinental" },
   // Path 1 - Unseeded (semi-final)
-  { id: "ncl", name: "New Caledonia", code: "NCL", flag: "🇳🇨", confederation: "OFC", playoffPath: "1", playoffType: "intercontinental" },
-  { id: "jam", name: "Jamaica", code: "JAM", flag: "🇯🇲", confederation: "CONCACAF", playoffPath: "1", playoffType: "intercontinental" },
+  { id: "ncl", name: "New Caledonia", code: "NC", flag: "🇳🇨", confederation: "OFC", playoffPath: "1", playoffType: "intercontinental" },
+  { id: "jam", name: "Jamaica", code: "JM", flag: "🇯🇲", confederation: "CONCACAF", playoffPath: "1", playoffType: "intercontinental" },
 
   // Path 2 - Seeded
-  { id: "irq", name: "Iraq", code: "IRQ", flag: "🇮🇶", confederation: "AFC", playoffPath: "2", playoffType: "intercontinental" },
+  { id: "irq", name: "Iraq", code: "IQ", flag: "🇮🇶", confederation: "AFC", playoffPath: "2", playoffType: "intercontinental" },
   // Path 2 - Unseeded (semi-final)
-  { id: "bol", name: "Bolivia", code: "BOL", flag: "🇧🇴", confederation: "CONMEBOL", playoffPath: "2", playoffType: "intercontinental" },
-  { id: "sur", name: "Suriname", code: "SUR", flag: "🇸🇷", confederation: "CONCACAF", playoffPath: "2", playoffType: "intercontinental" },
+  { id: "bol", name: "Bolivia", code: "BO", flag: "🇧🇴", confederation: "CONMEBOL", playoffPath: "2", playoffType: "intercontinental" },
+  { id: "sur", name: "Suriname", code: "SR", flag: "🇸🇷", confederation: "CONCACAF", playoffPath: "2", playoffType: "intercontinental" },
 ]
 
 // ============================================
