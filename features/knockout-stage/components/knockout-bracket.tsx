@@ -58,7 +58,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
         <div
           ref={containerRef}
           className={cn(
-            "overflow-auto rounded-xl bg-slate-50 border border-slate-200",
+            "overflow-auto rounded-xl bg-slate-50 border border-slate-200 dark:bg-slate-900 dark:border-slate-700",
             isDragging ? "cursor-grabbing" : "cursor-grab"
           )}
           style={{ maxHeight: "85vh" }}
@@ -85,7 +85,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Left R32 */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
                   Round of 32
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
@@ -116,7 +116,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Left R16 */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
                   Round of 16
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r16Gap}px`, paddingTop: `${r16Offset}px` }}>
@@ -149,7 +149,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Left QF */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
                   Quarter-Finals
                 </div>
                 <div className="flex flex-col" style={{ gap: `${qfGap + 80}px`, paddingTop: `${qfOffset}px` }}>
@@ -182,7 +182,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Left SF */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
                   Semi-Finals
                 </div>
                 <div style={{ paddingTop: `${sfOffset + 40}px` }}>
@@ -211,7 +211,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                     y1={matchHeight / 2}
                     x2={connectorWidth}
                     y2={matchHeight / 2}
-                    stroke="#94a3b8"
+                    className="stroke-slate-400 dark:stroke-slate-500"
                     strokeWidth="2"
                   />
                 </svg>
@@ -219,7 +219,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* CENTER - Final & 3rd Place */}
               <div className="flex flex-col items-center">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
                   Final
                 </div>
                 <div className="flex flex-col items-center gap-8" style={{ paddingTop: `${sfOffset - 230}px` }}>
@@ -230,8 +230,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         <Trophy className="h-10 w-10 text-amber-500" />
                         <TeamFlag code={teamsMap[champion].code} name={teamsMap[champion].name} width={160} height={50} widthImg={160} />
                         <div className="text-center">
-                          <div className="text-lg font-bold text-amber-600">{teamsMap[champion].name.toUpperCase()}</div>
-                          <div className="text-xs uppercase tracking-widest text-slate-500">World Champion</div>
+                          <div className="text-lg font-bold text-amber-600 dark:text-amber-400">{teamsMap[champion].name.toUpperCase()}</div>
+                          <div className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">World Champion</div>
                         </div>
                       </div>
                     )}
@@ -258,7 +258,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                     const placeholders = getMatchPlaceholders(third)
                     return (
                       <div className="mt-8">
-                        <div className="text-xs uppercase tracking-widest text-slate-400 text-center mb-2">3rd Place</div>
+                        <div className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 text-center mb-2">3rd Place</div>
                         <MatchCard
                           match={third}
                           team1={teamsMap[third.team1Id]}
@@ -282,7 +282,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                     y1={matchHeight / 2}
                     x2={connectorWidth}
                     y2={matchHeight / 2}
-                    stroke="#94a3b8"
+                    className="stroke-slate-400 dark:stroke-slate-500"
                     strokeWidth="2"
                   />
                 </svg>
@@ -290,7 +290,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Right SF */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
                   Semi-Finals
                 </div>
                 <div style={{ paddingTop: `${sfOffset + 40}px` }}>
@@ -324,7 +324,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Right QF */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
                   Quarter-Finals
                 </div>
                 <div className="flex flex-col" style={{ gap: `${qfGap + 80}px`, paddingTop: `${qfOffset}px` }}>
@@ -358,7 +358,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Right R16 */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
                   Round of 16
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r16Gap}px`, paddingTop: `${r16Offset}px` }}>
@@ -392,7 +392,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Right R32 */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 text-center mb-3 py-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
                   Round of 32
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
@@ -428,17 +428,17 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
             size="sm"
             onClick={() => setMobileRound(Math.max(0, mobileRound - 1))}
             disabled={mobileRound === 0}
-            className="text-slate-500"
+            className="text-slate-500 dark:text-slate-400"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <span className="font-semibold text-slate-700">{mobileRounds[mobileRound].title}</span>
+          <span className="font-semibold text-slate-700 dark:text-slate-200">{mobileRounds[mobileRound].title}</span>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setMobileRound(Math.min(mobileRounds.length - 1, mobileRound + 1))}
             disabled={mobileRound === mobileRounds.length - 1}
-            className="text-slate-500"
+            className="text-slate-500 dark:text-slate-400"
           >
             <ChevronRight className="h-5 w-5" />
           </Button>
@@ -452,7 +452,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               onClick={() => setMobileRound(idx)}
               className={cn(
                 "w-2 h-2 rounded-full transition-all",
-                idx === mobileRound ? "bg-amber-500 w-6" : "bg-slate-300",
+                idx === mobileRound ? "bg-amber-500 w-6" : "bg-slate-300 dark:bg-slate-600",
               )}
             />
           ))}
@@ -460,11 +460,11 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
         {/* Champion on mobile */}
         {mobileRound === 4 && champion && teamsMap[champion] && (
-          <div className="flex flex-col items-center gap-2 mb-6 p-4 rounded-lg bg-amber-50 border border-amber-400/50">
+          <div className="flex flex-col items-center gap-2 mb-6 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-400/50 dark:border-amber-500/30">
             <Trophy className="h-8 w-8 text-amber-500" />
             <span className="text-2xl">{teamsMap[champion].flag}</span>
-            <span className="font-bold text-amber-600">{teamsMap[champion].name}</span>
-            <span className="text-xs uppercase tracking-widest text-slate-500">World Champion</span>
+            <span className="font-bold text-amber-600 dark:text-amber-400">{teamsMap[champion].name}</span>
+            <span className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">World Champion</span>
           </div>
         )}
 
