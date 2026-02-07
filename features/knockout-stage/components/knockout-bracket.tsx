@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Trophy, ChevronLeft, ChevronRight } from "lucide-react"
+import { Trophy, ChevronLeft, ChevronRight, Dices, RotateCcw, Swords } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { KnockoutBracketProps } from "../types"
@@ -19,7 +19,7 @@ import { getMatchPlaceholders, getChampion } from "../utils/bracket-utils"
 import { TeamFlag } from "@/components/team-flag"
 
 
-export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, groupStandings, thirdPlaceRanking }: KnockoutBracketProps) {
+export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, groupStandings, thirdPlaceRanking, groupsComplete, resetKnockoutStage, simulateKnockoutStage }: KnockoutBracketProps) {
   const [zoom, setZoom] = useState(1)
   const [mobileRound, setMobileRound] = useState(0)
   const bracketRef = useRef<HTMLDivElement>(null)
@@ -52,6 +52,24 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
   return (
     <div className="space-y-6">
+      <div className="gap-2 flex flex-wrap justify-end min-h-[40px]">
+        {groupsComplete && (
+          <Button onClick={simulateKnockoutStage} className="gap-2 cursor-pointer" variant="default">
+            <Swords className="h-4 w-4" />
+            Simulate Knockout
+          </Button>
+        )}
+        <Button onClick={resetKnockoutStage} className="gap-2 cursor-pointer" variant="outline">
+          <RotateCcw className="h-4 w-4" />
+          Reset Knockout
+        </Button>
+      </div>
+      <div className="text-center space-y-2">
+        <h2 className="text-2xl font-bold">Knockout Stage</h2>
+        <p className="text-muted-foreground">
+          June 28-July 19, 2026 - Simulate results and determine the champion
+        </p>
+      </div>
       {/* Desktop View */}
       <div className="hidden lg:block">
         <ZoomControl zoom={zoom} setZoom={setZoom} />
