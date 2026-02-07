@@ -535,6 +535,11 @@ export function useTournament() {
     setActiveTab("groups")
   }
 
+  const resetGroupStage = () => {
+    setGroupMatches(generateGroupMatches())
+    setActiveTab("groups")
+  }
+
   const groupsComplete =
     qualifiedTeams.first.length === 12 && qualifiedTeams.second.length === 12 && qualifiedTeams.thirdBest.length === 8
 
@@ -556,7 +561,8 @@ export function useTournament() {
     simulateKnockoutStage,
     simulateTournament,
     generateKnockoutBracket,
-    resetTournament
+    resetTournament,
+    resetGroupStage
   }
 }
 
