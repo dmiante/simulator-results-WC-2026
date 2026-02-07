@@ -24,12 +24,6 @@ export default function ButtonSimulator({
           <Sparkles className="h-4 w-4" />
           Simulate All
         </Button>
-        {groupsComplete && (
-          <Button onClick={simulateKnockoutStage} className="gap-2" variant="secondary">
-            <Swords className="h-4 w-4" />
-            Simulate Knockout
-          </Button>
-        )}
         <Button variant="outline" onClick={resetTournament} className="gap-2 bg-transparent">
           <RotateCcw className="h-4 w-4" />
           Reset All
