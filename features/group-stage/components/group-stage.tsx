@@ -2,12 +2,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 import { MatchInput } from "@/features/group-stage/components/match-input"
 import { StandingsTable } from "@/features/group-stage/components/standings-table"
 
 import { GroupStageProps } from "../types"
 import { ThirdPlaceTable } from "./third-place-table"
+import { Dices, RotateCcw } from "lucide-react"
 
 
 export function GroupStage({
@@ -17,10 +19,28 @@ export function GroupStage({
   teamsMap,
   onScoreChange,
   qualifiedTeams,
-  thirdPlaceRanking
+  thirdPlaceRanking,
+  simulateGroupStage,
+  resetGroups
 }: GroupStageProps) {
   return (
     <div className="space-y-8">
+      <div className="gap-2 flex flex-wrap justify-end">
+        <Button onClick={simulateGroupStage} className="gap-2" variant="default">
+          <Dices className="h-4 w-4" />
+          Simulate Groups
+        </Button>
+        <Button onClick={resetGroups} className="gap-2 cursor-pointer" variant="outline">
+          <RotateCcw className="h-4 w-4" />
+          Reset Groups
+        </Button>
+      </div>
+      <div className="text-center space-y-2">
+        <h2 className="text-2xl font-bold">Group Stage</h2>
+        <p className="text-muted-foreground">
+          June 11–27, 2026 • Simulate results and determine the qualifiers
+        </p>
+      </div>
       {/* Progress indicator */}
       <div className="flex flex-wrap items-center gap-4 p-4 bg-muted/50 rounded-lg">
         <div className="flex items-center gap-2">
