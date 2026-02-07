@@ -11,9 +11,8 @@ export default function ButtonSimulator({
   groupsComplete,
   knockoutMatches,
   resetTournament,
-  simulatePlayoffs
 }: TournamentSimulatorProps) {
-  
+
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
       <div className="flex items-center gap-2">
@@ -25,25 +24,15 @@ export default function ButtonSimulator({
           <Sparkles className="h-4 w-4" />
           Simulate All
         </Button>
-        <Button onClick={simulateGroupStage} className="gap-2" variant="secondary">
-          <Dices className="h-4 w-4" />
-          Simulate Groups
-        </Button>
         {groupsComplete && (
           <Button onClick={simulateKnockoutStage} className="gap-2" variant="secondary">
             <Swords className="h-4 w-4" />
             Simulate Knockout
           </Button>
         )}
-        {groupsComplete && knockoutMatches.length === 0 && (
-          <Button onClick={generateKnockoutBracket} className="gap-2" variant="outline">
-            <GitBranch className="h-4 w-4" />
-            Generate Knockout
-          </Button>
-        )}
         <Button variant="outline" onClick={resetTournament} className="gap-2 bg-transparent">
           <RotateCcw className="h-4 w-4" />
-          Reset
+          Reset All
         </Button>
       </div>
     </div>
