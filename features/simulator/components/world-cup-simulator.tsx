@@ -41,7 +41,8 @@ export function WorldCupSimulator() {
     resetTournament: resetTournamentBase,
     simulateTournament: simulateTournamentBase,
     simulateGroupStage,
-    simulateKnockoutStage
+    simulateKnockoutStage,
+    resetGroupStage
   } = useTournament()
 
   // Create a dynamic teamsMap that replaces placeholders with playoff winners
@@ -133,6 +134,8 @@ export function WorldCupSimulator() {
               onScoreChange={handleScoreChange}
               qualifiedTeams={qualifiedTeams}
               thirdPlaceRanking={thirdPlaceRanking}
+              simulateGroupStage={simulateGroupStage}
+              resetGroups={resetGroupStage}
             />
           </TabsContent>
 
