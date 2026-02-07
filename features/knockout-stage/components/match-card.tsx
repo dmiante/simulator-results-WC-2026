@@ -28,20 +28,20 @@ export function MatchCard({
 }) {
   const isTeam1TBD = !team1 || team1.name === "TBD"
   const isTeam2TBD = !team2 || team2.name === "TBD"
-  
+
   // Check if we have resolved teams from group stage
   const hasResolvedTeam1 = resolvedTeam1 && isTeam1TBD
   const hasResolvedTeam2 = resolvedTeam2 && isTeam2TBD
-  
+
   // Determine if inputs should be disabled - only disable if TBD AND no resolved team
   const isTeam1InputDisabled = isTeam1TBD && !hasResolvedTeam1
   const isTeam2InputDisabled = isTeam2TBD && !hasResolvedTeam2
-  
+
   // Display text for teams - show resolved team if available, otherwise placeholder
-  const team1Display = isTeam1TBD 
+  const team1Display = isTeam1TBD
     ? (hasResolvedTeam1 ? resolvedTeam1.name : (placeholder1 || "TBD"))
     : team1.name
-  const team2Display = isTeam2TBD 
+  const team2Display = isTeam2TBD
     ? (hasResolvedTeam2 ? resolvedTeam2.name : (placeholder2 || "TBD"))
     : team2.name
 
@@ -58,10 +58,10 @@ export function MatchCard({
     <div
       className={cn(
         "rounded-lg border-2 overflow-hidden transition-all",
-        "bg-white border-slate-300",
-        isFinal && "border-amber-500/70 shadow-lg shadow-amber-500/20",
-        isThirdPlace && "border-orange-500/50",
-        !isFinal && !isThirdPlace && "hover:border-slate-400",
+        "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600",
+        isFinal && "border-amber-500/70 dark:border-amber-500/50 shadow-lg shadow-amber-500/20",
+        isThirdPlace && "border-orange-500/50 dark:border-orange-500/40",
+        !isFinal && !isThirdPlace && "hover:border-slate-400 dark:hover:border-slate-500",
       )}
       style={{ width: "220px", height: "87px" }}
     >
@@ -69,9 +69,9 @@ export function MatchCard({
         {/* Team 1 */}
         <div
           className={cn(
-            "flex items-center justify-between px-3 py-2 border-b border-slate-200 h-1/2",
-            winner === "team1" && "bg-emerald-100",
-            hasResolvedTeam1 && !winner && "bg-white",
+            "flex items-center justify-between px-3 py-2 border-b border-slate-200 dark:border-slate-600 h-1/2",
+            winner === "team1" && "bg-emerald-100 dark:bg-emerald-900/40",
+            hasResolvedTeam1 && !winner && "bg-white dark:bg-slate-800",
           )}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -80,10 +80,10 @@ export function MatchCard({
             )}
             <span
               className={cn(
-                "text-sm font-medium text-slate-700",
-                isTeam1TBD && !hasResolvedTeam1 && "text-slate-400 italic",
+                "text-sm font-medium text-slate-700 dark:text-slate-200",
+                isTeam1TBD && !hasResolvedTeam1 && "text-slate-400 dark:text-slate-500 italic",
                 hasResolvedTeam1 && "font-semibold",
-                winner === "team1" && "font-bold text-emerald-600",
+                winner === "team1" && "font-bold text-emerald-600 dark:text-emerald-400",
               )}
               title={hasResolvedTeam1 ? `${placeholder1}: ${resolvedTeam1.name}` : undefined}
             >
@@ -100,8 +100,8 @@ export function MatchCard({
               onScoreChange(match.id, "team1", val)
             }}
             className={cn(
-              "w-12 h-7 text-center text-sm p-0 font-bold bg-slate-100 border-slate-300 text-slate-800",
-              winner === "team1" && "bg-emerald-100 border-emerald-400",
+              "w-12 h-7 text-center text-sm p-0 font-bold bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-500 text-slate-800 dark:text-slate-100",
+              winner === "team1" && "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-400 dark:border-emerald-500",
             )}
             placeholder="-"
             disabled={isTeam1InputDisabled}
@@ -111,9 +111,9 @@ export function MatchCard({
         {/* Team 2 */}
         <div
           className={cn(
-            "flex items-center justify-between px-3 py-2 h-1/2", 
-            winner === "team2" && "bg-emerald-100",
-            hasResolvedTeam2 && !winner && "bg-white",
+            "flex items-center justify-between px-3 py-2 h-1/2",
+            winner === "team2" && "bg-emerald-100 dark:bg-emerald-900/40",
+            hasResolvedTeam2 && !winner && "bg-white dark:bg-slate-800",
           )}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -122,10 +122,10 @@ export function MatchCard({
             )}
             <span
               className={cn(
-                "text-sm font-medium text-slate-700",
-                isTeam2TBD && !hasResolvedTeam2 && "text-slate-400 italic",
+                "text-sm font-medium text-slate-700 dark:text-slate-200",
+                isTeam2TBD && !hasResolvedTeam2 && "text-slate-400 dark:text-slate-500 italic",
                 hasResolvedTeam2 && "font-semibold",
-                winner === "team2" && "font-bold text-emerald-600",
+                winner === "team2" && "font-bold text-emerald-600 dark:text-emerald-400",
               )}
               title={hasResolvedTeam2 ? `${placeholder2}: ${resolvedTeam2.name}` : undefined}
             >
@@ -142,8 +142,8 @@ export function MatchCard({
               onScoreChange(match.id, "team2", val)
             }}
             className={cn(
-              "w-12 h-7 text-center text-sm p-0 font-bold bg-slate-100 border-slate-300 text-slate-800",
-              winner === "team2" && "bg-emerald-100 border-emerald-400",
+              "w-12 h-7 text-center text-sm p-0 font-bold bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-500 text-slate-800 dark:text-slate-100",
+              winner === "team2" && "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-400 dark:border-emerald-500",
             )}
             placeholder="-"
             disabled={isTeam2InputDisabled}

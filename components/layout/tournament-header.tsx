@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge"
+import { DarkModeButton } from "../dark-mode-button"
 
 export function TournamentHeader() {
   return (
@@ -23,6 +24,7 @@ export function TournamentHeader() {
               104 Matches
             </Badge>
             <Badge className="text-xs bg-primary text-primary-foreground">Simulator</Badge>
+            <DarkModeButton />
           </div>
         </div>
       </div>
