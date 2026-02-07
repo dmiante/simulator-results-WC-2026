@@ -11,4 +11,7 @@ export interface KnockoutBracketProps {
     qualified: (GroupStanding & { group: string })[]
     eliminated: (GroupStanding & { group: string })[]
   }
+  groupsComplete: boolean
+  simulateKnockoutStage: () => void
+  resetKnockoutStage: () => void
 }
