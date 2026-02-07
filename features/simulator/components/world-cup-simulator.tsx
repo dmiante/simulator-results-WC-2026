@@ -42,7 +42,8 @@ export function WorldCupSimulator() {
     simulateTournament: simulateTournamentBase,
     simulateGroupStage,
     simulateKnockoutStage,
-    resetGroupStage
+    resetGroupStage,
+    resetKnockoutStage
   } = useTournament()
 
   // Create a dynamic teamsMap that replaces placeholders with playoff winners
@@ -91,13 +92,13 @@ export function WorldCupSimulator() {
       <div className="container mx-auto px-4 py-6">
         <ButtonSimulator
           generateKnockoutBracket={generateKnockoutBracket}
-          groupsComplete={groupsComplete}
           resetTournament={resetTournament}
           simulateTournament={simulateTournament}
           simulateGroupStage={simulateGroupStage}
           simulateKnockoutStage={simulateKnockoutStage}
           knockoutMatches={knockoutMatches}
           simulatePlayoffs={simulatePlayoffs}
+          groupsComplete={groupsComplete}
         />
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full max-w-xl grid-cols-3">
@@ -147,6 +148,9 @@ export function WorldCupSimulator() {
               onScoreChange={handleKnockoutScoreChange}
               groupStandings={groupStandings}
               thirdPlaceRanking={thirdPlaceRanking}
+              groupsComplete={groupsComplete}
+              simulateKnockoutStage={simulateKnockoutStage}
+              resetKnockoutStage={resetKnockoutStage}
             />
           </TabsContent>
         </Tabs>
