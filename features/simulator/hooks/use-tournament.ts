@@ -300,7 +300,7 @@ export function useTournament() {
 
   const [groupMatches, setGroupMatches] = useState<Match[]>(() => generateGroupMatches())
   const [knockoutMatches, setKnockoutMatches] = useState<Match[]>(() => generateEmptyKnockoutBracket())
-  const [activeTab, setActiveTab] = useState("groups")
+  const [activeTab, setActiveTab] = useState("playoffs")
 
   const teamsMap = useMemo(() => {
     const map: Record<string, Team> = {}
