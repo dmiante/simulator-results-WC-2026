@@ -12,6 +12,8 @@ export interface GroupStageProps {
     qualified: (GroupStanding & { group: string })[]
     eliminated: (GroupStanding & { group: string })[]
   }
+  simulateGroupStage: () => void
+  resetGroups: () => void
 }
 
 export interface MatchInputProps {
