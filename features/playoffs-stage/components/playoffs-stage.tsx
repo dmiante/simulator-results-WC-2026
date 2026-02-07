@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { PlayoffMatch, UEFAPlayoffPath, ICPlayoffPath, PlayoffTeam } from "../types"
 import { usePlayoffs } from "../hooks/use-playoffs"
-import { Trophy, Calendar, MapPin } from "lucide-react"
+import { Trophy, Calendar, MapPin, Dices, RotateCcw } from "lucide-react"
 import { TeamFlag } from "@/components/team-flag"
 
 
@@ -297,20 +297,26 @@ interface PlayoffsStageProps {
   playoffsState?: ReturnType<typeof usePlayoffs>['playoffsState']
   onMatchScoreChange?: (matchId: string, team: "team1" | "team2", score: number | null) => void
   onPenaltyWinner?: (matchId: string, winnerId: string) => void
+  simulatePlayoffs?: () => void
+  resetPlayoffs?: () => void
 }
 
-export function PlayoffsStage({ 
-  playoffsState: externalState, 
+export function PlayoffsStage({
+  playoffsState: externalState,
   onMatchScoreChange: externalScoreChange,
-  onPenaltyWinner: externalPenaltyWinner 
+  onPenaltyWinner: externalPenaltyWinner,
+  simulatePlayoffs: externalSimulate,
+  resetPlayoffs: externalReset
 }: PlayoffsStageProps = {}) {
-  const internalHook = usePlayoffs()
-  
+  const { simulatePlayoffs: internalSimulate, resetPlayoffs: internalReset, playoffsState: internalState, handleMatchScoreChange: handleScore, handlePenaltyWinner: handlePenalty } = usePlayoffs()
+
   // Use external state/handlers if provided, otherwise use internal hook
-  const playoffsState = externalState || internalHook.playoffsState
-  const handleMatchScoreChange = externalScoreChange || internalHook.handleMatchScoreChange
-  const handlePenaltyWinner = externalPenaltyWinner || internalHook.handlePenaltyWinner
-  
+  const playoffsState = externalState || internalState
+  const handleMatchScoreChange = externalScoreChange || handleScore
+  const handlePenaltyWinner = externalPenaltyWinner || handlePenalty
+  const simulatePlayoffs = externalSimulate || internalSimulate
+  const resetPlayoffs = externalReset || internalReset
+
   const { uefaPaths, icPaths, playoffTeams, winners } = playoffsState
 
   const getTeam = (id: string | null): PlayoffTeam | undefined => {
@@ -320,7 +326,20 @@ export function PlayoffsStage({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      <div className="gap-2 flex flex-wrap justify-end">
+        {simulatePlayoffs && (
+          <>
+            <Button onClick={simulatePlayoffs} className="gap-2 cursor-pointer" variant="default">
+              <Dices className="h-4 w-4" />
+              Simulate Playoffs
+            </Button>
+            <Button onClick={resetPlayoffs} className="gap-2 cursor-pointer" variant="outline">
+              <RotateCcw className="h-4 w-4" />
+              Reset Playoffs
+            </Button>
+          </>
+        )}
+      </div>
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold">Qualification Playoffs</h2>
         <p className="text-muted-foreground">
@@ -384,7 +403,7 @@ export function PlayoffsStage({
               const winnerTeam = winnerId ? getTeam(winnerId) : null
               const isUefa = slotId.startsWith("uefa")
               const pathLetter = slotId.replace("uefa", "").replace("icp", "")
-              
+
               return (
                 <div
                   key={slotId}

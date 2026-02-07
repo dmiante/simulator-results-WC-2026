@@ -47,7 +47,7 @@ export function WorldCupSimulator() {
   // Create a dynamic teamsMap that replaces placeholders with playoff winners
   const teamsMap = useMemo(() => {
     const map: Record<string, Team> = { ...baseTeamsMap }
-    
+
     // Map playoff slot IDs to their winner team data
     const playoffTeamsById: Record<string, Team> = {}
     playoffsState.playoffTeams.forEach((team) => {
@@ -115,10 +115,12 @@ export function WorldCupSimulator() {
           </TabsList>
 
           <TabsContent value="playoffs" className="mt-6">
-            <PlayoffsStage 
+            <PlayoffsStage
               playoffsState={playoffsState}
               onMatchScoreChange={handlePlayoffScoreChange}
               onPenaltyWinner={handlePlayoffPenaltyWinner}
+              simulatePlayoffs={simulatePlayoffs}
+              resetPlayoffs={resetPlayoffs}
             />
           </TabsContent>
 

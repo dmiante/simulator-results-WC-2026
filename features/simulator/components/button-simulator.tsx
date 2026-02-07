@@ -25,12 +25,6 @@ export default function ButtonSimulator({
           <Sparkles className="h-4 w-4" />
           Simulate All
         </Button>
-        {simulatePlayoffs && (
-          <Button onClick={simulatePlayoffs} className="gap-2" variant="secondary">
-            <Flag className="h-4 w-4" />
-            Simulate Playoffs
-          </Button>
-        )}
         <Button onClick={simulateGroupStage} className="gap-2" variant="secondary">
           <Dices className="h-4 w-4" />
           Simulate Groups
