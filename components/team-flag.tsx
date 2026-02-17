@@ -1,29 +1,33 @@
 import Image from "next/image";
 import { useState } from "react";
 
-export function TeamFlag({ code, name, width = 30, height = 30, widthImg = 40 }: { code: string; name: string; width?: number; height?: number; widthImg?: number }) {
+export function TeamFlag({ code, name, width = 30, widthImg = 40 }: { code: string; name: string; width?: number; widthImg?: number }) {
   const [error, setError] = useState(false);
-  
+
   if (error) {
     return (
-      <Image 
-        src={`/fifa_flag.svg`}
-        alt={name}
-        width={width}
-        height={height}
-        unoptimized
-      />
+      <div style={{ position: "relative", width: `${width}px`, height: `${width * 0.67}px` }}>
+        <Image
+          src={`/fifa_flag.svg`}
+          alt={name}
+          fill
+          style={{ objectFit: "contain" }}
+          unoptimized
+        />
+      </div>
     )
   }
 
   return (
-      <Image 
-        src={`https://flagcdn.com/${`w${widthImg}`}/${code.toLowerCase()}.png`}
+    <div style={{ position: "relative", width: `${width}px`, height: `${width * 0.67}px` }}>
+      <Image
+        src={`https://flagcdn.com/w${widthImg}/${code.toLowerCase()}.png`}
         alt={name}
-        width={width}
-        height={height}
+        fill
+        style={{ objectFit: "contain" }}
         onError={() => setError(true)}
         unoptimized
       />
+    </div>
   )
 }
