@@ -26,7 +26,7 @@ export function GroupStage({
   return (
     <div className="space-y-8">
       <div className="gap-2 flex flex-wrap justify-end">
-        <Button onClick={simulateGroupStage} className="gap-2" variant="default">
+        <Button onClick={simulateGroupStage} className="gap-2 cursor-pointer" variant="default">
           <Dices className="h-4 w-4" />
           Simulate Groups
         </Button>

@@ -446,7 +446,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
             size="sm"
             onClick={() => setMobileRound(Math.max(0, mobileRound - 1))}
             disabled={mobileRound === 0}
-            className="text-slate-500 dark:text-slate-400"
+            className="text-slate-500 dark:text-slate-400 cursor-pointer"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -456,7 +456,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
             size="sm"
             onClick={() => setMobileRound(Math.min(mobileRounds.length - 1, mobileRound + 1))}
             disabled={mobileRound === mobileRounds.length - 1}
-            className="text-slate-500 dark:text-slate-400"
+            className="text-slate-500 dark:text-slate-400 cursor-pointer"
           >
             <ChevronRight className="h-5 w-5" />
           </Button>

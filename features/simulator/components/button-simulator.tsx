@@ -20,11 +20,11 @@ export default function ButtonSimulator({
         <h2 className="text-xl font-semibold text-foreground">Tournament Simulator</h2>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Button onClick={simulateTournament} className="gap-2" variant="default">
+        <Button onClick={simulateTournament} className="gap-2 cursor-pointer" variant="default">
           <Sparkles className="h-4 w-4" />
           Simulate All
         </Button>
-        <Button variant="outline" onClick={resetTournament} className="gap-2 bg-transparent">
+        <Button variant="outline" onClick={resetTournament} className="gap-2 bg-transparent cursor-pointer">
           <RotateCcw className="h-4 w-4" />
           Reset All
         </Button>

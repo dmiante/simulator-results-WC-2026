@@ -145,7 +145,7 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
           <Button
             size="sm"
             variant={match.penaltyWinnerId === team1.id ? "default" : "outline"}
-            className="h-6 text-xs px-2"
+            className="h-6 text-xs px-2 cursor-pointer"
             onClick={() => onPenaltyWinner(match.id, team1.id)}
           >
             {team1.code}
@@ -153,7 +153,7 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
           <Button
             size="sm"
             variant={match.penaltyWinnerId === team2.id ? "default" : "outline"}
-            className="h-6 text-xs px-2"
+            className="h-6 text-xs px-2 cursor-pointer"
             onClick={() => onPenaltyWinner(match.id, team2.id)}
           >
             {team2.code}
