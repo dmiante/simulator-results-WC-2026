@@ -246,7 +246,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                     {champion && teamsMap[champion] && (
                       <div className="flex flex-col items-center gap-6 animate-in fade-in duration-500">
                         <Trophy className="h-10 w-10 text-amber-500" />
-                        <TeamFlag code={teamsMap[champion].code} name={teamsMap[champion].name} width={160} height={50} widthImg={160} />
+                        <TeamFlag code={teamsMap[champion].code} name={teamsMap[champion].name} width={160} widthImg={160} />
                         <div className="text-center">
                           <div className="text-lg font-bold text-amber-600 dark:text-amber-400">{teamsMap[champion].name.toUpperCase()}</div>
                           <div className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">World Champion</div>
