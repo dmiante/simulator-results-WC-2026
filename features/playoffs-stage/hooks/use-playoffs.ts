@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useEffect } from "react"
 import { PlayoffsState, PlayoffMatch, UEFAPlayoffPath, ICPlayoffPath } from "../types"
 import { initialPlayoffsState } from "@/db/playoffs-data"
 
@@ -45,8 +45,32 @@ function simulatePlayoffMatch(team1Id: string | null, team2Id: string | null): {
   return { score1, score2 }
 }
 
+// localStorage key for persistence
+const STORAGE_KEY_PLAYOFFS = "wc2026-playoffs-state"
+
 export function usePlayoffs() {
   const [playoffsState, setPlayoffsState] = useState<PlayoffsState>(initialPlayoffsState)
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  // Load from localStorage after hydration (client-side only)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_PLAYOFFS)
+      if (saved) {
+        setPlayoffsState(JSON.parse(saved))
+      }
+    } catch {
+      // Si hay error de parsing, mantener datos por defecto
+    }
+    setIsHydrated(true)
+  }, [])
+
+  // Persist playoffsState to localStorage (only after hydration)
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem(STORAGE_KEY_PLAYOFFS, JSON.stringify(playoffsState))
+    }
+  }, [playoffsState, isHydrated])
 
   // Calculate winners based on current match results
   const calculatedWinners = useMemo(() => {
@@ -249,7 +273,8 @@ export function usePlayoffs() {
     })
   }, [updateFinalsWithWinners])
 
-  const resetPlayoffs = useCallback(() => {
+const resetPlayoffs = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY_PLAYOFFS)
     setPlayoffsState(initialPlayoffsState)
   }, [])
 

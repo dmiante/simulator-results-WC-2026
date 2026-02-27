@@ -1,7 +1,7 @@
 import { calculateStandings, generateGroupMatches } from "@/db/matches"
 import { groups, teams, r32Placeholders } from "@/db/tournament-data"
 import { GroupStanding, Match, Team } from "@/lib/types"
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { 
   assignThirdPlaceTeams,
   type ThirdPlaceTeam 
@@ -223,6 +223,10 @@ function simulateAllKnockoutMatches(round32Matches: Match[]): Match[] {
   ]
 }
 
+// localStorage keys for persistence
+const STORAGE_KEY_GROUP = "wc2026-group-matches"
+const STORAGE_KEY_KNOCKOUT = "wc2026-knockout-matches"
+
 // Generate empty knockout bracket structure
 function generateEmptyKnockoutBracket(): Match[] {
   const round32Matches: Match[] = Array.from({ length: 16 }, (_, i) => ({
@@ -301,6 +305,38 @@ export function useTournament() {
   const [groupMatches, setGroupMatches] = useState<Match[]>(() => generateGroupMatches())
   const [knockoutMatches, setKnockoutMatches] = useState<Match[]>(() => generateEmptyKnockoutBracket())
   const [activeTab, setActiveTab] = useState("playoffs")
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  // Load from localStorage after hydration (client-side only)
+  useEffect(() => {
+    try {
+      const savedGroup = localStorage.getItem(STORAGE_KEY_GROUP)
+      if (savedGroup) {
+        setGroupMatches(JSON.parse(savedGroup))
+      }
+      const savedKnockout = localStorage.getItem(STORAGE_KEY_KNOCKOUT)
+      if (savedKnockout) {
+        setKnockoutMatches(JSON.parse(savedKnockout))
+      }
+    } catch {
+      // Si hay error de parsing, mantener datos por defecto
+    }
+    setIsHydrated(true)
+  }, [])
+
+  // Persist groupMatches to localStorage (only after hydration)
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem(STORAGE_KEY_GROUP, JSON.stringify(groupMatches))
+    }
+  }, [groupMatches, isHydrated])
+
+  // Persist knockoutMatches to localStorage (only after hydration)
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem(STORAGE_KEY_KNOCKOUT, JSON.stringify(knockoutMatches))
+    }
+  }, [knockoutMatches, isHydrated])
 
   const teamsMap = useMemo(() => {
     const map: Record<string, Team> = {}
@@ -529,18 +565,22 @@ export function useTournament() {
     setActiveTab("knockout")
   }
 
-  const resetTournament = () => {
+const resetTournament = () => {
+    localStorage.removeItem(STORAGE_KEY_GROUP)
+    localStorage.removeItem(STORAGE_KEY_KNOCKOUT)
     setGroupMatches(generateGroupMatches())
     setKnockoutMatches(generateEmptyKnockoutBracket())
     setActiveTab("playoffs")
   }
 
   const resetGroupStage = () => {
+    localStorage.removeItem(STORAGE_KEY_GROUP)
     setGroupMatches(generateGroupMatches())
     setActiveTab("groups")
   }
 
   const resetKnockoutStage = () => {
+    localStorage.removeItem(STORAGE_KEY_KNOCKOUT)
     setKnockoutMatches(generateEmptyKnockoutBracket())
     setActiveTab("knockout")
   }
