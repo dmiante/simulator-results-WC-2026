@@ -312,7 +312,18 @@ export function useTournament() {
     try {
       const savedGroup = localStorage.getItem(STORAGE_KEY_GROUP)
       if (savedGroup) {
-        setGroupMatches(JSON.parse(savedGroup))
+        const parsed: Match[] = JSON.parse(savedGroup)
+        // Migrate stale localStorage data: backfill dateTime/venue from fresh match data
+        const freshMatches = generateGroupMatches()
+        const freshById = new Map(freshMatches.map(m => [m.id, m]))
+        const migrated = parsed.map(m => {
+          const fresh = freshById.get(m.id)
+          if (fresh && !m.dateTime) {
+            return { ...m, dateTime: fresh.dateTime, venue: fresh.venue }
+          }
+          return m
+        })
+        setGroupMatches(migrated)
       }
       const savedKnockout = localStorage.getItem(STORAGE_KEY_KNOCKOUT)
       if (savedKnockout) {
