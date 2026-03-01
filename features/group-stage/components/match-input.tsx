@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { MatchInputProps } from "../types"
 import { TeamFlag } from "@/components/team-flag"
+import { MatchDateTime } from "@/components/match-datetime"
 
 export function MatchInput({ match, team1, team2, onScoreChange, compact = false }: MatchInputProps) {
   const handleChange = (team: "team1" | "team2", value: string) => {
@@ -30,73 +31,85 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
     )
   }
 
+  const hasMatchInfo = match.dateTime || match.venue
+
   return (
-    <div
-      className={cn(
-        "flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors",
-        compact && "p-1.5",
-      )}
-    >
-      {/* Team 1 */}
-      <div className={cn("flex items-center gap-2 flex-1 min-w-0", winner === "team1" && "font-semibold")}>
-        <TeamFlag code={team1.code} name={team1.name} />
-        <span
-          className={cn(
-            "text-sm truncate text-foreground",
-            compact && "text-xs",
-            winner === "team2" && "text-muted-foreground",
-          )}
-        >
-          {team1.name}
-        </span>
-      </div>
-
-      {/* Score inputs */}
-      <div className="flex items-center gap-1">
-        <Input
-          type="number"
-          min={0}
-          max={99}
-          value={match.team1Score ?? ""}
-          onChange={(e) => handleChange("team1", e.target.value)}
-          className={cn(
-            "w-10 h-8 text-center p-0 text-sm font-medium",
-            compact && "w-8 h-7 text-xs",
-            winner === "team1" && "border-green-500 bg-green-500/10",
-          )}
-          placeholder="-"
-        />
-        <span className="text-muted-foreground text-xs">:</span>
-        <Input
-          type="number"
-          min={0}
-          max={99}
-          value={match.team2Score ?? ""}
-          onChange={(e) => handleChange("team2", e.target.value)}
-          className={cn(
-            "w-10 h-8 text-center p-0 text-sm font-medium",
-            compact && "w-8 h-7 text-xs",
-            winner === "team2" && "border-green-500 bg-green-500/10",
-          )}
-          placeholder="-"
-        />
-      </div>
-
-      {/* Team 2 */}
+    <div className="space-y-1">
       <div
-        className={cn("flex items-center gap-2 flex-1 min-w-0 justify-end", winner === "team2" && "font-semibold")}
+        className={cn(
+          "flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors",
+          compact && "p-1.5",
+        )}
       >
-        <span
-          className={cn(
-            "text-sm truncate text-foreground",
-            compact && "text-xs",
-            winner === "team1" && "text-muted-foreground",
-          )}
+        {/* Team 1 */}
+        <div className={cn("flex items-center gap-2 flex-1 min-w-0", winner === "team1" && "font-semibold")}>
+          <TeamFlag code={team1.code} name={team1.name} />
+          <span
+            className={cn(
+              "text-sm truncate text-foreground",
+              compact && "text-xs",
+              winner === "team2" && "text-muted-foreground",
+            )}
+          >
+            {team1.name}
+          </span>
+        </div>
+
+        {/* Score inputs */}
+        <div className="flex items-center gap-1">
+          <Input
+            type="number"
+            min={0}
+            max={99}
+            value={match.team1Score ?? ""}
+            onChange={(e) => handleChange("team1", e.target.value)}
+            className={cn(
+              "w-10 h-8 text-center p-0 text-sm font-medium",
+              compact && "w-8 h-7 text-xs",
+              winner === "team1" && "border-green-500 bg-green-500/10",
+            )}
+            placeholder="-"
+          />
+          <span className="text-muted-foreground text-xs">:</span>
+          <Input
+            type="number"
+            min={0}
+            max={99}
+            value={match.team2Score ?? ""}
+            onChange={(e) => handleChange("team2", e.target.value)}
+            className={cn(
+              "w-10 h-8 text-center p-0 text-sm font-medium",
+              compact && "w-8 h-7 text-xs",
+              winner === "team2" && "border-green-500 bg-green-500/10",
+            )}
+            placeholder="-"
+          />
+        </div>
+
+        {/* Team 2 */}
+        <div
+          className={cn("flex items-center gap-2 flex-1 min-w-0 justify-end", winner === "team2" && "font-semibold")}
         >
-          {team2.name}
-        </span>
-        <TeamFlag code={team2.code} name={team2.name} />
+          <span
+            className={cn(
+              "text-sm truncate text-foreground",
+              compact && "text-xs",
+              winner === "team1" && "text-muted-foreground",
+            )}
+          >
+            {team2.name}
+          </span>
+          <TeamFlag code={team2.code} name={team2.name} />
+        </div>
       </div>
+
+      {/* Match info row */}
+      {hasMatchInfo && !compact && (
+        <div className="flex items-center justify-between px-2 text-xs text-muted-foreground/70">
+          {match.dateTime && <MatchDateTime dateTime={match.dateTime} />}
+          {match.venue && <span className="truncate ml-2">{match.venue}</span>}
+        </div>
+      )}
     </div>
   )
 }

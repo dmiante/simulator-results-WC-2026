@@ -3,65 +3,65 @@ import { Team, ThirdPlaceCombination } from "../lib/types"
 // Note: 6 spots TBD (4 UEFA playoffs + 2 intercontinental playoffs)
 export const teams: Team[] = [
   // Group A
-  { id: "mex", name: "Mexico", code: "MX", flag: "🇲🇽", confederation: "CONCACAF" },
-  { id: "rsa", name: "South Africa", code: "ZA", flag: "🇿🇦", confederation: "CAF" },
-  { id: "kor", name: "South Korea", code: "KR", flag: "🇰🇷", confederation: "AFC" },
-  { id: "uefad", name: "UEFA Path D Winner", code: "XX", flag: "🏳️", confederation: "UEFA" },
+  { id: "mex", name: "Mexico", code: "MX", flag: "ðŸ‡²ðŸ‡½", confederation: "CONCACAF" },
+  { id: "rsa", name: "South Africa", code: "ZA", flag: "ðŸ‡¿ðŸ‡¦", confederation: "CAF" },
+  { id: "kor", name: "South Korea", code: "KR", flag: "ðŸ‡°ðŸ‡·", confederation: "AFC" },
+  { id: "uefad", name: "UEFA Path D Winner", code: "XX", flag: "ðŸ³ï¸", confederation: "UEFA" },
   // Group B
-  { id: "can", name: "Canada", code: "CA", flag: "🇨🇦", confederation: "CONCACAF" },
-  { id: "uefaa", name: "UEFA Path A Winner", code: "XX", flag: "🏳️", confederation: "UEFA" },
-  { id: "qat", name: "Qatar", code: "QA", flag: "🇶🇦", confederation: "AFC" },
-  { id: "sui", name: "Switzerland", code: "CH", flag: "🇨🇭", confederation: "UEFA" },
+  { id: "can", name: "Canada", code: "CA", flag: "ðŸ‡¨ðŸ‡¦", confederation: "CONCACAF" },
+  { id: "uefaa", name: "UEFA Path A Winner", code: "XX", flag: "ðŸ³ï¸", confederation: "UEFA" },
+  { id: "qat", name: "Qatar", code: "QA", flag: "ðŸ‡¶ðŸ‡¦", confederation: "AFC" },
+  { id: "sui", name: "Switzerland", code: "CH", flag: "ðŸ‡¨ðŸ‡­", confederation: "UEFA" },
   // Group C
-  { id: "bra", name: "Brazil", code: "BR", flag: "🇧🇷", confederation: "CONMEBOL" },
-  { id: "mar", name: "Morocco", code: "MA", flag: "🇲🇦", confederation: "CAF" },
-  { id: "hai", name: "Haiti", code: "HT", flag: "🇭🇹", confederation: "CONCACAF" },
-  { id: "sco", name: "Scotland", code: "GB-SCT", flag: "🏴", confederation: "UEFA" },
+  { id: "bra", name: "Brazil", code: "BR", flag: "ðŸ‡§ðŸ‡·", confederation: "CONMEBOL" },
+  { id: "mar", name: "Morocco", code: "MA", flag: "ðŸ‡²ðŸ‡¦", confederation: "CAF" },
+  { id: "hai", name: "Haiti", code: "HT", flag: "ðŸ‡­ðŸ‡¹", confederation: "CONCACAF" },
+  { id: "sco", name: "Scotland", code: "GB-SCT", flag: "ðŸ´", confederation: "UEFA" },
   // Group D
-  { id: "usa", name: "United States", code: "US", flag: "🇺🇸", confederation: "CONCACAF" },
-  { id: "par", name: "Paraguay", code: "PY", flag: "🇵🇾", confederation: "CONMEBOL" },
-  { id: "aus", name: "Australia", code: "AU", flag: "🇦🇺", confederation: "AFC" },
-  { id: "uefac", name: "UEFA Path C Winner", code: "XX", flag: "🏳️", confederation: "UEFA" },
+  { id: "usa", name: "United States", code: "US", flag: "ðŸ‡ºðŸ‡¸", confederation: "CONCACAF" },
+  { id: "par", name: "Paraguay", code: "PY", flag: "ðŸ‡µðŸ‡¾", confederation: "CONMEBOL" },
+  { id: "aus", name: "Australia", code: "AU", flag: "ðŸ‡¦ðŸ‡º", confederation: "AFC" },
+  { id: "uefac", name: "UEFA Path C Winner", code: "XX", flag: "ðŸ³ï¸", confederation: "UEFA" },
   // Group E
-  { id: "ger", name: "Germany", code: "DE", flag: "🇩🇪", confederation: "UEFA" },
-  { id: "cur", name: "Curaçao", code: "CW", flag: "🇨🇼", confederation: "CONCACAF" },
-  { id: "civ", name: "Ivory Coast", code: "CI", flag: "🇨🇮", confederation: "CAF" },
-  { id: "ecu", name: "Ecuador", code: "EC", flag: "🇪🇨", confederation: "CONMEBOL" },
+  { id: "ger", name: "Germany", code: "DE", flag: "ðŸ‡©ðŸ‡ª", confederation: "UEFA" },
+  { id: "cur", name: "CuraÃ§ao", code: "CW", flag: "ðŸ‡¨ðŸ‡¼", confederation: "CONCACAF" },
+  { id: "civ", name: "Ivory Coast", code: "CI", flag: "ðŸ‡¨ðŸ‡®", confederation: "CAF" },
+  { id: "ecu", name: "Ecuador", code: "EC", flag: "ðŸ‡ªðŸ‡¨", confederation: "CONMEBOL" },
   // Group F
-  { id: "ned", name: "Netherlands", code: "NL", flag: "🇳🇱", confederation: "UEFA" },
-  { id: "jpn", name: "Japan", code: "JP", flag: "🇯🇵", confederation: "AFC" },
-  { id: "uefab", name: "UEFA Path B Winner", code: "XX", flag: "🏳️", confederation: "UEFA" },
-  { id: "tun", name: "Tunisia", code: "TN", flag: "🇹🇳", confederation: "CAF" },
+  { id: "ned", name: "Netherlands", code: "NL", flag: "ðŸ‡³ðŸ‡±", confederation: "UEFA" },
+  { id: "jpn", name: "Japan", code: "JP", flag: "ðŸ‡¯ðŸ‡µ", confederation: "AFC" },
+  { id: "uefab", name: "UEFA Path B Winner", code: "XX", flag: "ðŸ³ï¸", confederation: "UEFA" },
+  { id: "tun", name: "Tunisia", code: "TN", flag: "ðŸ‡¹ðŸ‡³", confederation: "CAF" },
   // Group G
-  { id: "bel", name: "Belgium", code: "BE", flag: "🇧🇪", confederation: "UEFA" },
-  { id: "egy", name: "Egypt", code: "EG", flag: "🇪🇬", confederation: "CAF" },
-  { id: "irn", name: "Iran", code: "IR", flag: "🇮🇷", confederation: "AFC" },
-  { id: "nzl", name: "New Zealand", code: "NZ", flag: "🇳🇿", confederation: "OFC" },
+  { id: "bel", name: "Belgium", code: "BE", flag: "ðŸ‡§ðŸ‡ª", confederation: "UEFA" },
+  { id: "egy", name: "Egypt", code: "EG", flag: "ðŸ‡ªðŸ‡¬", confederation: "CAF" },
+  { id: "irn", name: "Iran", code: "IR", flag: "ðŸ‡®ðŸ‡·", confederation: "AFC" },
+  { id: "nzl", name: "New Zealand", code: "NZ", flag: "ðŸ‡³ðŸ‡¿", confederation: "OFC" },
   // Group H
-  { id: "esp", name: "Spain", code: "ES", flag: "🇪🇸", confederation: "UEFA" },
-  { id: "cpv", name: "Cape Verde", code: "CV", flag: "🇨🇻", confederation: "CAF" },
-  { id: "sau", name: "Saudi Arabia", code: "SA", flag: "🇸🇦", confederation: "AFC" },
-  { id: "uru", name: "Uruguay", code: "UY", flag: "🇺🇾", confederation: "CONMEBOL" },
+  { id: "esp", name: "Spain", code: "ES", flag: "ðŸ‡ªðŸ‡¸", confederation: "UEFA" },
+  { id: "cpv", name: "Cape Verde", code: "CV", flag: "ðŸ‡¨ðŸ‡»", confederation: "CAF" },
+  { id: "sau", name: "Saudi Arabia", code: "SA", flag: "ðŸ‡¸ðŸ‡¦", confederation: "AFC" },
+  { id: "uru", name: "Uruguay", code: "UY", flag: "ðŸ‡ºðŸ‡¾", confederation: "CONMEBOL" },
   // Group I
-  { id: "fra", name: "France", code: "FR", flag: "🇫🇷", confederation: "UEFA" },
-  { id: "sen", name: "Senegal", code: "SN", flag: "🇸🇳", confederation: "CAF" },
-  { id: "icp2", name: "IC Path 2 Winner", code: "XX", flag: "🏳️", confederation: "TBD" },
-  { id: "nor", name: "Norway", code: "NO", flag: "🇳🇴", confederation: "UEFA" },
+  { id: "fra", name: "France", code: "FR", flag: "ðŸ‡«ðŸ‡·", confederation: "UEFA" },
+  { id: "sen", name: "Senegal", code: "SN", flag: "ðŸ‡¸ðŸ‡³", confederation: "CAF" },
+  { id: "icp2", name: "IC Path 2 Winner", code: "XX", flag: "ðŸ³ï¸", confederation: "TBD" },
+  { id: "nor", name: "Norway", code: "NO", flag: "ðŸ‡³ðŸ‡´", confederation: "UEFA" },
   // Group J
-  { id: "arg", name: "Argentina", code: "AR", flag: "🇦🇷", confederation: "CONMEBOL" },
-  { id: "alg", name: "Algeria", code: "DZ", flag: "🇩🇿", confederation: "CAF" },
-  { id: "aut", name: "Austria", code: "AT", flag: "🇦🇹", confederation: "UEFA" },
-  { id: "jor", name: "Jordan", code: "JO", flag: "🇯🇴", confederation: "AFC" },
+  { id: "arg", name: "Argentina", code: "AR", flag: "ðŸ‡¦ðŸ‡·", confederation: "CONMEBOL" },
+  { id: "alg", name: "Algeria", code: "DZ", flag: "ðŸ‡©ðŸ‡¿", confederation: "CAF" },
+  { id: "aut", name: "Austria", code: "AT", flag: "ðŸ‡¦ðŸ‡¹", confederation: "UEFA" },
+  { id: "jor", name: "Jordan", code: "JO", flag: "ðŸ‡¯ðŸ‡´", confederation: "AFC" },
   // Group K
-  { id: "por", name: "Portugal", code: "PT", flag: "🇵🇹", confederation: "UEFA" },
-  { id: "icp1", name: "IC Path 1 Winner", code: "XX", flag: "🏳️", confederation: "TBD" },
-  { id: "uzb", name: "Uzbekistan", code: "UZ", flag: "🇺🇿", confederation: "AFC" },
-  { id: "col", name: "Colombia", code: "CO", flag: "🇨🇴", confederation: "CONMEBOL" },
+  { id: "por", name: "Portugal", code: "PT", flag: "ðŸ‡µðŸ‡¹", confederation: "UEFA" },
+  { id: "icp1", name: "IC Path 1 Winner", code: "XX", flag: "ðŸ³ï¸", confederation: "TBD" },
+  { id: "uzb", name: "Uzbekistan", code: "UZ", flag: "ðŸ‡ºðŸ‡¿", confederation: "AFC" },
+  { id: "col", name: "Colombia", code: "CO", flag: "ðŸ‡¨ðŸ‡´", confederation: "CONMEBOL" },
   // Group L
-  { id: "eng", name: "England", code: "GB-ENG", flag: "🏴", confederation: "UEFA" },
-  { id: "cro", name: "Croatia", code: "HR", flag: "🇭🇷", confederation: "UEFA" },
-  { id: "gha", name: "Ghana", code: "GH", flag: "🇬🇭", confederation: "CAF" },
-  { id: "pan", name: "Panama", code: "PA", flag: "🇵🇦", confederation: "CONCACAF" },
+  { id: "eng", name: "England", code: "GB-ENG", flag: "ðŸ´", confederation: "UEFA" },
+  { id: "cro", name: "Croatia", code: "HR", flag: "ðŸ‡­ðŸ‡·", confederation: "UEFA" },
+  { id: "gha", name: "Ghana", code: "GH", flag: "ðŸ‡¬ðŸ‡­", confederation: "CAF" },
+  { id: "pan", name: "Panama", code: "PA", flag: "ðŸ‡µðŸ‡¦", confederation: "CONCACAF" },
 ]
 
 export const groups: Record<string, string[]> = {
@@ -83,96 +83,193 @@ export const officialMatches: Array<{
   team1Id: string
   team2Id: string
   group: string
-  date: string
   matchNumber: number
+  venue: string
+  dateTime: string // ISO 8601 in UTC (ej: "2026-06-12T01:00:00Z")
 }> = [
-  // Jornada 1 - 11 de junio 2026
-  { team1Id: "mex", team2Id: "rsa", group: "A", date: "2026-06-11", matchNumber: 1 },
-  // Jornada 1 - 12 de junio 2026
-  { team1Id: "kor", team2Id: "uefad", group: "A", date: "2026-06-12", matchNumber: 2 },
-  { team1Id: "can", team2Id: "uefaa", group: "B", date: "2026-06-12", matchNumber: 3 },
-  { team1Id: "qat", team2Id: "sui", group: "B", date: "2026-06-12", matchNumber: 4 },
-  { team1Id: "bra", team2Id: "mar", group: "C", date: "2026-06-12", matchNumber: 5 },
-  { team1Id: "hai", team2Id: "sco", group: "C", date: "2026-06-12", matchNumber: 6 },
-  // Jornada 1 - 13 de junio 2026
-  { team1Id: "usa", team2Id: "par", group: "D", date: "2026-06-13", matchNumber: 7 },
-  { team1Id: "aus", team2Id: "uefac", group: "D", date: "2026-06-13", matchNumber: 8 },
-  { team1Id: "ger", team2Id: "cur", group: "E", date: "2026-06-13", matchNumber: 9 },
-  { team1Id: "civ", team2Id: "ecu", group: "E", date: "2026-06-13", matchNumber: 10 },
-  { team1Id: "ned", team2Id: "jpn", group: "F", date: "2026-06-13", matchNumber: 11 },
-  { team1Id: "uefab", team2Id: "tun", group: "F", date: "2026-06-13", matchNumber: 12 },
-  // Jornada 1 - 14 de junio 2026
-  { team1Id: "bel", team2Id: "egy", group: "G", date: "2026-06-14", matchNumber: 13 },
-  { team1Id: "irn", team2Id: "nzl", group: "G", date: "2026-06-14", matchNumber: 14 },
-  { team1Id: "esp", team2Id: "cpv", group: "H", date: "2026-06-14", matchNumber: 15 },
-  { team1Id: "sau", team2Id: "uru", group: "H", date: "2026-06-14", matchNumber: 16 },
-  { team1Id: "fra", team2Id: "sen", group: "I", date: "2026-06-14", matchNumber: 17 },
-  { team1Id: "icp2", team2Id: "nor", group: "I", date: "2026-06-14", matchNumber: 18 },
-  // Jornada 1 - 15 de junio 2026
-  { team1Id: "arg", team2Id: "alg", group: "J", date: "2026-06-15", matchNumber: 19 },
-  { team1Id: "aut", team2Id: "jor", group: "J", date: "2026-06-15", matchNumber: 20 },
-  { team1Id: "por", team2Id: "icp1", group: "K", date: "2026-06-15", matchNumber: 21 },
-  { team1Id: "uzb", team2Id: "col", group: "K", date: "2026-06-15", matchNumber: 22 },
-  { team1Id: "eng", team2Id: "cro", group: "L", date: "2026-06-15", matchNumber: 23 },
-  { team1Id: "gha", team2Id: "pan", group: "L", date: "2026-06-15", matchNumber: 24 },
+  // ===================== MATCHDAY 1 (June 11-17) =====================
 
-  // Jornada 2 - 16 de junio 2026
-  { team1Id: "mex", team2Id: "kor", group: "A", date: "2026-06-16", matchNumber: 25 },
-  { team1Id: "rsa", team2Id: "uefad", group: "A", date: "2026-06-16", matchNumber: 26 },
-  { team1Id: "can", team2Id: "qat", group: "B", date: "2026-06-16", matchNumber: 27 },
-  { team1Id: "uefaa", team2Id: "sui", group: "B", date: "2026-06-16", matchNumber: 28 },
-  { team1Id: "bra", team2Id: "hai", group: "C", date: "2026-06-16", matchNumber: 29 },
-  { team1Id: "mar", team2Id: "sco", group: "C", date: "2026-06-16", matchNumber: 30 },
-  // Jornada 2 - 17 de junio 2026
-  { team1Id: "usa", team2Id: "aus", group: "D", date: "2026-06-17", matchNumber: 31 },
-  { team1Id: "par", team2Id: "uefac", group: "D", date: "2026-06-17", matchNumber: 32 },
-  { team1Id: "ger", team2Id: "civ", group: "E", date: "2026-06-17", matchNumber: 33 },
-  { team1Id: "cur", team2Id: "ecu", group: "E", date: "2026-06-17", matchNumber: 34 },
-  { team1Id: "ned", team2Id: "uefab", group: "F", date: "2026-06-17", matchNumber: 35 },
-  { team1Id: "jpn", team2Id: "tun", group: "F", date: "2026-06-17", matchNumber: 36 },
-  // Jornada 2 - 18 de junio 2026
-  { team1Id: "bel", team2Id: "irn", group: "G", date: "2026-06-18", matchNumber: 37 },
-  { team1Id: "egy", team2Id: "nzl", group: "G", date: "2026-06-18", matchNumber: 38 },
-  { team1Id: "esp", team2Id: "sau", group: "H", date: "2026-06-18", matchNumber: 39 },
-  { team1Id: "cpv", team2Id: "uru", group: "H", date: "2026-06-18", matchNumber: 40 },
-  { team1Id: "fra", team2Id: "icp2", group: "I", date: "2026-06-18", matchNumber: 41 },
-  { team1Id: "sen", team2Id: "nor", group: "I", date: "2026-06-18", matchNumber: 42 },
-  // Jornada 2 - 19 de junio 2026
-  { team1Id: "arg", team2Id: "aut", group: "J", date: "2026-06-19", matchNumber: 43 },
-  { team1Id: "alg", team2Id: "jor", group: "J", date: "2026-06-19", matchNumber: 44 },
-  { team1Id: "por", team2Id: "uzb", group: "K", date: "2026-06-19", matchNumber: 45 },
-  { team1Id: "icp1", team2Id: "col", group: "K", date: "2026-06-19", matchNumber: 46 },
-  { team1Id: "eng", team2Id: "gha", group: "L", date: "2026-06-19", matchNumber: 47 },
-  { team1Id: "cro", team2Id: "pan", group: "L", date: "2026-06-19", matchNumber: 48 },
+  // June 11 - Group A
+  // MEX vs RSA: 1:00 PM (UTC-6) = 19:00 UTC
+  { team1Id: "mex", team2Id: "rsa", group: "A", matchNumber: 1, venue: "Mexico City, Estadio Azteca", dateTime: "2026-06-11T19:00:00Z" },
+  // KOR vs UEFA D: 8:00 PM (UTC-6) = 02:00 UTC+1
+  { team1Id: "kor", team2Id: "uefad", group: "A", matchNumber: 2, venue: "Zapopan, Estadio Akron", dateTime: "2026-06-12T02:00:00Z" },
 
-  // Jornada 3 - 20 de junio 2026
-  { team1Id: "mex", team2Id: "uefad", group: "A", date: "2026-06-20", matchNumber: 49 },
-  { team1Id: "rsa", team2Id: "kor", group: "A", date: "2026-06-20", matchNumber: 50 },
-  { team1Id: "can", team2Id: "sui", group: "B", date: "2026-06-20", matchNumber: 51 },
-  { team1Id: "uefaa", team2Id: "qat", group: "B", date: "2026-06-20", matchNumber: 52 },
-  { team1Id: "bra", team2Id: "sco", group: "C", date: "2026-06-20", matchNumber: 53 },
-  { team1Id: "mar", team2Id: "hai", group: "C", date: "2026-06-20", matchNumber: 54 },
-  // Jornada 3 - 21 de junio 2026
-  { team1Id: "usa", team2Id: "uefac", group: "D", date: "2026-06-21", matchNumber: 55 },
-  { team1Id: "par", team2Id: "aus", group: "D", date: "2026-06-21", matchNumber: 56 },
-  { team1Id: "ger", team2Id: "ecu", group: "E", date: "2026-06-21", matchNumber: 57 },
-  { team1Id: "cur", team2Id: "civ", group: "E", date: "2026-06-21", matchNumber: 58 },
-  { team1Id: "ned", team2Id: "tun", group: "F", date: "2026-06-21", matchNumber: 59 },
-  { team1Id: "jpn", team2Id: "uefab", group: "F", date: "2026-06-21", matchNumber: 60 },
-  // Jornada 3 - 22 de junio 2026
-  { team1Id: "bel", team2Id: "nzl", group: "G", date: "2026-06-22", matchNumber: 61 },
-  { team1Id: "egy", team2Id: "irn", group: "G", date: "2026-06-22", matchNumber: 62 },
-  { team1Id: "esp", team2Id: "uru", group: "H", date: "2026-06-22", matchNumber: 63 },
-  { team1Id: "cpv", team2Id: "sau", group: "H", date: "2026-06-22", matchNumber: 64 },
-  { team1Id: "fra", team2Id: "nor", group: "I", date: "2026-06-22", matchNumber: 65 },
-  { team1Id: "sen", team2Id: "icp2", group: "I", date: "2026-06-22", matchNumber: 66 },
-  // Jornada 3 - 23 de junio 2026
-  { team1Id: "arg", team2Id: "jor", group: "J", date: "2026-06-23", matchNumber: 67 },
-  { team1Id: "alg", team2Id: "aut", group: "J", date: "2026-06-23", matchNumber: 68 },
-  { team1Id: "por", team2Id: "col", group: "K", date: "2026-06-23", matchNumber: 69 },
-  { team1Id: "icp1", team2Id: "uzb", group: "K", date: "2026-06-23", matchNumber: 70 },
-  { team1Id: "eng", team2Id: "pan", group: "L", date: "2026-06-23", matchNumber: 71 },
-  { team1Id: "cro", team2Id: "gha", group: "L", date: "2026-06-23", matchNumber: 72 },
+  // June 12 - Groups B, C, D
+  // CAN vs UEFA A: 3:00 PM (UTC-4) = 19:00 UTC
+  { team1Id: "can", team2Id: "uefaa", group: "B", matchNumber: 3, venue: "Toronto, BMO Field", dateTime: "2026-06-12T19:00:00Z" },
+  // USA vs PAR: 6:00 PM (UTC-7) = 01:00 UTC+1
+  { team1Id: "usa", team2Id: "par", group: "D", matchNumber: 4, venue: "Inglewood, SoFi Stadium", dateTime: "2026-06-13T01:00:00Z" },
+  // HAI vs SCO: 9:00 PM (UTC-4) = 01:00 UTC+1
+  { team1Id: "hai", team2Id: "sco", group: "C", matchNumber: 5, venue: "Foxborough, Gillette Stadium", dateTime: "2026-06-14T01:00:00Z" },
+
+  // June 13 - Groups B, C, D, E
+  // AUS vs UEFA C: 9:00 PM (UTC-7) = 04:00 UTC+1
+  { team1Id: "aus", team2Id: "uefac", group: "D", matchNumber: 6, venue: "Vancouver, BC Place", dateTime: "2026-06-14T04:00:00Z" },
+  // BRA vs MAR: 6:00 PM (UTC-4) = 22:00 UTC
+  { team1Id: "bra", team2Id: "mar", group: "C", matchNumber: 7, venue: "East Rutherford, MetLife Stadium", dateTime: "2026-06-13T22:00:00Z" },
+  // QAT vs SUI: 12:00 PM (UTC-7) = 19:00 UTC
+  { team1Id: "qat", team2Id: "sui", group: "B", matchNumber: 8, venue: "Santa Clara, Levi's Stadium", dateTime: "2026-06-13T19:00:00Z" },
+  // CIV vs ECU: 7:00 PM (UTC-4) = 23:00 UTC
+  { team1Id: "civ", team2Id: "ecu", group: "E", matchNumber: 9, venue: "Philadelphia, Lincoln Financial Field", dateTime: "2026-06-13T23:00:00Z" },
+  // GER vs CUR: 12:00 PM (UTC-5) = 17:00 UTC
+  { team1Id: "ger", team2Id: "cur", group: "E", matchNumber: 10, venue: "Houston, NRG Stadium", dateTime: "2026-06-13T17:00:00Z" },
+
+  // June 14 - Groups F, G, H
+  // NED vs JPN: 3:00 PM (UTC-5) = 20:00 UTC
+  { team1Id: "ned", team2Id: "jpn", group: "F", matchNumber: 11, venue: "Arlington, AT&T Stadium", dateTime: "2026-06-14T20:00:00Z" },
+  // UEFA B vs TUN: 8:00 PM (UTC-6) = 02:00 UTC+1
+  { team1Id: "uefab", team2Id: "tun", group: "F", matchNumber: 12, venue: "Guadalupe, Estadio BBVA", dateTime: "2026-06-15T02:00:00Z" },
+  // SAU vs URU: 6:00 PM (UTC-4) = 22:00 UTC
+  { team1Id: "sau", team2Id: "uru", group: "H", matchNumber: 13, venue: "Miami Gardens, Hard Rock Stadium", dateTime: "2026-06-14T22:00:00Z" },
+  // ESP vs CPV: 12:00 PM (UTC-4) = 16:00 UTC
+  { team1Id: "esp", team2Id: "cpv", group: "H", matchNumber: 14, venue: "Atlanta, Mercedes-Benz Stadium", dateTime: "2026-06-14T16:00:00Z" },
+  // IRN vs NZL: 6:00 PM (UTC-7) = 01:00 UTC+1
+  { team1Id: "irn", team2Id: "nzl", group: "G", matchNumber: 15, venue: "Inglewood, SoFi Stadium", dateTime: "2026-06-15T01:00:00Z" },
+  // BEL vs EGY: 12:00 PM (UTC-7) = 19:00 UTC
+  { team1Id: "bel", team2Id: "egy", group: "G", matchNumber: 16, venue: "Seattle, Lumen Field", dateTime: "2026-06-14T19:00:00Z" },
+
+  // June 15 - Groups H, I, J
+  // FRA vs SEN: 3:00 PM (UTC-4) = 19:00 UTC
+  { team1Id: "fra", team2Id: "sen", group: "I", matchNumber: 17, venue: "East Rutherford, MetLife Stadium", dateTime: "2026-06-15T19:00:00Z" },
+  // ICP2 vs NOR: 6:00 PM (UTC-4) = 22:00 UTC
+  { team1Id: "icp2", team2Id: "nor", group: "I", matchNumber: 18, venue: "Foxborough, Gillette Stadium", dateTime: "2026-06-15T22:00:00Z" },
+
+  // June 16 - Groups I, J
+  // ARG vs ALG: 8:00 PM (UTC-5) = 01:00 UTC+1
+  { team1Id: "arg", team2Id: "alg", group: "J", matchNumber: 19, venue: "Kansas City, Arrowhead Stadium", dateTime: "2026-06-17T01:00:00Z" },
+  // AUT vs JOR: 9:00 PM (UTC-7) = 04:00 UTC+1
+  { team1Id: "aut", team2Id: "jor", group: "J", matchNumber: 20, venue: "Santa Clara, Levi's Stadium", dateTime: "2026-06-17T04:00:00Z" },
+  // GHA vs PAN: 7:00 PM (UTC-4) = 23:00 UTC
+  { team1Id: "gha", team2Id: "pan", group: "L", matchNumber: 21, venue: "Toronto, BMO Field", dateTime: "2026-06-16T23:00:00Z" },
+  // ENG vs CRO: 3:00 PM (UTC-5) = 20:00 UTC
+  { team1Id: "eng", team2Id: "cro", group: "L", matchNumber: 22, venue: "Arlington, AT&T Stadium", dateTime: "2026-06-16T20:00:00Z" },
+
+  // June 17 - Groups K, L
+  // POR vs ICP1: 12:00 PM (UTC-5) = 17:00 UTC
+  { team1Id: "por", team2Id: "icp1", group: "K", matchNumber: 23, venue: "Houston, NRG Stadium", dateTime: "2026-06-17T17:00:00Z" },
+  // UZB vs COL: 8:00 PM (UTC-6) = 02:00 UTC+1
+  { team1Id: "uzb", team2Id: "col", group: "K", matchNumber: 24, venue: "Mexico City, Estadio Azteca", dateTime: "2026-06-18T02:00:00Z" },
+
+  // ===================== MATCHDAY 2 (June 18-23) =====================
+
+  // June 18 - Groups A, B
+  // UEFA D vs RSA: 12:00 PM (UTC-4) = 16:00 UTC
+  { team1Id: "uefad", team2Id: "rsa", group: "A", matchNumber: 25, venue: "Atlanta, Mercedes-Benz Stadium", dateTime: "2026-06-18T16:00:00Z" },
+  // SUI vs UEFA A: 12:00 PM (UTC-7) = 19:00 UTC
+  { team1Id: "sui", team2Id: "uefaa", group: "B", matchNumber: 26, venue: "Inglewood, SoFi Stadium", dateTime: "2026-06-18T19:00:00Z" },
+  // CAN vs QAT: 3:00 PM (UTC-7) = 22:00 UTC
+  { team1Id: "can", team2Id: "qat", group: "B", matchNumber: 27, venue: "Vancouver, BC Place", dateTime: "2026-06-18T22:00:00Z" },
+  // MEX vs KOR: 7:00 PM (UTC-6) = 01:00 UTC+1
+  { team1Id: "mex", team2Id: "kor", group: "A", matchNumber: 28, venue: "Zapopan, Estadio Akron", dateTime: "2026-06-19T01:00:00Z" },
+
+  // June 19 - Groups C, D
+  // BRA vs HAI: 9:00 PM (UTC-4) = 01:00 UTC+1
+  { team1Id: "bra", team2Id: "hai", group: "C", matchNumber: 29, venue: "Philadelphia, Lincoln Financial Field", dateTime: "2026-06-20T01:00:00Z" },
+  // SCO vs MAR: 6:00 PM (UTC-4) = 22:00 UTC
+  { team1Id: "sco", team2Id: "mar", group: "C", matchNumber: 30, venue: "Foxborough, Gillette Stadium", dateTime: "2026-06-19T22:00:00Z" },
+  // UEFA C vs PAR: 9:00 PM (UTC-7) = 04:00 UTC+1
+  { team1Id: "uefac", team2Id: "par", group: "D", matchNumber: 31, venue: "Santa Clara, Levi's Stadium", dateTime: "2026-06-20T04:00:00Z" },
+  // USA vs AUS: 12:00 PM (UTC-7) = 19:00 UTC
+  { team1Id: "usa", team2Id: "aus", group: "D", matchNumber: 32, venue: "Seattle, Lumen Field", dateTime: "2026-06-19T19:00:00Z" },
+
+  // June 20 - Groups E, F
+  // GER vs CIV: 4:00 PM (UTC-4) = 20:00 UTC
+  { team1Id: "ger", team2Id: "civ", group: "E", matchNumber: 33, venue: "Toronto, BMO Field", dateTime: "2026-06-20T20:00:00Z" },
+  // ECU vs CUR: 7:00 PM (UTC-5) = 00:00 UTC+1
+  { team1Id: "ecu", team2Id: "cur", group: "E", matchNumber: 34, venue: "Kansas City, Arrowhead Stadium", dateTime: "2026-06-21T00:00:00Z" },
+  // NED vs UEFA B: 12:00 PM (UTC-5) = 17:00 UTC
+  { team1Id: "ned", team2Id: "uefab", group: "F", matchNumber: 35, venue: "Houston, NRG Stadium", dateTime: "2026-06-20T17:00:00Z" },
+  // TUN vs JPN: 10:00 PM (UTC-6) = 04:00 UTC+1
+  { team1Id: "tun", team2Id: "jpn", group: "F", matchNumber: 36, venue: "Guadalupe, Estadio BBVA", dateTime: "2026-06-21T04:00:00Z" },
+
+  // June 21 - Groups G, H
+  // URU vs CPV: 6:00 PM (UTC-4) = 22:00 UTC
+  { team1Id: "uru", team2Id: "cpv", group: "H", matchNumber: 37, venue: "Miami Gardens, Hard Rock Stadium", dateTime: "2026-06-21T22:00:00Z" },
+  // ESP vs SAU: 12:00 PM (UTC-4) = 16:00 UTC
+  { team1Id: "esp", team2Id: "sau", group: "H", matchNumber: 38, venue: "Atlanta, Mercedes-Benz Stadium", dateTime: "2026-06-21T16:00:00Z" },
+  // BEL vs IRN: 12:00 PM (UTC-7) = 19:00 UTC
+  { team1Id: "bel", team2Id: "irn", group: "G", matchNumber: 39, venue: "Inglewood, SoFi Stadium", dateTime: "2026-06-21T19:00:00Z" },
+  // NZL vs EGY: 6:00 PM (UTC-7) = 01:00 UTC+1
+  { team1Id: "nzl", team2Id: "egy", group: "G", matchNumber: 40, venue: "Vancouver, BC Place", dateTime: "2026-06-22T01:00:00Z" },
+
+  // June 22 - Groups I, J
+  // NOR vs SEN: 8:00 PM (UTC-4) = 00:00 UTC+1
+  { team1Id: "nor", team2Id: "sen", group: "I", matchNumber: 41, venue: "East Rutherford, MetLife Stadium", dateTime: "2026-06-23T00:00:00Z" },
+  // FRA vs ICP2: 5:00 PM (UTC-4) = 21:00 UTC
+  { team1Id: "fra", team2Id: "icp2", group: "I", matchNumber: 42, venue: "Philadelphia, Lincoln Financial Field", dateTime: "2026-06-22T21:00:00Z" },
+  // ARG vs AUT: 12:00 PM (UTC-5) = 17:00 UTC
+  { team1Id: "arg", team2Id: "aut", group: "J", matchNumber: 43, venue: "Arlington, AT&T Stadium", dateTime: "2026-06-22T17:00:00Z" },
+  // JOR vs ALG: 8:00 PM (UTC-7) = 03:00 UTC+1
+  { team1Id: "jor", team2Id: "alg", group: "J", matchNumber: 44, venue: "Santa Clara, Levi's Stadium", dateTime: "2026-06-23T03:00:00Z" },
+
+  // June 23 - Groups K, L
+  // ENG vs GHA: 4:00 PM (UTC-4) = 20:00 UTC
+  { team1Id: "eng", team2Id: "gha", group: "L", matchNumber: 45, venue: "Foxborough, Gillette Stadium", dateTime: "2026-06-23T20:00:00Z" },
+  // PAN vs CRO: 7:00 PM (UTC-4) = 23:00 UTC
+  { team1Id: "pan", team2Id: "cro", group: "L", matchNumber: 46, venue: "Toronto, BMO Field", dateTime: "2026-06-23T23:00:00Z" },
+  // POR vs UZB: 12:00 PM (UTC-5) = 17:00 UTC
+  { team1Id: "por", team2Id: "uzb", group: "K", matchNumber: 47, venue: "Houston, NRG Stadium", dateTime: "2026-06-23T17:00:00Z" },
+  // COL vs ICP1: 8:00 PM (UTC-6) = 02:00 UTC+1
+  { team1Id: "col", team2Id: "icp1", group: "K", matchNumber: 48, venue: "Zapopan, Estadio Akron", dateTime: "2026-06-24T02:00:00Z" },
+
+  // ===================== MATCHDAY 3 (June 24-27) =====================
+
+  // June 24 - Groups A, B, C
+  // SCO vs BRA: 6:00 PM (UTC-4) = 22:00 UTC
+  { team1Id: "sco", team2Id: "bra", group: "C", matchNumber: 49, venue: "Miami Gardens, Hard Rock Stadium", dateTime: "2026-06-24T22:00:00Z" },
+  // MAR vs HAI: 6:00 PM (UTC-4) = 22:00 UTC
+  { team1Id: "mar", team2Id: "hai", group: "C", matchNumber: 50, venue: "Atlanta, Mercedes-Benz Stadium", dateTime: "2026-06-24T22:00:00Z" },
+  // SUI vs CAN: 12:00 PM (UTC-7) = 19:00 UTC
+  { team1Id: "sui", team2Id: "can", group: "B", matchNumber: 51, venue: "Vancouver, BC Place", dateTime: "2026-06-24T19:00:00Z" },
+  // UEFA A vs QAT: 12:00 PM (UTC-7) = 19:00 UTC
+  { team1Id: "uefaa", team2Id: "qat", group: "B", matchNumber: 52, venue: "Seattle, Lumen Field", dateTime: "2026-06-24T19:00:00Z" },
+  // UEFA D vs MEX: 7:00 PM (UTC-6) = 01:00 UTC+1
+  { team1Id: "uefad", team2Id: "mex", group: "A", matchNumber: 53, venue: "Mexico City, Estadio Azteca", dateTime: "2026-06-25T01:00:00Z" },
+  // RSA vs KOR: 7:00 PM (UTC-6) = 01:00 UTC+1
+  { team1Id: "rsa", team2Id: "kor", group: "A", matchNumber: 54, venue: "Guadalupe, Estadio BBVA", dateTime: "2026-06-25T01:00:00Z" },
+
+  // June 25 - Groups D, E, F
+  // CUR vs CIV: 4:00 PM (UTC-4) = 20:00 UTC
+  { team1Id: "cur", team2Id: "civ", group: "E", matchNumber: 55, venue: "Philadelphia, Lincoln Financial Field", dateTime: "2026-06-25T20:00:00Z" },
+  // ECU vs GER: 4:00 PM (UTC-4) = 20:00 UTC
+  { team1Id: "ecu", team2Id: "ger", group: "E", matchNumber: 56, venue: "East Rutherford, MetLife Stadium", dateTime: "2026-06-25T20:00:00Z" },
+  // JPN vs UEFA B: 6:00 PM (UTC-5) = 23:00 UTC
+  { team1Id: "jpn", team2Id: "uefab", group: "F", matchNumber: 57, venue: "Arlington, AT&T Stadium", dateTime: "2026-06-25T23:00:00Z" },
+  // TUN vs NED: 6:00 PM (UTC-5) = 23:00 UTC
+  { team1Id: "tun", team2Id: "ned", group: "F", matchNumber: 58, venue: "Kansas City, Arrowhead Stadium", dateTime: "2026-06-25T23:00:00Z" },
+  // UEFA C vs USA: 7:00 PM (UTC-7) = 02:00 UTC+1
+  { team1Id: "uefac", team2Id: "usa", group: "D", matchNumber: 59, venue: "Inglewood, SoFi Stadium", dateTime: "2026-06-26T02:00:00Z" },
+  // PAR vs AUS: 7:00 PM (UTC-7) = 02:00 UTC+1
+  { team1Id: "par", team2Id: "aus", group: "D", matchNumber: 60, venue: "Santa Clara, Levi's Stadium", dateTime: "2026-06-26T02:00:00Z" },
+
+  // June 26 - Groups G, H, I
+  // NOR vs FRA: 3:00 PM (UTC-4) = 19:00 UTC
+  { team1Id: "nor", team2Id: "fra", group: "I", matchNumber: 61, venue: "Foxborough, Gillette Stadium", dateTime: "2026-06-26T19:00:00Z" },
+  // SEN vs ICP2: 3:00 PM (UTC-4) = 19:00 UTC
+  { team1Id: "sen", team2Id: "icp2", group: "I", matchNumber: 62, venue: "Toronto, BMO Field", dateTime: "2026-06-26T19:00:00Z" },
+  // EGY vs IRN: 8:00 PM (UTC-7) = 03:00 UTC+1
+  { team1Id: "egy", team2Id: "irn", group: "G", matchNumber: 63, venue: "Seattle, Lumen Field", dateTime: "2026-06-27T03:00:00Z" },
+  // NZL vs BEL: 8:00 PM (UTC-7) = 03:00 UTC+1
+  { team1Id: "nzl", team2Id: "bel", group: "G", matchNumber: 64, venue: "Vancouver, BC Place", dateTime: "2026-06-27T03:00:00Z" },
+  // CPV vs SAU: 7:00 PM (UTC-5) = 00:00 UTC+1
+  { team1Id: "cpv", team2Id: "sau", group: "H", matchNumber: 65, venue: "Houston, NRG Stadium", dateTime: "2026-06-27T00:00:00Z" },
+  // URU vs ESP: 6:00 PM (UTC-6) = 00:00 UTC+1
+  { team1Id: "uru", team2Id: "esp", group: "H", matchNumber: 66, venue: "Zapopan, Estadio Akron", dateTime: "2026-06-27T00:00:00Z" },
+
+  // June 27 - Groups J, K, L
+  // PAN vs ENG: 5:00 PM (UTC-4) = 21:00 UTC
+  { team1Id: "pan", team2Id: "eng", group: "L", matchNumber: 67, venue: "East Rutherford, MetLife Stadium", dateTime: "2026-06-27T21:00:00Z" },
+  // CRO vs GHA: 5:00 PM (UTC-4) = 21:00 UTC
+  { team1Id: "cro", team2Id: "gha", group: "L", matchNumber: 68, venue: "Philadelphia, Lincoln Financial Field", dateTime: "2026-06-27T21:00:00Z" },
+  // ALG vs AUT: 9:00 PM (UTC-5) = 02:00 UTC+1
+  { team1Id: "alg", team2Id: "aut", group: "J", matchNumber: 69, venue: "Kansas City, Arrowhead Stadium", dateTime: "2026-06-28T02:00:00Z" },
+  // JOR vs ARG: 9:00 PM (UTC-5) = 02:00 UTC+1
+  { team1Id: "jor", team2Id: "arg", group: "J", matchNumber: 70, venue: "Arlington, AT&T Stadium", dateTime: "2026-06-28T02:00:00Z" },
+  // COL vs POR: 7:30 PM (UTC-4) = 23:30 UTC
+  { team1Id: "col", team2Id: "por", group: "K", matchNumber: 71, venue: "Miami Gardens, Hard Rock Stadium", dateTime: "2026-06-27T23:30:00Z" },
+  // ICP1 vs UZB: 7:30 PM (UTC-4) = 23:30 UTC
+  { team1Id: "icp1", team2Id: "uzb", group: "K", matchNumber: 72, venue: "Atlanta, Mercedes-Benz Stadium", dateTime: "2026-06-27T23:30:00Z" },
 ]
 
 export const THIRD_PLACE_COMBINATIONS: ThirdPlaceCombination = {
@@ -674,20 +771,20 @@ export const THIRD_PLACE_COMBINATIONS: ThirdPlaceCombination = {
 };
 
 export const r32Placeholders: Record<string, { team1: string; team2: string }> = {
-  "round32-1": { team1: "1E", team2: "3º ABCDF" },
-  "round32-2": { team1: "1I", team2: "3º CDFGH" },
+  "round32-1": { team1: "1E", team2: "3Âº ABCDF" },
+  "round32-2": { team1: "1I", team2: "3Âº CDFGH" },
   "round32-3": { team1: "2A", team2: "2B" },
   "round32-4": { team1: "1F", team2: "2C" },
   "round32-5": { team1: "2K", team2: "2L" },
   "round32-6": { team1: "1H", team2: "2J" },
-  "round32-7": { team1: "1D", team2: "3º BEFIJ" },
-  "round32-8": { team1: "1G", team2: "3º AEHIJ" },
+  "round32-7": { team1: "1D", team2: "3Âº BEFIJ" },
+  "round32-8": { team1: "1G", team2: "3Âº AEHIJ" },
   "round32-9": { team1: "1C", team2: "2F" },
   "round32-10": { team1: "2E", team2: "2I" },
-  "round32-11": { team1: "1A", team2: "3º CEFHI" },
-  "round32-12": { team1: "1L", team2: "3º EHIJK" },
+  "round32-11": { team1: "1A", team2: "3Âº CEFHI" },
+  "round32-12": { team1: "1L", team2: "3Âº EHIJK" },
   "round32-13": { team1: "1J", team2: "2H" },
   "round32-14": { team1: "2D", team2: "2G" },
-  "round32-15": { team1: "1B", team2: "3º EFGIJ" },
-  "round32-16": { team1: "1K", team2: "3º DEIJL" },
+  "round32-15": { team1: "1B", team2: "3Âº EFGIJ" },
+  "round32-16": { team1: "1K", team2: "3Âº DEIJL" },
 }

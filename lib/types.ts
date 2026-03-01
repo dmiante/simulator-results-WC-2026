@@ -15,7 +15,8 @@ export interface Match {
   stage: "group" | "round32" | "round16" | "quarter" | "semi" | "third" | "final"
   group?: string
   matchNumber: number
-  date?: string // Fecha del partido en formato YYYY-MM-DD
+  dateTime?: string // ISO 8601 datetime in UTC (ej: "2026-06-12T01:00:00Z")
+  venue?: string // Ciudad y estadio (ej: "Mexico City, Estadio Azteca")
   penaltyWinnerId?: string // ID del equipo ganador en caso de empate (penales) - solo para fase de eliminación
 }
 

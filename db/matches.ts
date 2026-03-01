@@ -11,7 +11,8 @@ export function generateGroupMatches(): Match[] {
     stage: "group" as const,
     group: match.group,
     matchNumber: match.matchNumber,
-    date: match.date,
+    dateTime: match.dateTime,
+    venue: match.venue,
   }))
 }
 
