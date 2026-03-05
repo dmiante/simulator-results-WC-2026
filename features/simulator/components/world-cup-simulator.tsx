@@ -33,6 +33,7 @@ export function WorldCupSimulator() {
     thirdPlaceRanking,
     teamsMap: baseTeamsMap,
     handleKnockoutScoreChange,
+    handleKnockoutPenaltyWinner,
     groupsComplete,
     handleScoreChange,
     setKnockoutMatches,
@@ -146,6 +147,7 @@ export function WorldCupSimulator() {
               setMatches={setKnockoutMatches}
               teamsMap={teamsMap}
               onScoreChange={handleKnockoutScoreChange}
+              onPenaltyWinner={handleKnockoutPenaltyWinner}
               groupStandings={groupStandings}
               thirdPlaceRanking={thirdPlaceRanking}
               groupsComplete={groupsComplete}

@@ -19,7 +19,7 @@ import { getMatchPlaceholders, getChampion } from "../utils/bracket-utils"
 import { TeamFlag } from "@/components/team-flag"
 
 
-export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, groupStandings, thirdPlaceRanking, groupsComplete, resetKnockoutStage, simulateKnockoutStage }: KnockoutBracketProps) {
+export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, onPenaltyWinner, groupStandings, thirdPlaceRanking, groupsComplete, resetKnockoutStage, simulateKnockoutStage }: KnockoutBracketProps) {
   const [zoom, setZoom] = useState(1)
   const [mobileRound, setMobileRound] = useState(0)
   const bracketRef = useRef<HTMLDivElement>(null)
@@ -116,7 +116,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         match={match}
                         team1={teamsMap[match.team1Id]}
                         team2={teamsMap[match.team2Id]}
-                        onScoreChange={onScoreChange}
+onScoreChange={onScoreChange}
+                        onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
                         resolvedTeam1={resolved?.team1}
@@ -147,6 +148,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         team1={teamsMap[match.team1Id]}
                         team2={teamsMap[match.team2Id]}
                         onScoreChange={onScoreChange}
+                        onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
                       />
@@ -180,6 +182,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         team1={teamsMap[match.team1Id]}
                         team2={teamsMap[match.team2Id]}
                         onScoreChange={onScoreChange}
+                        onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
                       />
@@ -213,6 +216,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         team1={teamsMap[match.team1Id]}
                         team2={teamsMap[match.team2Id]}
                         onScoreChange={onScoreChange}
+                        onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
                       />
@@ -264,6 +268,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         team1={teamsMap[final.team1Id]}
                         team2={teamsMap[final.team2Id]}
                         onScoreChange={onScoreChange}
+                        onPenaltyWinner={onPenaltyWinner}
                         isFinal
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
@@ -282,6 +287,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                           team1={teamsMap[third.team1Id]}
                           team2={teamsMap[third.team2Id]}
                           onScoreChange={onScoreChange}
+                          onPenaltyWinner={onPenaltyWinner}
                           isThirdPlace
                           placeholder1={placeholders.team1}
                           placeholder2={placeholders.team2}
@@ -321,6 +327,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         team1={teamsMap[match.team1Id]}
                         team2={teamsMap[match.team2Id]}
                         onScoreChange={onScoreChange}
+                        onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
                       />
@@ -355,6 +362,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         team1={teamsMap[match.team1Id]}
                         team2={teamsMap[match.team2Id]}
                         onScoreChange={onScoreChange}
+                        onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
                       />
@@ -389,6 +397,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         team1={teamsMap[match.team1Id]}
                         team2={teamsMap[match.team2Id]}
                         onScoreChange={onScoreChange}
+                        onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
                       />
@@ -424,6 +433,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         team1={teamsMap[match.team1Id]}
                         team2={teamsMap[match.team2Id]}
                         onScoreChange={onScoreChange}
+                        onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
                         resolvedTeam1={resolved?.team1}
@@ -498,6 +508,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                 team1={teamsMap[match.team1Id]}
                 team2={teamsMap[match.team2Id]}
                 onScoreChange={onScoreChange}
+                onPenaltyWinner={onPenaltyWinner}
                 isFinal={match.stage === "final"}
                 isThirdPlace={match.stage === "third"}
                 placeholder1={placeholders.team1}

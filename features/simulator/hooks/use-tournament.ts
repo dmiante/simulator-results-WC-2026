@@ -451,13 +451,8 @@ export function useTournament() {
         const newTeam2Score = team === "team2" ? score : m.team2Score
         
         if (newTeam1Score !== null && newTeam2Score !== null && newTeam1Score === newTeam2Score) {
-          // It's a draw - assign a random penalty winner if not already set
-          // Use team IDs if available, otherwise keep empty
-          const team1Id = m.team1Id
-          const team2Id = m.team2Id
-          if (team1Id && team2Id) {
-            updatedMatch.penaltyWinnerId = Math.random() > 0.5 ? team1Id : team2Id
-          }
+          // It's a draw - clear penalty winner so the user can choose via the UI
+          updatedMatch.penaltyWinnerId = undefined
         } else if (newTeam1Score !== null && newTeam2Score !== null) {
           // Not a draw - clear any existing penalty winner
           updatedMatch.penaltyWinnerId = undefined
@@ -465,6 +460,12 @@ export function useTournament() {
         
         return updatedMatch
       }),
+    )
+  }
+
+  const handleKnockoutPenaltyWinner = (matchId: string, winnerId: string) => {
+    setKnockoutMatches((prev) =>
+      prev.map((m) => (m.id === matchId ? { ...m, penaltyWinnerId: winnerId } : m)),
     )
   }
 
@@ -612,6 +613,7 @@ const resetTournament = () => {
     setKnockoutMatches,
     setActiveTab,
     handleKnockoutScoreChange,
+    handleKnockoutPenaltyWinner,
     handleScoreChange,
     simulateGroupStage,
     simulateKnockoutStage,

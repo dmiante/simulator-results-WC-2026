@@ -5,6 +5,7 @@ export interface KnockoutBracketProps {
   setMatches: React.Dispatch<React.SetStateAction<Match[]>>
   teamsMap: Record<string, Team>
   onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
+  onPenaltyWinner: (matchId: string, winnerId: string) => void
   groupStandings: Record<string, GroupStanding[]>
   thirdPlaceRanking: {
     all: (GroupStanding & { group: string })[]

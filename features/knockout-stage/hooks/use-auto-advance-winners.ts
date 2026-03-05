@@ -57,6 +57,7 @@ export function useAutoAdvanceWinners({
       if (targetMatch.team1Id !== newTeam1 || targetMatch.team2Id !== newTeam2) {
         if (targetMatch.team1Id !== newTeam1) targetMatch.team1Score = null
         if (targetMatch.team2Id !== newTeam2) targetMatch.team2Score = null
+        targetMatch.penaltyWinnerId = undefined
         targetMatch.team1Id = newTeam1
         targetMatch.team2Id = newTeam2
         return true

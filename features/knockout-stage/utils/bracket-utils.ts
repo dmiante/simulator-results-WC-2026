@@ -158,5 +158,7 @@ export function getChampion(final: Match | undefined): string {
   if (final.team1Score === null || final.team2Score === null) return ""
   if (final.team1Score > final.team2Score) return final.team1Id
   if (final.team2Score > final.team1Score) return final.team2Id
+  // Draw in the final - check for penalty winner
+  if (final.penaltyWinnerId) return final.penaltyWinnerId
   return ""
 }
