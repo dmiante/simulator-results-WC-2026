@@ -80,7 +80,7 @@ export function MatchCard({
         isThirdPlace && "border-orange-500/50 dark:border-orange-500/40",
         !isFinal && !isThirdPlace && "hover:border-slate-400 dark:hover:border-slate-500",
       )}
-      style={{ width: "220px", height: "87px" }}
+      style={{ width: "270px", height: "95px" }}
     >
       <div className="flex flex-col h-full">
         {/* Team 1 */}

@@ -32,7 +32,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
   useAutoAdvanceWinners({ matches, setMatches, resolvedTeams })
 
-  const { matchHeight, r32Gap, r16Gap, qfGap, connectorWidth, r16Offset, qfOffset, sfOffset } = getBracketLayoutValues()
+  const { matchHeight, r32Gap, r16Gap, qfGap, connectorWidth, headerHeight, r16Offset, qfOffset, sfOffset } = getBracketLayoutValues()
 
   // Destructure bracket matches for easier access
   const {
@@ -129,7 +129,7 @@ onScoreChange={onScoreChange}
               </div>
 
               {/* Connector R32 -> R16 */}
-              <div style={{ paddingTop: "44px" }}>
+              <div style={{ paddingTop: `${headerHeight}px` }}>
                 <BracketConnector matchCount={8} matchHeight={matchHeight} gap={r32Gap} connectorWidth={connectorWidth} />
               </div>
 
@@ -158,7 +158,7 @@ onScoreChange={onScoreChange}
               </div>
 
               {/* Connector R16 -> QF */}
-              <div style={{ paddingTop: `${r16Offset + 43}px` }}>
+              <div style={{ paddingTop: `${r16Offset + headerHeight}px` }}>
                 <BracketConnector
                   matchCount={4}
                   matchHeight={matchHeight}
@@ -192,7 +192,7 @@ onScoreChange={onScoreChange}
               </div>
 
               {/* Connector QF -> SF */}
-              <div style={{ paddingTop: `${qfOffset + 43}px` }}>
+              <div style={{ paddingTop: `${qfOffset + headerHeight}px` }}>
                 <BracketConnector
                   matchCount={2}
                   matchHeight={matchHeight}
@@ -226,7 +226,7 @@ onScoreChange={onScoreChange}
               </div>
 
               {/* Connector SF -> Final (left) */}
-              <div style={{ paddingTop: `${sfOffset + 83}px` }}>
+              <div style={{ paddingTop: `${headerHeight + sfOffset + 40}px` }}>
                 <svg width={connectorWidth} height={matchHeight} className="shrink-0">
                   <line
                     x1={0}
@@ -299,7 +299,7 @@ onScoreChange={onScoreChange}
               </div>
 
               {/* Connector Final -> SF (right) */}
-              <div style={{ paddingTop: `${sfOffset + 83}px` }}>
+              <div style={{ paddingTop: `${headerHeight + sfOffset + 40}px` }}>
                 <svg width={connectorWidth} height={matchHeight} className="shrink-0">
                   <line
                     x1={0}
@@ -337,7 +337,7 @@ onScoreChange={onScoreChange}
               </div>
 
               {/* Connector SF -> QF (right) */}
-              <div style={{ paddingTop: `${qfOffset + 44}px` }}>
+              <div style={{ paddingTop: `${qfOffset + headerHeight}px` }}>
                 <BracketConnector
                   matchCount={2}
                   matchHeight={matchHeight}
@@ -372,7 +372,7 @@ onScoreChange={onScoreChange}
               </div>
 
               {/* Connector QF -> R16 (right) */}
-              <div style={{ paddingTop: `${r16Offset + 44}px` }}>
+              <div style={{ paddingTop: `${r16Offset + headerHeight}px` }}>
                 <BracketConnector
                   matchCount={4}
                   matchHeight={matchHeight}
@@ -407,7 +407,7 @@ onScoreChange={onScoreChange}
               </div>
 
               {/* Connector R16 -> R32 (right) */}
-              <div style={{ paddingTop: "44px" }}>
+              <div style={{ paddingTop: `${headerHeight}px` }}>
                 <BracketConnector
                   matchCount={8}
                   matchHeight={matchHeight}
