@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils"
 import { StandingsTableProps } from "../types"
 import { TeamFlag } from "@/components/team-flag"
+import { ConfederationBadge } from "@/components/confederation-badge"
 
 
 export function StandingsTable({ standings, teamsMap, qualifiedTeams }: StandingsTableProps) {
@@ -63,6 +64,7 @@ export function StandingsTable({ standings, teamsMap, qualifiedTeams }: Standing
                   <div className="flex items-center gap-2">
                     <TeamFlag code={team?.code || "xx"} name={team?.name || "Unknown"} />
                     <span className="font-medium text-foreground truncate max-w-[100px]">{team?.name}</span>
+                    {team?.confederation && <ConfederationBadge confederation={team.confederation} />}
                   </div>
                 </td>
                 <td className="text-center py-2 text-muted-foreground">{standing.played}</td>

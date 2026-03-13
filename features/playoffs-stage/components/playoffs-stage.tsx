@@ -10,6 +10,7 @@ import { PlayoffMatch, UEFAPlayoffPath, ICPlayoffPath, PlayoffTeam } from "../ty
 import { usePlayoffs } from "../hooks/use-playoffs"
 import { Trophy, Calendar, MapPin, Dices, RotateCcw } from "lucide-react"
 import { TeamFlag } from "@/components/team-flag"
+import { ConfederationBadge } from "@/components/confederation-badge"
 
 
 interface PlayoffMatchCardProps {
@@ -67,6 +68,7 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
           {team1 ? (
             <>
               <TeamFlag code={team1.code} name={team1.name} />
+              <ConfederationBadge confederation={team1.confederation} />
               <span className={cn(
                 "text-sm truncate",
                 winner === "team2" && !match.penaltyWinnerId && "text-muted-foreground"
@@ -128,6 +130,7 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
               )}>
                 {team2.name}
               </span>
+              <ConfederationBadge confederation={team2.confederation} />
               <TeamFlag code={team2.code} name={team2.name} />
             </>
           ) : (
@@ -419,6 +422,7 @@ export function PlayoffsStage({
                     <div className="flex flex-col items-center gap-2">
                       <TeamFlag code={winnerTeam.code} name={winnerTeam.name} />
                       <div className="text-sm font-medium">{winnerTeam.name}</div>
+                      <ConfederationBadge confederation={winnerTeam.confederation} />
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-2">

@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils"
 import { GroupStanding, Team } from "@/lib/types"
 import { TeamFlag } from "@/components/team-flag"
+import { ConfederationBadge } from "@/components/confederation-badge"
 
 interface ThirdPlaceTableProps {
   ranking: {
@@ -104,6 +105,7 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
                       <span className="font-medium truncate">
                         {teamData?.name || team.teamId}
                       </span>
+                      {teamData?.confederation && <ConfederationBadge confederation={teamData.confederation} />}
                     </div>
                   </td>
                   <td className="text-center py-3 px-2 text-muted-foreground">{team.group}</td>
