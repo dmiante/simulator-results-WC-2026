@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description:
     "Predict match results and simulate the FIFA World Cup 2026 tournament. Enter scores for all 48 teams across group stages and knockout rounds.",
   keywords: ["FIFA", "World Cup", "2026", "simulator", "football", "soccer", "predictions"],
-  generator: 'v0.app'
+  referrer: "strict-origin-when-cross-origin",
 }
 
 export const viewport: Viewport = {
