@@ -11,6 +11,7 @@ import { usePlayoffs } from "../hooks/use-playoffs"
 import { Trophy, Calendar, MapPin, Dices, RotateCcw } from "lucide-react"
 import { TeamFlag } from "@/components/team-flag"
 import { ConfederationBadge } from "@/components/confederation-badge"
+import Image from "next/image"
 
 
 interface PlayoffMatchCardProps {
@@ -426,7 +427,7 @@ export function PlayoffsStage({
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-2">
-                      <img src="/fifa_flag.svg" alt="TBD" width={30} height={30} />
+                      <Image src="/fifa_flag.svg" alt="TBD" width={30} height={30} unoptimized />
                       <div className="text-sm text-muted-foreground">TBD</div>
                     </div>
                   )}
