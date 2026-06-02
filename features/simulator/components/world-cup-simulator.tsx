@@ -103,16 +103,16 @@ export function WorldCupSimulator() {
         />
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full max-w-xl grid-cols-3">
-            <TabsTrigger value="playoffs" className="gap-2">
-              <Swords className="h-4 w-4" />
+            <TabsTrigger value="playoffs" className="gap-2 text-xs sm:text-sm">
+              <Swords className="h-4 w-4 hidden sm:inline" />
               PlayOffs
             </TabsTrigger>
-            <TabsTrigger value="groups" className="gap-2">
-              <Users className="h-4 w-4" />
+            <TabsTrigger value="groups" className="gap-2 text-xs sm:text-sm">
+              <Users className="h-4 w-4 hidden sm:inline" />
               Group Stage
             </TabsTrigger>
-            <TabsTrigger value="knockout" className="gap-2">
-              <GitBranch className="h-4 w-4" />
+            <TabsTrigger value="knockout" className="gap-2 text-xs sm:text-sm">
+              <GitBranch className="h-4 w-4 hidden sm:inline" />
               Knockout
             </TabsTrigger>
           </TabsList>

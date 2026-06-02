@@ -63,7 +63,7 @@ export function StandingsTable({ standings, teamsMap, qualifiedTeams }: Standing
                 <td className="py-2">
                   <div className="flex items-center gap-2">
                     <TeamFlag code={team?.code || "xx"} name={team?.name || "Unknown"} />
-                    <span className="font-medium text-foreground truncate max-w-[100px]">{team?.name}</span>
+                    <span className="font-medium text-foreground truncate max-w-[80px] sm:max-w-[100px]">{team?.name}</span>
                     {team?.confederation && <ConfederationBadge confederation={team.confederation} />}
                   </div>
                 </td>

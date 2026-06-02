@@ -65,7 +65,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
         </Button>
       </div>
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold">Knockout Stage</h2>
+        <h2 className="text-xl sm:text-2xl font-bold">Knockout Stage</h2>
         <p className="text-muted-foreground">
           June 28-July 19, 2026 - Simulate results and determine the champion
         </p>
@@ -515,6 +515,7 @@ onScoreChange={onScoreChange}
                 placeholder2={placeholders.team2}
                 resolvedTeam1={resolved?.team1}
                 resolvedTeam2={resolved?.team2}
+                className="w-full"
               />
             )
           })}

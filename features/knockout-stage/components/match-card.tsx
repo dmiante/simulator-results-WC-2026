@@ -16,6 +16,7 @@ export function MatchCard({
   placeholder2,
   resolvedTeam1,
   resolvedTeam2,
+  className,
 }: {
   match: Match
   team1: Team
@@ -28,6 +29,7 @@ export function MatchCard({
   placeholder2?: string
   resolvedTeam1?: Team | null
   resolvedTeam2?: Team | null
+  className?: string
 }) {
   const isTeam1TBD = !team1 || team1.name === "TBD"
   const isTeam2TBD = !team2 || team2.name === "TBD"
@@ -74,13 +76,13 @@ export function MatchCard({
   return (
     <div
       className={cn(
-        "rounded-lg border-2 overflow-hidden transition-all",
+        "rounded-lg border-2 overflow-hidden transition-all w-[270px] min-h-[95px]",
         "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600",
         isFinal && "border-amber-500/70 dark:border-amber-500/50 shadow-lg shadow-amber-500/20",
         isThirdPlace && "border-orange-500/50 dark:border-orange-500/40",
         !isFinal && !isThirdPlace && "hover:border-slate-400 dark:hover:border-slate-500",
+        className,
       )}
-      style={{ width: "270px", height: "95px" }}
     >
       <div className="flex flex-col h-full">
         {/* Team 1 */}

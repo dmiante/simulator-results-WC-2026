@@ -46,7 +46,7 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
 
   return (
     <div className="rounded-lg border border-border bg-card overflow-hidden">
-      <div className="px-6 py-8 border-b border-border bg-muted/30">
+      <div className="px-4 py-4 sm:px-6 sm:py-6 border-b border-border bg-muted/30">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <span className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-bold text-sm">
             3°
@@ -55,8 +55,9 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
         </h3>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="relative">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
           <thead>
             <tr className="text-xs text-muted-foreground border-b border-border bg-muted/20">
               <th className="text-center py-3 px-2 font-medium">#</th>
@@ -126,6 +127,9 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
             })}
           </tbody>
         </table>
+        </div>
+        {/* Scroll hint gradient on right edge */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-card to-transparent sm:hidden" />
       </div>
 
       <div className="p-3 border-t border-border flex flex-wrap gap-4 text-xs bg-muted/20">

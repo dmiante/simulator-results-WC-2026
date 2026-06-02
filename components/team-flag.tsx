@@ -8,7 +8,7 @@ export function TeamFlag({ code, name, width = 30, widthImg = 40 }: { code: stri
 
   if (error) {
     return (
-      <div style={{ position: "relative", width: `${width}px`, height: `${width * 0.67}px` }}>
+      <div className="shrink-0" style={{ position: "relative", width: `${width}px`, height: `${width * 0.67}px` }}>
         <Image
           src={`/fifa_flag.svg`}
           alt={name}
@@ -21,7 +21,7 @@ export function TeamFlag({ code, name, width = 30, widthImg = 40 }: { code: stri
   }
 
   return (
-    <div style={{ position: "relative", width: `${width}px`, height: `${width * 0.67}px` }}>
+    <div className="shrink-0" style={{ position: "relative", width: `${width}px`, height: `${width * 0.67}px` }}>
       <Image
         src={`https://flagcdn.com/w${widthImg}/${code.toLowerCase()}.png`}
         alt={name}

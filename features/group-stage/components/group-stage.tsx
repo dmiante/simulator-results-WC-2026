@@ -36,7 +36,7 @@ export function GroupStage({
         </Button>
       </div>
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold">Group Stage</h2>
+        <h2 className="text-xl sm:text-2xl font-bold">Group Stage</h2>
         <p className="text-muted-foreground">
           June 11–27, 2026 • Simulate results and determine the qualifiers
         </p>

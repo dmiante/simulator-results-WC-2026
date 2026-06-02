@@ -53,39 +53,39 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
         {match.venue && (
           <div className="flex items-center gap-1">
             <MapPin className="h-3 w-3" />
-            <span className="truncate max-w-[120px]">{match.venue}</span>
+            <span className="truncate max-w-[80px] sm:max-w-[120px]">{match.venue}</span>
           </div>
         )}
       </div>
 
       {/* Teams and score */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2">
         {/* Team 1 */}
         <div className={cn(
-          "flex-1 flex items-center gap-2 min-w-0",
+          "flex-1 flex items-center gap-1 sm:gap-2 min-w-0 overflow-hidden",
           winner === "team1" && "font-semibold",
           match.penaltyWinnerId === match.team1Id && "font-semibold"
         )}>
           {team1 ? (
             <>
               <TeamFlag code={team1.code} name={team1.name} />
-              <ConfederationBadge confederation={team1.confederation} />
+              <span className="hidden sm:inline"><ConfederationBadge confederation={team1.confederation} /></span>
               <span className={cn(
-                "text-sm truncate",
+                "text-sm truncate min-w-0",
                 winner === "team2" && !match.penaltyWinnerId && "text-muted-foreground"
               )}>
                 {team1.name}
               </span>
             </>
           ) : (
-            <span className="text-sm text-muted-foreground italic">
+            <span className="text-sm text-muted-foreground italic truncate">
               {match.team1FromMatch || "TBD"}
             </span>
           )}
         </div>
 
         {/* Score inputs */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <Input
             type="number"
             min={0}
@@ -119,23 +119,23 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
 
         {/* Team 2 */}
         <div className={cn(
-          "flex-1 flex items-center gap-2 min-w-0 justify-end",
+          "flex-1 flex items-center gap-1 sm:gap-2 min-w-0 overflow-hidden justify-end",
           winner === "team2" && "font-semibold",
           match.penaltyWinnerId === match.team2Id && "font-semibold"
         )}>
           {team2 ? (
             <>
               <span className={cn(
-                "text-sm truncate",
+                "text-sm truncate min-w-0",
                 winner === "team1" && !match.penaltyWinnerId && "text-muted-foreground"
               )}>
                 {team2.name}
               </span>
-              <ConfederationBadge confederation={team2.confederation} />
+              <span className="hidden sm:inline"><ConfederationBadge confederation={team2.confederation} /></span>
               <TeamFlag code={team2.code} name={team2.name} />
             </>
           ) : (
-            <span className="text-sm text-muted-foreground italic">
+            <span className="text-sm text-muted-foreground italic truncate">
               {match.team2FromMatch || "TBD"}
             </span>
           )}
@@ -182,7 +182,7 @@ function UEFAPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }:
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="text-lg flex items-center gap-2">
             <span>{path.name}</span>
             <Badge variant="outline" className="text-xs">
@@ -251,7 +251,7 @@ function ICPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }: I
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="text-lg flex items-center gap-2">
             <span>{path.name}</span>
             <Badge variant="outline" className="text-xs">
@@ -345,7 +345,7 @@ export function PlayoffsStage({
         )}
       </div>
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold">Qualification Playoffs</h2>
+        <h2 className="text-xl sm:text-2xl font-bold">Qualification Playoffs</h2>
         <p className="text-muted-foreground">
           March 26-31, 2026 • Determine the final 6 teams for the World Cup
         </p>
@@ -353,8 +353,14 @@ export function PlayoffsStage({
 
       <Tabs defaultValue="uefa" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger value="uefa">UEFA Playoffs (4 spots)</TabsTrigger>
-          <TabsTrigger value="ic">Inter-Confederation (2 spots)</TabsTrigger>
+          <TabsTrigger value="uefa">
+            <span className="sm:hidden">UEFA (4)</span>
+            <span className="hidden sm:inline">UEFA Playoffs (4 spots)</span>
+          </TabsTrigger>
+          <TabsTrigger value="ic">
+            <span className="sm:hidden">IC Playoffs (2)</span>
+            <span className="hidden sm:inline">Inter-Confederation (2 spots)</span>
+          </TabsTrigger>
         </TabsList>
 
         {/* UEFA Playoffs */}
