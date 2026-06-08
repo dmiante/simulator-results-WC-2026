@@ -3,12 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { PlayoffMatch, UEFAPlayoffPath, ICPlayoffPath, PlayoffTeam } from "../types"
 import { usePlayoffs } from "../hooks/use-playoffs"
-import { Trophy, Calendar, MapPin, Dices, RotateCcw } from "lucide-react"
+import { Trophy, Calendar, MapPin } from "lucide-react"
 import { TeamFlag } from "@/components/team-flag"
 import { ConfederationBadge } from "@/components/confederation-badge"
 import Image from "next/image"
@@ -17,19 +16,15 @@ import Image from "next/image"
 interface PlayoffMatchCardProps {
   match: PlayoffMatch
   getTeam: (id: string | null) => PlayoffTeam | undefined
-  onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
-  onPenaltyWinner?: (matchId: string, winnerId: string) => void
-  showPenaltySelection?: boolean
 }
 
-function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: PlayoffMatchCardProps) {
+function PlayoffMatchCard({ match, getTeam }: PlayoffMatchCardProps) {
   const team1 = match.team1Id ? getTeam(match.team1Id) : null
   const team2 = match.team2Id ? getTeam(match.team2Id) : null
-
-  const handleScoreChange = (team: "team1" | "team2", value: string) => {
-    const score = value === "" ? null : Math.max(0, Math.min(99, parseInt(value) || 0))
-    onScoreChange(match.id, team, score)
-  }
+  const hasPenaltyScore = match.penaltyTeam1Score !== undefined && match.penaltyTeam2Score !== undefined
+  const penaltyWinnerSide = match.penaltyWinnerId
+    ? match.penaltyWinnerId === match.team1Id ? "team1" : "team2"
+    : null
 
   const getWinner = () => {
     if (match.team1Score === null || match.team2Score === null) return null
@@ -39,8 +34,6 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
   }
 
   const winner = getWinner()
-  const isDraw = winner === "draw"
-  const needsPenalties = isDraw && match.team1Score !== null
 
   return (
     <div className="bg-muted/30 rounded-lg p-3 space-y-2">
@@ -91,10 +84,11 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
             min={0}
             max={99}
             value={match.team1Score ?? ""}
-            onChange={(e) => handleScoreChange("team1", e.target.value)}
+            readOnly
             disabled={!team1}
             className={cn(
               "w-10 h-8 text-center p-0 text-sm font-medium",
+              "pointer-events-none",
               winner === "team1" && "border-green-500 bg-green-500/10",
               match.penaltyWinnerId === match.team1Id && "border-green-500 bg-green-500/10"
             )}
@@ -106,10 +100,11 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
             min={0}
             max={99}
             value={match.team2Score ?? ""}
-            onChange={(e) => handleScoreChange("team2", e.target.value)}
+            readOnly
             disabled={!team2}
             className={cn(
               "w-10 h-8 text-center p-0 text-sm font-medium",
+              "pointer-events-none",
               winner === "team2" && "border-green-500 bg-green-500/10",
               match.penaltyWinnerId === match.team2Id && "border-green-500 bg-green-500/10"
             )}
@@ -142,26 +137,47 @@ function PlayoffMatchCard({ match, getTeam, onScoreChange, onPenaltyWinner }: Pl
         </div>
       </div>
 
-      {/* Penalty shootout selection */}
-      {needsPenalties && team1 && team2 && onPenaltyWinner && (
-        <div className="flex items-center justify-center gap-2 pt-2 border-t border-border/50">
-          <span className="text-xs text-muted-foreground">Penalties:</span>
-          <Button
-            size="sm"
-            variant={match.penaltyWinnerId === team1.id ? "default" : "outline"}
-            className="h-6 text-xs px-2 cursor-pointer"
-            onClick={() => onPenaltyWinner(match.id, team1.id)}
-          >
-            {team1.code}
-          </Button>
-          <Button
-            size="sm"
-            variant={match.penaltyWinnerId === team2.id ? "default" : "outline"}
-            className="h-6 text-xs px-2 cursor-pointer"
-            onClick={() => onPenaltyWinner(match.id, team2.id)}
-          >
-            {team2.code}
-          </Button>
+      {winner === "draw" && penaltyWinnerSide && hasPenaltyScore && team1 && team2 && (
+        <div className="border-t border-border/50 pt-2">
+          <div className="grid grid-cols-[1fr_auto_1fr] overflow-hidden rounded-md border border-border/60 bg-background/70 text-xs">
+            <div
+              className={cn(
+                "flex min-w-0 items-center justify-between gap-2 px-3 py-2",
+                penaltyWinnerSide === "team1"
+                  ? "bg-green-500/15 text-green-700 dark:text-green-300"
+                  : "bg-muted/40 text-muted-foreground"
+              )}
+            >
+              <div className="flex min-w-0 items-center gap-1.5">
+                {penaltyWinnerSide === "team1" && <Trophy className="h-3 w-3 shrink-0" />}
+                <span className="truncate font-medium">{team1.code}</span>
+              </div>
+              <span className="shrink-0 font-semibold tabular-nums text-foreground dark:text-current">
+                {match.penaltyTeam1Score}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-center border-x border-border/60 bg-muted/60 px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Pen
+            </div>
+
+            <div
+              className={cn(
+                "flex min-w-0 items-center justify-between gap-2 px-3 py-2",
+                penaltyWinnerSide === "team2"
+                  ? "bg-green-500/15 text-green-700 dark:text-green-300"
+                  : "bg-muted/40 text-muted-foreground"
+              )}
+            >
+              <span className="shrink-0 font-semibold tabular-nums text-foreground dark:text-current">
+                {match.penaltyTeam2Score}
+              </span>
+              <div className="flex min-w-0 items-center justify-end gap-1.5 text-right">
+                <span className="truncate font-medium">{team2.code}</span>
+                {penaltyWinnerSide === "team2" && <Trophy className="h-3 w-3 shrink-0" />}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -172,11 +188,9 @@ interface UEFAPathCardProps {
   path: UEFAPlayoffPath
   getTeam: (id: string | null) => PlayoffTeam | undefined
   winner: string | null
-  onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
-  onPenaltyWinner: (matchId: string, winnerId: string) => void
 }
 
-function UEFAPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }: UEFAPathCardProps) {
+function UEFAPathCard({ path, getTeam, winner }: UEFAPathCardProps) {
   const winnerTeam = winner ? getTeam(winner) : null
 
   return (
@@ -208,14 +222,10 @@ function UEFAPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }:
             <PlayoffMatchCard
               match={path.semifinal1}
               getTeam={getTeam}
-              onScoreChange={onScoreChange}
-              onPenaltyWinner={onPenaltyWinner}
             />
             <PlayoffMatchCard
               match={path.semifinal2}
               getTeam={getTeam}
-              onScoreChange={onScoreChange}
-              onPenaltyWinner={onPenaltyWinner}
             />
           </div>
         </div>
@@ -228,8 +238,6 @@ function UEFAPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }:
           <PlayoffMatchCard
             match={path.final}
             getTeam={getTeam}
-            onScoreChange={onScoreChange}
-            onPenaltyWinner={onPenaltyWinner}
           />
         </div>
       </CardContent>
@@ -241,11 +249,9 @@ interface ICPathCardProps {
   path: ICPlayoffPath
   getTeam: (id: string | null) => PlayoffTeam | undefined
   winner: string | null
-  onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
-  onPenaltyWinner: (matchId: string, winnerId: string) => void
 }
 
-function ICPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }: ICPathCardProps) {
+function ICPathCard({ path, getTeam, winner }: ICPathCardProps) {
   const winnerTeam = winner ? getTeam(winner) : null
 
   return (
@@ -275,8 +281,6 @@ function ICPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }: I
           <PlayoffMatchCard
             match={path.semifinal}
             getTeam={getTeam}
-            onScoreChange={onScoreChange}
-            onPenaltyWinner={onPenaltyWinner}
           />
         </div>
 
@@ -288,8 +292,6 @@ function ICPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }: I
           <PlayoffMatchCard
             match={path.final}
             getTeam={getTeam}
-            onScoreChange={onScoreChange}
-            onPenaltyWinner={onPenaltyWinner}
           />
         </div>
       </CardContent>
@@ -299,27 +301,15 @@ function ICPathCard({ path, getTeam, winner, onScoreChange, onPenaltyWinner }: I
 
 interface PlayoffsStageProps {
   playoffsState?: ReturnType<typeof usePlayoffs>['playoffsState']
-  onMatchScoreChange?: (matchId: string, team: "team1" | "team2", score: number | null) => void
-  onPenaltyWinner?: (matchId: string, winnerId: string) => void
-  simulatePlayoffs?: () => void
-  resetPlayoffs?: () => void
 }
 
 export function PlayoffsStage({
-  playoffsState: externalState,
-  onMatchScoreChange: externalScoreChange,
-  onPenaltyWinner: externalPenaltyWinner,
-  simulatePlayoffs: externalSimulate,
-  resetPlayoffs: externalReset
+  playoffsState: externalState
 }: PlayoffsStageProps = {}) {
-  const { simulatePlayoffs: internalSimulate, resetPlayoffs: internalReset, playoffsState: internalState, handleMatchScoreChange: handleScore, handlePenaltyWinner: handlePenalty } = usePlayoffs()
+  const { playoffsState: internalState } = usePlayoffs()
 
   // Use external state/handlers if provided, otherwise use internal hook
   const playoffsState = externalState || internalState
-  const handleMatchScoreChange = externalScoreChange || handleScore
-  const handlePenaltyWinner = externalPenaltyWinner || handlePenalty
-  const simulatePlayoffs = externalSimulate || internalSimulate
-  const resetPlayoffs = externalReset || internalReset
 
   const { uefaPaths, icPaths, playoffTeams, winners } = playoffsState
 
@@ -330,20 +320,6 @@ export function PlayoffsStage({
 
   return (
     <div className="space-y-6">
-      <div className="gap-2 flex flex-wrap justify-end">
-        {simulatePlayoffs && (
-          <>
-            <Button onClick={simulatePlayoffs} className="gap-2 cursor-pointer" variant="default">
-              <Dices className="h-4 w-4" />
-              Simulate Playoffs
-            </Button>
-            <Button onClick={resetPlayoffs} className="gap-2 cursor-pointer" variant="outline">
-              <RotateCcw className="h-4 w-4" />
-              Reset Playoffs
-            </Button>
-          </>
-        )}
-      </div>
       <div className="text-center space-y-2">
         <h2 className="text-xl sm:text-2xl font-bold">Qualification Playoffs</h2>
         <p className="text-muted-foreground">
@@ -375,8 +351,6 @@ export function PlayoffsStage({
                 path={path}
                 getTeam={getTeam}
                 winner={winners[path.targetSlotId as keyof typeof winners]}
-                onScoreChange={handleMatchScoreChange}
-                onPenaltyWinner={handlePenaltyWinner}
               />
             ))}
           </div>
@@ -394,8 +368,6 @@ export function PlayoffsStage({
                 path={path}
                 getTeam={getTeam}
                 winner={winners[path.targetSlotId as keyof typeof winners]}
-                onScoreChange={handleMatchScoreChange}
-                onPenaltyWinner={handlePenaltyWinner}
               />
             ))}
           </div>
