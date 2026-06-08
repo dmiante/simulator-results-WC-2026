@@ -65,8 +65,8 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       matchNumber: 1,
       team1Id: "ita", // Italy (Pot 1 - Host)
       team2Id: "nir", // Northern Ireland (Pot 4 - Away)
-      team1Score: null,
-      team2Score: null,
+      team1Score: 2,
+      team2Score: 0,
       date: "2026-03-26",
       venue: "Bergamo",
     },
@@ -77,22 +77,28 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       matchNumber: 2,
       team1Id: "wal", // Wales (Pot 2 - Host)
       team2Id: "bih", // Bosnia and Herzegovina (Pot 3 - Away)
-      team1Score: null,
-      team2Score: null,
+      team1Score: 1,
+      team2Score: 1,
       date: "2026-03-26",
       venue: "Cardiff",
+      penaltyWinnerId: "bih",
+      penaltyTeam1Score: 2,
+      penaltyTeam2Score: 4,
     },
     final: {
       id: "uefa-a-final",
       pathId: "A",
       stage: "final",
       matchNumber: 3,
-      team1Id: null,
-      team2Id: null,
-      team1Score: null,
-      team2Score: null,
+      team1Id: "bih",
+      team2Id: "ita",
+      team1Score: 1,
+      team2Score: 1,
       date: "2026-03-31",
-      venue: "Cardiff or Zenica",
+      venue: "Zenica",
+      penaltyWinnerId: "bih",
+      penaltyTeam1Score: 4,
+      penaltyTeam2Score: 1,
       team1FromMatch: "Winner SF2",
       team2FromMatch: "Winner SF1",
     },
@@ -109,8 +115,8 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       matchNumber: 1,
       team1Id: "ukr", // Ukraine (Pot 1 - Host, neutral venue)
       team2Id: "swe", // Sweden (Pot 4 - Away)
-      team1Score: null,
-      team2Score: null,
+      team1Score: 1,
+      team2Score: 3,
       date: "2026-03-26",
       venue: "Valencia (neutral)",
     },
@@ -121,8 +127,8 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       matchNumber: 2,
       team1Id: "pol", // Poland (Pot 2 - Host)
       team2Id: "alb", // Albania (Pot 3 - Away)
-      team1Score: null,
-      team2Score: null,
+      team1Score: 2,
+      team2Score: 1,
       date: "2026-03-26",
       venue: "Warsaw",
     },
@@ -131,12 +137,12 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       pathId: "B",
       stage: "final",
       matchNumber: 3,
-      team1Id: null,
-      team2Id: null,
-      team1Score: null,
-      team2Score: null,
+      team1Id: "swe",
+      team2Id: "pol",
+      team1Score: 3,
+      team2Score: 2,
       date: "2026-03-31",
-      venue: "Valencia or Solna",
+      venue: "Solna",
       team1FromMatch: "Winner SF1",
       team2FromMatch: "Winner SF2",
     },
@@ -153,8 +159,8 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       matchNumber: 1,
       team1Id: "tur", // Turkey (Pot 1 - Host)
       team2Id: "rou", // Romania (Pot 4 - Away)
-      team1Score: null,
-      team2Score: null,
+      team1Score: 1,
+      team2Score: 0,
       date: "2026-03-26",
       venue: "Istanbul",
     },
@@ -165,8 +171,8 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       matchNumber: 2,
       team1Id: "svk", // Slovakia (Pot 2 - Host)
       team2Id: "kos", // Kosovo (Pot 3 - Away)
-      team1Score: null,
-      team2Score: null,
+      team1Score: 3,
+      team2Score: 4,
       date: "2026-03-26",
       venue: "Bratislava",
     },
@@ -175,12 +181,12 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       pathId: "C",
       stage: "final",
       matchNumber: 3,
-      team1Id: null,
-      team2Id: null,
-      team1Score: null,
-      team2Score: null,
+      team1Id: "kos",
+      team2Id: "tur",
+      team1Score: 0,
+      team2Score: 1,
       date: "2026-03-31",
-      venue: "Bratislava or Pristina",
+      venue: "Pristina",
       team1FromMatch: "Winner SF2",
       team2FromMatch: "Winner SF1",
     },
@@ -197,8 +203,8 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       matchNumber: 1,
       team1Id: "den", // Denmark (Pot 1 - Host)
       team2Id: "mkd", // North Macedonia (Pot 4 - Away)
-      team1Score: null,
-      team2Score: null,
+      team1Score: 4,
+      team2Score: 0,
       date: "2026-03-26",
       venue: "Copenhagen",
     },
@@ -209,22 +215,28 @@ export const uefaPlayoffPaths: UEFAPlayoffPath[] = [
       matchNumber: 2,
       team1Id: "cze", // Czech Republic (Pot 2 - Host)
       team2Id: "irl", // Republic of Ireland (Pot 3 - Away)
-      team1Score: null,
-      team2Score: null,
+      team1Score: 2,
+      team2Score: 2,
       date: "2026-03-26",
       venue: "Prague",
+      penaltyWinnerId: "cze",
+      penaltyTeam1Score: 4,
+      penaltyTeam2Score: 3,
     },
     final: {
       id: "uefa-d-final",
       pathId: "D",
       stage: "final",
       matchNumber: 3,
-      team1Id: null,
-      team2Id: null,
-      team1Score: null,
-      team2Score: null,
+      team1Id: "cze",
+      team2Id: "den",
+      team1Score: 2,
+      team2Score: 2,
       date: "2026-03-31",
-      venue: "Prague or Dublin",
+      venue: "Prague",
+      penaltyWinnerId: "cze",
+      penaltyTeam1Score: 3,
+      penaltyTeam2Score: 1,
       team1FromMatch: "Winner SF2",
       team2FromMatch: "Winner SF1",
     },
@@ -248,8 +260,8 @@ export const icPlayoffPaths: ICPlayoffPath[] = [
       matchNumber: 1,
       team1Id: "ncl", // New Caledonia
       team2Id: "jam", // Jamaica
-      team1Score: null,
-      team2Score: null,
+      team1Score: 0,
+      team2Score: 1,
       date: "2026-03-26",
       venue: "Guadalajara (Estadio Akron)",
     },
@@ -259,9 +271,9 @@ export const icPlayoffPaths: ICPlayoffPath[] = [
       stage: "final",
       matchNumber: 2,
       team1Id: "cod", // DR Congo (Seeded)
-      team2Id: null,
-      team1Score: null,
-      team2Score: null,
+      team2Id: "jam",
+      team1Score: 1,
+      team2Score: 0,
       date: "2026-03-31",
       venue: "Guadalajara (Estadio Akron)",
       team2FromMatch: "Winner Match 1",
@@ -279,8 +291,8 @@ export const icPlayoffPaths: ICPlayoffPath[] = [
       matchNumber: 1,
       team1Id: "bol", // Bolivia
       team2Id: "sur", // Suriname
-      team1Score: null,
-      team2Score: null,
+      team1Score: 2,
+      team2Score: 1,
       date: "2026-03-26",
       venue: "Monterrey (Estadio BBVA)",
     },
@@ -290,9 +302,9 @@ export const icPlayoffPaths: ICPlayoffPath[] = [
       stage: "final",
       matchNumber: 2,
       team1Id: "irq", // Iraq (Seeded)
-      team2Id: null,
-      team1Score: null,
-      team2Score: null,
+      team2Id: "bol",
+      team1Score: 2,
+      team2Score: 1,
       date: "2026-03-31",
       venue: "Monterrey (Estadio BBVA)",
       team2FromMatch: "Winner Match 2",
@@ -315,12 +327,12 @@ export const initialPlayoffsState: PlayoffsState = {
   icPaths: icPlayoffPaths,
   playoffTeams: allPlayoffTeams,
   winners: {
-    uefaa: null, // Winner of Path A → Group B
-    uefab: null, // Winner of Path B → Group F
-    uefac: null, // Winner of Path C → Group D
-    uefad: null, // Winner of Path D → Group A
-    icp1: null,  // Winner of IC Path 1 → Group K
-    icp2: null,  // Winner of IC Path 2 → Group I
+    uefaa: "bih", // Winner of Path A → Group B
+    uefab: "swe", // Winner of Path B → Group F
+    uefac: "tur", // Winner of Path C → Group D
+    uefad: "cze", // Winner of Path D → Group A
+    icp1: "cod",  // Winner of IC Path 1 → Group K
+    icp2: "irq",  // Winner of IC Path 2 → Group I
   },
 }
 
