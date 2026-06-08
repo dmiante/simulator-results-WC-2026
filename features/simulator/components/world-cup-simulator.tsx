@@ -17,10 +17,6 @@ export function WorldCupSimulator() {
   // Playoffs state (determines which teams go to groups)
   const {
     playoffsState,
-    handleMatchScoreChange: handlePlayoffScoreChange,
-    handlePenaltyWinner: handlePlayoffPenaltyWinner,
-    simulatePlayoffs,
-    resetPlayoffs,
     winners: playoffWinners,
   } = usePlayoffs()
 
@@ -78,12 +74,10 @@ export function WorldCupSimulator() {
   // Combined reset function
   const resetTournament = () => {
     resetTournamentBase()
-    resetPlayoffs()
   }
 
   // Combined simulate function
   const simulateTournament = () => {
-    simulatePlayoffs()
     simulateTournamentBase()
   }
 
@@ -98,7 +92,6 @@ export function WorldCupSimulator() {
           simulateGroupStage={simulateGroupStage}
           simulateKnockoutStage={simulateKnockoutStage}
           knockoutMatches={knockoutMatches}
-          simulatePlayoffs={simulatePlayoffs}
           groupsComplete={groupsComplete}
         />
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -120,10 +113,6 @@ export function WorldCupSimulator() {
           <TabsContent value="playoffs" className="mt-6">
             <PlayoffsStage
               playoffsState={playoffsState}
-              onMatchScoreChange={handlePlayoffScoreChange}
-              onPenaltyWinner={handlePlayoffPenaltyWinner}
-              simulatePlayoffs={simulatePlayoffs}
-              resetPlayoffs={resetPlayoffs}
             />
           </TabsContent>
 
