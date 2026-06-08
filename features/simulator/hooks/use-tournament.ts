@@ -227,6 +227,38 @@ function simulateAllKnockoutMatches(round32Matches: Match[]): Match[] {
 const STORAGE_KEY_GROUP = "wc2026-group-matches"
 const STORAGE_KEY_KNOCKOUT = "wc2026-knockout-matches"
 
+function loadStoredGroupMatches(): Match[] | null {
+  try {
+    const savedGroup = localStorage.getItem(STORAGE_KEY_GROUP)
+    if (!savedGroup) return null
+
+    const parsed: Match[] = JSON.parse(savedGroup)
+    // Migrate stale localStorage data: backfill dateTime/venue from fresh match data
+    const freshMatches = generateGroupMatches()
+    const freshById = new Map(freshMatches.map((match) => [match.id, match]))
+
+    return parsed.map((match) => {
+      const fresh = freshById.get(match.id)
+      if (fresh && !match.dateTime) {
+        return { ...match, dateTime: fresh.dateTime, venue: fresh.venue }
+      }
+
+      return match
+    })
+  } catch {
+    return null
+  }
+}
+
+function loadStoredKnockoutMatches(): Match[] | null {
+  try {
+    const savedKnockout = localStorage.getItem(STORAGE_KEY_KNOCKOUT)
+    return savedKnockout ? JSON.parse(savedKnockout) : null
+  } catch {
+    return null
+  }
+}
+
 // Generate empty knockout bracket structure
 function generateEmptyKnockoutBracket(): Match[] {
   const round32Matches: Match[] = Array.from({ length: 16 }, (_, i) => ({
@@ -309,30 +341,20 @@ export function useTournament() {
 
   // Load from localStorage after hydration (client-side only)
   useEffect(() => {
-    try {
-      const savedGroup = localStorage.getItem(STORAGE_KEY_GROUP)
-      if (savedGroup) {
-        const parsed: Match[] = JSON.parse(savedGroup)
-        // Migrate stale localStorage data: backfill dateTime/venue from fresh match data
-        const freshMatches = generateGroupMatches()
-        const freshById = new Map(freshMatches.map(m => [m.id, m]))
-        const migrated = parsed.map(m => {
-          const fresh = freshById.get(m.id)
-          if (fresh && !m.dateTime) {
-            return { ...m, dateTime: fresh.dateTime, venue: fresh.venue }
-          }
-          return m
-        })
-        setGroupMatches(migrated)
+    queueMicrotask(() => {
+      const storedGroupMatches = loadStoredGroupMatches()
+      const storedKnockoutMatches = loadStoredKnockoutMatches()
+
+      if (storedGroupMatches) {
+        setGroupMatches(storedGroupMatches)
       }
-      const savedKnockout = localStorage.getItem(STORAGE_KEY_KNOCKOUT)
-      if (savedKnockout) {
-        setKnockoutMatches(JSON.parse(savedKnockout))
+
+      if (storedKnockoutMatches) {
+        setKnockoutMatches(storedKnockoutMatches)
       }
-    } catch {
-      // Si hay error de parsing, mantener datos por defecto
-    }
-    setIsHydrated(true)
+
+      setIsHydrated(true)
+    })
   }, [])
 
   // Persist groupMatches to localStorage (only after hydration)
