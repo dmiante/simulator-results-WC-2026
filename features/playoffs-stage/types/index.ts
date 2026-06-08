@@ -19,6 +19,8 @@ export interface PlayoffMatch {
   date: string
   venue?: string
   penaltyWinnerId?: string
+  penaltyTeam1Score?: number
+  penaltyTeam2Score?: number
   team1FromMatch?: string // e.g., "Winner SF1"
   team2FromMatch?: string // e.g., "Winner SF2"
 }
@@ -65,6 +67,4 @@ export interface PlayoffsState {
 
 export interface PlayoffsStageProps {
   playoffsState: PlayoffsState
-  onMatchScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
-  onPenaltyWinner: (matchId: string, winnerId: string) => void
 }
