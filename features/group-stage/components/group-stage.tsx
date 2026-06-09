@@ -1,6 +1,7 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ExportImageButton } from "@/components/export-image-button"
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
@@ -9,7 +10,7 @@ import { StandingsTable } from "@/features/group-stage/components/standings-tabl
 
 import { GroupStageProps } from "../types"
 import { ThirdPlaceTable } from "./third-place-table"
-import { Dices, RotateCcw } from "lucide-react"
+import { Camera, Dices, RotateCcw } from "lucide-react"
 
 
 export function GroupStage({
@@ -41,6 +42,7 @@ export function GroupStage({
           June 11–27, 2026 • Simulate results and determine the qualifiers
         </p>
       </div>
+
       {/* Progress indicator */}
       <div className="flex flex-wrap items-center gap-4 p-4 bg-muted/50 rounded-lg">
         <div className="flex items-center gap-2">
@@ -61,12 +63,12 @@ export function GroupStage({
 
       {/* Groups grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {Object.entries(groups).map(([groupName, teamIds]) => {
+        {Object.entries(groups).map(([groupName]) => {
           const matches = groupMatches.filter((m) => m.group === groupName)
           const standings = groupStandings[groupName] || []
 
           return (
-            <Card key={groupName} className="overflow-hidden">
+            <Card key={groupName} className="overflow-hidden" id={`group-card-${groupName}`}>
               <CardHeader className="bg-muted/30 py-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
@@ -74,6 +76,17 @@ export function GroupStage({
                   </span>
                   Group {groupName}
                 </CardTitle>
+                <CardAction>
+                  <ExportImageButton
+                    getTarget={() => document.getElementById(`group-card-${groupName}`)}
+                    filename={`Group ${groupName}.png`}
+                    ariaLabel={`Screenshot group ${groupName}`}
+                    showLabel={false}
+                    icon={Camera}
+                    size="icon-sm"
+                    className="cursor-pointer"
+                  />
+                </CardAction>
               </CardHeader>
               <CardContent className="p-4 space-y-4">
                 {/* Standings */}

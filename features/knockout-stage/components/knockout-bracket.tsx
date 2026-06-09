@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 
+import { ExportImageButton } from "@/components/export-image-button"
 import { Button } from "@/components/ui/button"
 import { Trophy, ChevronLeft, ChevronRight, Dices, RotateCcw, Swords } from "lucide-react"
 
@@ -24,6 +25,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
   const [mobileRound, setMobileRound] = useState(0)
   const bracketRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const mobileExportRef = useRef<HTMLDivElement>(null)
   const [bracketSize, setBracketSize] = useState({ width: 0, height: 0 })
 
   const { isDragging, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useDragToPan(containerRef)
@@ -49,6 +51,13 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
   }, [matches])
 
   const champion = getChampion(final)
+  const getExportTarget = () => {
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      return bracketRef.current
+    }
+
+    return mobileExportRef.current
+  }
 
   return (
     <div className="space-y-6">
@@ -63,6 +72,22 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
           <RotateCcw className="h-4 w-4" />
           Reset Knockout
         </Button>
+        <ExportImageButton
+          getTarget={getExportTarget}
+          getOptions={(target) =>
+            target === bracketRef.current
+              ? {
+                  style: {
+                    transform: "none",
+                    transformOrigin: "top left",
+                  },
+                }
+              : {}
+          }
+          filename="world-cup-2026-knockout.png"
+          label="Export Bracket"
+          className="gap-2 cursor-pointer"
+        />
       </div>
       <div className="text-center space-y-2">
         <h2 className="text-xl sm:text-2xl font-bold">Knockout Stage</h2>
@@ -449,14 +474,15 @@ onScoreChange={onScoreChange}
       </div>
 
       {/* Mobile View */}
-      <div className="lg:hidden">
-        <div className="flex items-center justify-between mb-4">
+      <div ref={mobileExportRef} className="lg:hidden space-y-4">
+        <div className="flex items-center justify-between">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setMobileRound(Math.max(0, mobileRound - 1))}
             disabled={mobileRound === 0}
             className="text-slate-500 dark:text-slate-400 cursor-pointer"
+            data-export-ignore="true"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -467,6 +493,7 @@ onScoreChange={onScoreChange}
             onClick={() => setMobileRound(Math.min(mobileRounds.length - 1, mobileRound + 1))}
             disabled={mobileRound === mobileRounds.length - 1}
             className="text-slate-500 dark:text-slate-400 cursor-pointer"
+            data-export-ignore="true"
           >
             <ChevronRight className="h-5 w-5" />
           </Button>
