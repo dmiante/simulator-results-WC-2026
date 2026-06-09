@@ -6,6 +6,12 @@ import {
   assignThirdPlaceTeams,
   type ThirdPlaceTeam 
 } from "../utils/third-place-assignment"
+import { TournamentTab } from "../types"
+import {
+  decodeSharedTournamentState,
+  SHARE_STATE_PARAM,
+  stripSharedStateFromUrl,
+} from "../utils/share-state"
 
 function generateRandomScore(): number {
   const weights = [25, 30, 25, 12, 5, 3] // 0, 1, 2, 3, 4, 5 goals
@@ -336,12 +342,32 @@ export function useTournament() {
 
   const [groupMatches, setGroupMatches] = useState<Match[]>(() => generateGroupMatches())
   const [knockoutMatches, setKnockoutMatches] = useState<Match[]>(() => generateEmptyKnockoutBracket())
-  const [activeTab, setActiveTab] = useState("playoffs")
+  const [activeTab, setActiveTab] = useState<TournamentTab>("playoffs")
   const [isHydrated, setIsHydrated] = useState(false)
 
   // Load from localStorage after hydration (client-side only)
   useEffect(() => {
     queueMicrotask(() => {
+      const sharedStateParam = new URLSearchParams(window.location.search).get(SHARE_STATE_PARAM)
+
+      if (sharedStateParam) {
+        const sharedState = decodeSharedTournamentState(
+          sharedStateParam,
+          generateGroupMatches(),
+          generateEmptyKnockoutBracket(),
+        )
+
+        window.history.replaceState({}, "", stripSharedStateFromUrl(window.location.href))
+
+        if (sharedState) {
+          setGroupMatches(sharedState.groupMatches)
+          setKnockoutMatches(sharedState.knockoutMatches)
+          setActiveTab(sharedState.activeTab)
+          setIsHydrated(true)
+          return
+        }
+      }
+
       const storedGroupMatches = loadStoredGroupMatches()
       const storedKnockoutMatches = loadStoredKnockoutMatches()
 

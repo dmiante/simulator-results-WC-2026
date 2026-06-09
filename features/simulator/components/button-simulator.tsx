@@ -11,6 +11,7 @@ export default function ButtonSimulator({
   groupsComplete,
   knockoutMatches,
   resetTournament,
+  extraActions,
 }: TournamentSimulatorProps) {
 
   return (
@@ -28,6 +29,7 @@ export default function ButtonSimulator({
           <RotateCcw className="h-4 w-4" />
           Reset All
         </Button>
+        {extraActions}
       </div>
     </div>
   )

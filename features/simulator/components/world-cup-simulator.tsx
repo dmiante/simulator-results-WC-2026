@@ -8,7 +8,9 @@ import { KnockoutBracket } from "@/features/knockout-stage/components/knockout-b
 import { TournamentHeader } from "@/components/layout/tournament-header"
 import { groups } from "@/db/tournament-data"
 import { useTournament } from "../hooks/use-tournament"
+import { TournamentTab } from "../types"
 import ButtonSimulator from "./button-simulator"
+import { ShareButton } from "./share-button"
 import { PlayoffsStage } from "@/features/playoffs-stage/components/playoffs-stage"
 import { usePlayoffs } from "@/features/playoffs-stage/hooks/use-playoffs"
 import { Team } from "@/lib/types"
@@ -81,6 +83,12 @@ export function WorldCupSimulator() {
     simulateTournamentBase()
   }
 
+  const handleTabChange = (value: string) => {
+    if (value === "playoffs" || value === "groups" || value === "knockout") {
+      setActiveTab(value as TournamentTab)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <TournamentHeader />
@@ -93,8 +101,15 @@ export function WorldCupSimulator() {
           simulateKnockoutStage={simulateKnockoutStage}
           knockoutMatches={knockoutMatches}
           groupsComplete={groupsComplete}
+          extraActions={
+            <ShareButton
+              groupMatches={groupMatches}
+              knockoutMatches={knockoutMatches}
+              activeTab={activeTab}
+            />
+          }
         />
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
           <TabsList className="grid w-full max-w-xl grid-cols-3">
             <TabsTrigger value="playoffs" className="gap-2 text-xs sm:text-sm">
               <Swords className="h-4 w-4 hidden sm:inline" />
