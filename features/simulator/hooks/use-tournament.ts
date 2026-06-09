@@ -342,7 +342,7 @@ export function useTournament() {
 
   const [groupMatches, setGroupMatches] = useState<Match[]>(() => generateGroupMatches())
   const [knockoutMatches, setKnockoutMatches] = useState<Match[]>(() => generateEmptyKnockoutBracket())
-  const [activeTab, setActiveTab] = useState<TournamentTab>("playoffs")
+  const [activeTab, setActiveTab] = useState<TournamentTab>("groups")
   const [isHydrated, setIsHydrated] = useState(false)
 
   // Load from localStorage after hydration (client-side only)
@@ -630,7 +630,7 @@ const resetTournament = () => {
     localStorage.removeItem(STORAGE_KEY_KNOCKOUT)
     setGroupMatches(generateGroupMatches())
     setKnockoutMatches(generateEmptyKnockoutBracket())
-    setActiveTab("playoffs")
+    setActiveTab("groups")
   }
 
   const resetGroupStage = () => {
