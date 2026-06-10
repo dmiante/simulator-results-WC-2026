@@ -18,7 +18,10 @@ export interface Match {
   dateTime?: string // ISO 8601 datetime in UTC (ej: "2026-06-12T01:00:00Z")
   venue?: string // Ciudad y estadio (ej: "Mexico City, Estadio Azteca")
   penaltyWinnerId?: string // ID del equipo ganador en caso de empate (penales) - solo para fase de eliminación
+  winnerId?: string // ID del equipo seleccionado como ganador en modo de predicción por posiciones
 }
+
+export type PredictionMode = "match" | "positions"
 
 export interface GroupStanding {
   teamId: string
