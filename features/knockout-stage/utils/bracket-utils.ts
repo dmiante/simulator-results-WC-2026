@@ -115,9 +115,15 @@ export function getMatchWinner(
   match: Match,
   getActualTeamId: (match: Match, team: "team1" | "team2") => string
 ): string {
-  if (match.team1Score === null || match.team2Score === null) return ""
   const team1Id = getActualTeamId(match, "team1")
   const team2Id = getActualTeamId(match, "team2")
+
+  if (match.winnerId === team1Id || match.winnerId === team2Id) {
+    return match.winnerId
+  }
+
+  if (match.team1Score === null || match.team2Score === null) return ""
+
   if (match.team1Score > match.team2Score) return team1Id
   if (match.team2Score > match.team1Score) return team2Id
   
@@ -136,9 +142,14 @@ export function getMatchLoser(
   match: Match,
   getActualTeamId: (match: Match, team: "team1" | "team2") => string
 ): string {
-  if (match.team1Score === null || match.team2Score === null) return ""
   const team1Id = getActualTeamId(match, "team1")
   const team2Id = getActualTeamId(match, "team2")
+
+  if (match.winnerId === team1Id) return team2Id
+  if (match.winnerId === team2Id) return team1Id
+
+  if (match.team1Score === null || match.team2Score === null) return ""
+
   if (match.team1Score > match.team2Score) return team2Id
   if (match.team2Score > match.team1Score) return team1Id
   
@@ -155,6 +166,7 @@ export function getMatchLoser(
  */
 export function getChampion(final: Match | undefined): string {
   if (!final) return ""
+  if (final.winnerId) return final.winnerId
   if (final.team1Score === null || final.team2Score === null) return ""
   if (final.team1Score > final.team2Score) return final.team1Id
   if (final.team2Score > final.team1Score) return final.team2Id

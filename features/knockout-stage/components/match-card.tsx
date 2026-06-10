@@ -1,7 +1,7 @@
 import { TeamFlag } from "@/components/team-flag"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Match, Team } from "@/lib/types"
+import { Match, PredictionMode, Team } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 export function MatchCard({
@@ -16,19 +16,23 @@ export function MatchCard({
   placeholder2,
   resolvedTeam1,
   resolvedTeam2,
+  predictionMode = "match",
+  onWinnerSelect,
   className,
 }: {
   match: Match
-  team1: Team
-  team2: Team
+  team1: Team | undefined
+  team2: Team | undefined
   onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
   onPenaltyWinner?: (matchId: string, winnerId: string) => void
+  onWinnerSelect?: (matchId: string, winnerId: string) => void
   isFinal?: boolean
   isThirdPlace?: boolean
   placeholder1?: string
   placeholder2?: string
   resolvedTeam1?: Team | null
   resolvedTeam2?: Team | null
+  predictionMode?: PredictionMode
   className?: string
 }) {
   const isTeam1TBD = !team1 || team1.name === "TBD"
@@ -53,6 +57,10 @@ export function MatchCard({
   // Get team codes for penalty buttons
   const team1Code = hasResolvedTeam1 ? resolvedTeam1.code : (!isTeam1TBD ? team1.code : "")
   const team2Code = hasResolvedTeam2 ? resolvedTeam2.code : (!isTeam2TBD ? team2.code : "")
+  const team1Id = hasResolvedTeam1 ? resolvedTeam1.id : match.team1Id
+  const team2Id = hasResolvedTeam2 ? resolvedTeam2.id : match.team2Id
+  const displayTeam1 = hasResolvedTeam1 ? resolvedTeam1 : team1
+  const displayTeam2 = hasResolvedTeam2 ? resolvedTeam2 : team2
 
   const getWinner = () => {
     if (match.team1Score === null || match.team2Score === null) return null
@@ -72,6 +80,12 @@ export function MatchCard({
 
   // Effective winner: the team that advances (either outright or via penalties)
   const effectiveWinner = isDraw ? penaltyWinnerSide : winner
+  const positionWinner = predictionMode === "positions"
+    ? match.winnerId === team1Id ? "team1" : match.winnerId === team2Id ? "team2" : null
+    : null
+  const selectedWinner = predictionMode === "positions" ? positionWinner : effectiveWinner
+  const canPickTeam1 = predictionMode === "positions" && Boolean(team1Id)
+  const canPickTeam2 = predictionMode === "positions" && Boolean(team2Id)
 
   return (
     <div
@@ -87,22 +101,35 @@ export function MatchCard({
       <div className="flex flex-col h-full">
         {/* Team 1 */}
         <div
+          role={predictionMode === "positions" ? "button" : undefined}
+          tabIndex={canPickTeam1 ? 0 : undefined}
+          onClick={() => {
+            if (canPickTeam1) onWinnerSelect?.(match.id, team1Id)
+          }}
+          onKeyDown={(event) => {
+            if ((event.key === "Enter" || event.key === " ") && canPickTeam1) {
+              event.preventDefault()
+              onWinnerSelect?.(match.id, team1Id)
+            }
+          }}
           className={cn(
             "flex items-center justify-between px-3 py-2 border-b border-slate-200 dark:border-slate-600 h-1/2",
-            effectiveWinner === "team1" && "bg-emerald-100 dark:bg-emerald-900/40",
-            hasResolvedTeam1 && !effectiveWinner && "bg-white dark:bg-slate-800",
+            selectedWinner === "team1" && "bg-emerald-100 dark:bg-emerald-900/40",
+            hasResolvedTeam1 && !selectedWinner && "bg-white dark:bg-slate-800",
+            predictionMode === "positions" && canPickTeam1 && "cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-950/30",
+            predictionMode === "positions" && !canPickTeam1 && "opacity-60",
           )}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            {(!isTeam1TBD || hasResolvedTeam1) && (
-              <TeamFlag code={hasResolvedTeam1 ? resolvedTeam1.code : team1.code} name={hasResolvedTeam1 ? resolvedTeam1.name : team1.name} />
+            {displayTeam1 && (!isTeam1TBD || hasResolvedTeam1) && (
+              <TeamFlag code={displayTeam1.code} name={displayTeam1.name} />
             )}
             <span
               className={cn(
                 "text-sm font-medium text-slate-700 dark:text-slate-200",
                 isTeam1TBD && !hasResolvedTeam1 && "text-slate-400 dark:text-slate-500 italic",
                 hasResolvedTeam1 && "font-semibold",
-                effectiveWinner === "team1" && "font-bold text-emerald-600 dark:text-emerald-400",
+                selectedWinner === "team1" && "font-bold text-emerald-600 dark:text-emerald-400",
               )}
               title={hasResolvedTeam1 ? `${placeholder1}: ${resolvedTeam1.name}` : undefined}
             >
@@ -110,6 +137,11 @@ export function MatchCard({
             </span>
           </div>
           <div className="flex items-center gap-1">
+            {predictionMode === "positions" && selectedWinner === "team1" && (
+              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">Winner</span>
+            )}
+            {predictionMode === "match" && (
+              <>
             {needsPenalties && onPenaltyWinner && (
               <Button
                 size="sm"
@@ -139,27 +171,42 @@ export function MatchCard({
               placeholder="-"
               disabled={isTeam1InputDisabled}
             />
+              </>
+            )}
           </div>
         </div>
 
         {/* Team 2 */}
         <div
+          role={predictionMode === "positions" ? "button" : undefined}
+          tabIndex={canPickTeam2 ? 0 : undefined}
+          onClick={() => {
+            if (canPickTeam2) onWinnerSelect?.(match.id, team2Id)
+          }}
+          onKeyDown={(event) => {
+            if ((event.key === "Enter" || event.key === " ") && canPickTeam2) {
+              event.preventDefault()
+              onWinnerSelect?.(match.id, team2Id)
+            }
+          }}
           className={cn(
             "flex items-center justify-between px-3 py-2 h-1/2",
-            effectiveWinner === "team2" && "bg-emerald-100 dark:bg-emerald-900/40",
-            hasResolvedTeam2 && !effectiveWinner && "bg-white dark:bg-slate-800",
+            selectedWinner === "team2" && "bg-emerald-100 dark:bg-emerald-900/40",
+            hasResolvedTeam2 && !selectedWinner && "bg-white dark:bg-slate-800",
+            predictionMode === "positions" && canPickTeam2 && "cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-950/30",
+            predictionMode === "positions" && !canPickTeam2 && "opacity-60",
           )}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            {(!isTeam2TBD || hasResolvedTeam2) && (
-              <TeamFlag code={hasResolvedTeam2 ? resolvedTeam2.code : team2.code} name={hasResolvedTeam2 ? resolvedTeam2.name : team2.name} />
+            {displayTeam2 && (!isTeam2TBD || hasResolvedTeam2) && (
+              <TeamFlag code={displayTeam2.code} name={displayTeam2.name} />
             )}
             <span
               className={cn(
                 "text-sm font-medium text-slate-700 dark:text-slate-200",
                 isTeam2TBD && !hasResolvedTeam2 && "text-slate-400 dark:text-slate-500 italic",
                 hasResolvedTeam2 && "font-semibold",
-                effectiveWinner === "team2" && "font-bold text-emerald-600 dark:text-emerald-400",
+                selectedWinner === "team2" && "font-bold text-emerald-600 dark:text-emerald-400",
               )}
               title={hasResolvedTeam2 ? `${placeholder2}: ${resolvedTeam2.name}` : undefined}
             >
@@ -167,6 +214,11 @@ export function MatchCard({
             </span>
           </div>
           <div className="flex items-center gap-1">
+            {predictionMode === "positions" && selectedWinner === "team2" && (
+              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">Winner</span>
+            )}
+            {predictionMode === "match" && (
+              <>
             {needsPenalties && onPenaltyWinner && (
               <Button
                 size="sm"
@@ -196,6 +248,8 @@ export function MatchCard({
               placeholder="-"
               disabled={isTeam2InputDisabled}
             />
+              </>
+            )}
           </div>
         </div>
       </div>
