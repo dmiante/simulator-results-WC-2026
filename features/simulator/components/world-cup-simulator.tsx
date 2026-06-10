@@ -27,23 +27,48 @@ export function WorldCupSimulator() {
     groupMatches,
     groupStandings,
     knockoutMatches,
+    positionKnockoutMatches,
     qualifiedTeams,
+    positionQualifiedTeams,
     thirdPlaceRanking,
+    positionThirdPlaceRanking,
     teamsMap: baseTeamsMap,
+    positionGroupStandings,
+    groupPredictionMode,
+    knockoutPredictionMode,
+    groupPositionsByGroup,
+    thirdPlaceGroupOrder,
     handleKnockoutScoreChange,
     handleKnockoutPenaltyWinner,
+    handleKnockoutPositionWinner,
     groupsComplete,
+    positionGroupsComplete,
     handleScoreChange,
     setKnockoutMatches,
+    setPositionKnockoutMatches,
     setActiveTab,
+    setGroupPredictionMode,
+    setKnockoutPredictionMode,
+    handleGroupPositionsChange,
+    handleThirdPlaceGroupOrderChange,
     generateKnockoutBracket,
     resetTournament: resetTournamentBase,
     simulateTournament: simulateTournamentBase,
     simulateGroupStage,
     simulateKnockoutStage,
+    simulatePositionKnockoutStage,
     resetGroupStage,
     resetKnockoutStage
   } = useTournament()
+
+  const activeGroupStandings = groupPredictionMode === "positions" ? positionGroupStandings : groupStandings
+  const activeQualifiedTeams = groupPredictionMode === "positions" ? positionQualifiedTeams : qualifiedTeams
+  const activeThirdPlaceRanking = groupPredictionMode === "positions" ? positionThirdPlaceRanking : thirdPlaceRanking
+  const activeKnockoutMatches = knockoutPredictionMode === "positions" ? positionKnockoutMatches : knockoutMatches
+  const activeSetKnockoutMatches = knockoutPredictionMode === "positions" ? setPositionKnockoutMatches : setKnockoutMatches
+  const activeKnockoutGroupStandings = knockoutPredictionMode === "positions" ? positionGroupStandings : groupStandings
+  const activeKnockoutThirdPlaceRanking = knockoutPredictionMode === "positions" ? positionThirdPlaceRanking : thirdPlaceRanking
+  const activeGroupsComplete = knockoutPredictionMode === "positions" ? positionGroupsComplete : groupsComplete
 
   // Create a dynamic teamsMap that replaces placeholders with playoff winners
   const teamsMap = useMemo(() => {
@@ -105,7 +130,12 @@ export function WorldCupSimulator() {
             <ShareButton
               groupMatches={groupMatches}
               knockoutMatches={knockoutMatches}
+              positionKnockoutMatches={positionKnockoutMatches}
               activeTab={activeTab}
+              groupPredictionMode={groupPredictionMode}
+              knockoutPredictionMode={knockoutPredictionMode}
+              groupPositionsByGroup={groupPositionsByGroup}
+              thirdPlaceGroupOrder={thirdPlaceGroupOrder}
             />
           }
         />
@@ -135,28 +165,38 @@ export function WorldCupSimulator() {
             <GroupStage
               groups={groups}
               groupMatches={groupMatches}
-              groupStandings={groupStandings}
+              groupStandings={activeGroupStandings}
               teamsMap={teamsMap}
               onScoreChange={handleScoreChange}
-              qualifiedTeams={qualifiedTeams}
-              thirdPlaceRanking={thirdPlaceRanking}
+              qualifiedTeams={activeQualifiedTeams}
+              thirdPlaceRanking={activeThirdPlaceRanking}
               simulateGroupStage={simulateGroupStage}
               resetGroups={resetGroupStage}
+              predictionMode={groupPredictionMode}
+              onPredictionModeChange={setGroupPredictionMode}
+              groupPositionsByGroup={groupPositionsByGroup}
+              thirdPlaceGroupOrder={thirdPlaceGroupOrder}
+              onGroupPositionsChange={handleGroupPositionsChange}
+              onThirdPlaceGroupOrderChange={handleThirdPlaceGroupOrderChange}
             />
           </TabsContent>
 
           <TabsContent value="knockout" className="mt-6">
             <KnockoutBracket
-              matches={knockoutMatches}
-              setMatches={setKnockoutMatches}
+              matches={activeKnockoutMatches}
+              setMatches={activeSetKnockoutMatches}
               teamsMap={teamsMap}
               onScoreChange={handleKnockoutScoreChange}
               onPenaltyWinner={handleKnockoutPenaltyWinner}
-              groupStandings={groupStandings}
-              thirdPlaceRanking={thirdPlaceRanking}
-              groupsComplete={groupsComplete}
+              onWinnerSelect={handleKnockoutPositionWinner}
+              groupStandings={activeKnockoutGroupStandings}
+              thirdPlaceRanking={activeKnockoutThirdPlaceRanking}
+              groupsComplete={activeGroupsComplete}
               simulateKnockoutStage={simulateKnockoutStage}
+              simulatePositionKnockoutStage={simulatePositionKnockoutStage}
               resetKnockoutStage={resetKnockoutStage}
+              predictionMode={knockoutPredictionMode}
+              onPredictionModeChange={setKnockoutPredictionMode}
             />
           </TabsContent>
         </Tabs>

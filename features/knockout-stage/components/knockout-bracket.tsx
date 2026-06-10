@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 
 import { ExportImageButton } from "@/components/export-image-button"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Trophy, ChevronLeft, ChevronRight, Dices, RotateCcw, Swords } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -20,7 +21,7 @@ import { getMatchPlaceholders, getChampion } from "../utils/bracket-utils"
 import { TeamFlag } from "@/components/team-flag"
 
 
-export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, onPenaltyWinner, groupStandings, thirdPlaceRanking, groupsComplete, resetKnockoutStage, simulateKnockoutStage }: KnockoutBracketProps) {
+export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, onPenaltyWinner, onWinnerSelect, groupStandings, thirdPlaceRanking, groupsComplete, resetKnockoutStage, simulateKnockoutStage, simulatePositionKnockoutStage, predictionMode, onPredictionModeChange }: KnockoutBracketProps) {
   const [zoom, setZoom] = useState(1)
   const [mobileRound, setMobileRound] = useState(0)
   const bracketRef = useRef<HTMLDivElement>(null)
@@ -61,11 +62,22 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
   return (
     <div className="space-y-6">
-      <div className="gap-2 flex flex-wrap justify-end min-h-[40px]">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between min-h-[40px]">
+        <Tabs value={predictionMode} onValueChange={(value) => onPredictionModeChange(value === "positions" ? "positions" : "match")}>
+          <TabsList>
+            <TabsTrigger value="match">Scores</TabsTrigger>
+            <TabsTrigger value="positions">Positions</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div className="gap-2 flex flex-wrap justify-end">
         {groupsComplete && (
-          <Button onClick={simulateKnockoutStage} className="gap-2 cursor-pointer" variant="default">
+          <Button
+            onClick={predictionMode === "positions" ? simulatePositionKnockoutStage : simulateKnockoutStage}
+            className="gap-2 cursor-pointer"
+            variant="default"
+          >
             <Swords className="h-4 w-4" />
-            Simulate Knockout
+            {predictionMode === "positions" ? "Simulate Winners" : "Simulate Knockout"}
           </Button>
         )}
         <Button onClick={resetKnockoutStage} className="gap-2 cursor-pointer" variant="outline">
@@ -88,11 +100,14 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
           label="Export Bracket"
           className="gap-2 cursor-pointer"
         />
+        </div>
       </div>
       <div className="text-center space-y-2">
         <h2 className="text-xl sm:text-2xl font-bold">Knockout Stage</h2>
         <p className="text-muted-foreground">
-          June 28-July 19, 2026 - Simulate results and determine the champion
+          {predictionMode === "positions"
+            ? "Click each winner to advance them through the bracket"
+            : "June 28-July 19, 2026 - Simulate results and determine the champion"}
         </p>
       </div>
       {/* Desktop View */}
@@ -147,6 +162,8 @@ onScoreChange={onScoreChange}
                         placeholder2={placeholders.team2}
                         resolvedTeam1={resolved?.team1}
                         resolvedTeam2={resolved?.team2}
+                        predictionMode={predictionMode}
+                        onWinnerSelect={onWinnerSelect}
                       />
                     )
                   })}
@@ -176,6 +193,8 @@ onScoreChange={onScoreChange}
                         onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
+                        predictionMode={predictionMode}
+                        onWinnerSelect={onWinnerSelect}
                       />
                     )
                   })}
@@ -210,6 +229,8 @@ onScoreChange={onScoreChange}
                         onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
+                        predictionMode={predictionMode}
+                        onWinnerSelect={onWinnerSelect}
                       />
                     )
                   })}
@@ -244,6 +265,8 @@ onScoreChange={onScoreChange}
                         onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
+                        predictionMode={predictionMode}
+                        onWinnerSelect={onWinnerSelect}
                       />
                     )
                   })}
@@ -297,6 +320,8 @@ onScoreChange={onScoreChange}
                         isFinal
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
+                        predictionMode={predictionMode}
+                        onWinnerSelect={onWinnerSelect}
                       />
                     )
                   })()}
@@ -316,6 +341,8 @@ onScoreChange={onScoreChange}
                           isThirdPlace
                           placeholder1={placeholders.team1}
                           placeholder2={placeholders.team2}
+                          predictionMode={predictionMode}
+                          onWinnerSelect={onWinnerSelect}
                         />
                       </div>
                     )
@@ -355,6 +382,8 @@ onScoreChange={onScoreChange}
                         onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
+                        predictionMode={predictionMode}
+                        onWinnerSelect={onWinnerSelect}
                       />
                     )
                   })}
@@ -390,6 +419,8 @@ onScoreChange={onScoreChange}
                         onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
+                        predictionMode={predictionMode}
+                        onWinnerSelect={onWinnerSelect}
                       />
                     )
                   })}
@@ -425,6 +456,8 @@ onScoreChange={onScoreChange}
                         onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
+                        predictionMode={predictionMode}
+                        onWinnerSelect={onWinnerSelect}
                       />
                     )
                   })}
@@ -463,6 +496,8 @@ onScoreChange={onScoreChange}
                         placeholder2={placeholders.team2}
                         resolvedTeam1={resolved?.team1}
                         resolvedTeam2={resolved?.team2}
+                        predictionMode={predictionMode}
+                        onWinnerSelect={onWinnerSelect}
                       />
                     )
                   })}
@@ -542,6 +577,8 @@ onScoreChange={onScoreChange}
                 placeholder2={placeholders.team2}
                 resolvedTeam1={resolved?.team1}
                 resolvedTeam2={resolved?.team2}
+                predictionMode={predictionMode}
+                onWinnerSelect={onWinnerSelect}
                 className="w-full"
               />
             )

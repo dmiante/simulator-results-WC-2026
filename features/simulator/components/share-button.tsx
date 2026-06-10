@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Check, Copy, Share2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Match } from "@/lib/types"
+import { Match, PredictionMode } from "@/lib/types"
 
 import { TournamentTab } from "../types"
 import { buildSharedTournamentUrl } from "../utils/share-state"
@@ -12,12 +12,26 @@ import { buildSharedTournamentUrl } from "../utils/share-state"
 interface ShareButtonProps {
   groupMatches: Match[]
   knockoutMatches: Match[]
+  positionKnockoutMatches: Match[]
   activeTab: TournamentTab
+  groupPredictionMode: PredictionMode
+  knockoutPredictionMode: PredictionMode
+  groupPositionsByGroup: Record<string, string[]>
+  thirdPlaceGroupOrder: string[]
 }
 
 type ShareStatus = "idle" | "copied" | "error"
 
-export function ShareButton({ groupMatches, knockoutMatches, activeTab }: ShareButtonProps) {
+export function ShareButton({
+  groupMatches,
+  knockoutMatches,
+  positionKnockoutMatches,
+  activeTab,
+  groupPredictionMode,
+  knockoutPredictionMode,
+  groupPositionsByGroup,
+  thirdPlaceGroupOrder,
+}: ShareButtonProps) {
   const [status, setStatus] = useState<ShareStatus>("idle")
 
   useEffect(() => {
@@ -38,7 +52,12 @@ export function ShareButton({ groupMatches, knockoutMatches, activeTab }: ShareB
     const shareUrl = buildSharedTournamentUrl(window.location.href, {
       groupMatches,
       knockoutMatches,
+      positionKnockoutMatches,
       activeTab,
+      groupPredictionMode,
+      knockoutPredictionMode,
+      groupPositionsByGroup,
+      thirdPlaceGroupOrder,
     })
 
     try {

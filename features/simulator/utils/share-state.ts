@@ -1,10 +1,10 @@
 import { deflate, inflate } from "pako"
 
-import { Match } from "@/lib/types"
+import { Match, PredictionMode } from "@/lib/types"
 
 import { TournamentTab } from "../types"
 
-const SHARE_STATE_VERSION = 1
+const SHARE_STATE_VERSION = 2
 export const SHARE_STATE_PARAM = "s"
 
 type SharedGroupMatch = [number | null, number | null]
@@ -15,18 +15,33 @@ interface SharedTournamentState {
   t: TournamentTab
   g: SharedGroupMatch[]
   k: SharedKnockoutMatch[]
+  gm?: PredictionMode
+  km?: PredictionMode
+  gp?: Record<string, string[]>
+  tg?: string[]
+  pk?: SharedKnockoutMatch[]
 }
 
 interface SharedTournamentStateInput {
   groupMatches: Match[]
   knockoutMatches: Match[]
+  positionKnockoutMatches: Match[]
   activeTab: TournamentTab
+  groupPredictionMode: PredictionMode
+  knockoutPredictionMode: PredictionMode
+  groupPositionsByGroup: Record<string, string[]>
+  thirdPlaceGroupOrder: string[]
 }
 
 export interface DecodedSharedTournamentState {
   groupMatches: Match[]
   knockoutMatches: Match[]
+  positionKnockoutMatches: Match[]
   activeTab: TournamentTab
+  groupPredictionMode?: PredictionMode
+  knockoutPredictionMode?: PredictionMode
+  groupPositionsByGroup?: Record<string, string[]>
+  thirdPlaceGroupOrder?: string[]
 }
 
 function isValidTab(value: unknown): value is TournamentTab {
@@ -35,6 +50,24 @@ function isValidTab(value: unknown): value is TournamentTab {
 
 function isValidScore(value: unknown): value is number | null {
   return value === null || (typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 99)
+}
+
+function isValidPredictionMode(value: unknown): value is PredictionMode {
+  return value === "match" || value === "positions"
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string")
+}
+
+function encodeKnockoutMatches(knockoutMatches: Match[]): SharedKnockoutMatch[] {
+  return knockoutMatches.map((match) => [
+    match.team1Id,
+    match.team2Id,
+    match.team1Score,
+    match.team2Score,
+    match.penaltyWinnerId ?? match.winnerId ?? "",
+  ])
 }
 
 function toBase64Url(bytes: Uint8Array): string {
@@ -77,19 +110,23 @@ function normalizePenaltyWinner(
 export function encodeSharedTournamentState({
   groupMatches,
   knockoutMatches,
+  positionKnockoutMatches,
   activeTab,
+  groupPredictionMode,
+  knockoutPredictionMode,
+  groupPositionsByGroup,
+  thirdPlaceGroupOrder,
 }: SharedTournamentStateInput): string {
   const payload: SharedTournamentState = {
     v: SHARE_STATE_VERSION,
     t: activeTab,
     g: groupMatches.map((match) => [match.team1Score, match.team2Score]),
-    k: knockoutMatches.map((match) => [
-      match.team1Id,
-      match.team2Id,
-      match.team1Score,
-      match.team2Score,
-      match.penaltyWinnerId ?? "",
-    ]),
+    k: encodeKnockoutMatches(knockoutMatches),
+    gm: groupPredictionMode,
+    km: knockoutPredictionMode,
+    gp: groupPositionsByGroup,
+    tg: thirdPlaceGroupOrder,
+    pk: encodeKnockoutMatches(positionKnockoutMatches),
   }
 
   const compressed = deflate(JSON.stringify(payload))
@@ -100,13 +137,14 @@ export function decodeSharedTournamentState(
   encoded: string,
   initialGroupMatches: Match[],
   initialKnockoutMatches: Match[],
+  initialPositionKnockoutMatches: Match[] = initialKnockoutMatches,
 ): DecodedSharedTournamentState | null {
   try {
     const inflated = inflate(fromBase64Url(encoded), { to: "string" })
     const parsed = JSON.parse(inflated) as Partial<SharedTournamentState>
 
     if (
-      parsed.v !== SHARE_STATE_VERSION ||
+      (parsed.v !== 1 && parsed.v !== SHARE_STATE_VERSION) ||
       !isValidTab(parsed.t) ||
       !Array.isArray(parsed.g) ||
       !Array.isArray(parsed.k) ||
@@ -118,6 +156,7 @@ export function decodeSharedTournamentState(
 
     const groupEntries = parsed.g
     const knockoutEntries = parsed.k
+    const positionKnockoutEntries = parsed.pk
 
     const groupMatches = initialGroupMatches.map((match, index) => {
       const entry = groupEntries[index]
@@ -168,10 +207,52 @@ export function decodeSharedTournamentState(
       }
     })
 
+    const positionKnockoutMatches = Array.isArray(positionKnockoutEntries) && positionKnockoutEntries.length === initialPositionKnockoutMatches.length
+      ? initialPositionKnockoutMatches.map((match, index) => {
+          const entry = positionKnockoutEntries[index]
+
+          if (!Array.isArray(entry) || entry.length !== 5) {
+            throw new Error("Invalid shared position knockout match")
+          }
+
+          const [team1Id, team2Id, team1Score, team2Score, winnerId] = entry
+
+          if (
+            typeof team1Id !== "string" ||
+            typeof team2Id !== "string" ||
+            typeof winnerId !== "string" ||
+            !isValidScore(team1Score) ||
+            !isValidScore(team2Score)
+          ) {
+            throw new Error("Invalid shared position knockout score")
+          }
+
+          return {
+            ...match,
+            team1Id,
+            team2Id,
+            team1Score,
+            team2Score,
+            winnerId: winnerId === team1Id || winnerId === team2Id ? winnerId : undefined,
+          }
+        })
+      : initialPositionKnockoutMatches
+
+    const groupPositionsByGroup = parsed.gp && typeof parsed.gp === "object"
+      ? Object.fromEntries(
+          Object.entries(parsed.gp).filter((entry): entry is [string, string[]] => typeof entry[0] === "string" && isStringArray(entry[1])),
+        )
+      : undefined
+
     return {
       groupMatches,
       knockoutMatches,
+      positionKnockoutMatches,
       activeTab: parsed.t,
+      groupPredictionMode: isValidPredictionMode(parsed.gm) ? parsed.gm : undefined,
+      knockoutPredictionMode: isValidPredictionMode(parsed.km) ? parsed.km : undefined,
+      groupPositionsByGroup,
+      thirdPlaceGroupOrder: isStringArray(parsed.tg) ? parsed.tg : undefined,
     }
   } catch {
     return null

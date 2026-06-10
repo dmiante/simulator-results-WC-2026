@@ -1,4 +1,4 @@
-import { GroupStanding, Match, Team } from "@/lib/types"
+import { GroupStanding, Match, PredictionMode, Team } from "@/lib/types"
 
 export interface KnockoutBracketProps {
   matches: Match[]
@@ -6,6 +6,7 @@ export interface KnockoutBracketProps {
   teamsMap: Record<string, Team>
   onScoreChange: (matchId: string, team: "team1" | "team2", score: number | null) => void
   onPenaltyWinner: (matchId: string, winnerId: string) => void
+  onWinnerSelect: (matchId: string, winnerId: string) => void
   groupStandings: Record<string, GroupStanding[]>
   thirdPlaceRanking: {
     all: (GroupStanding & { group: string })[]
@@ -14,5 +15,8 @@ export interface KnockoutBracketProps {
   }
   groupsComplete: boolean
   simulateKnockoutStage: () => void
+  simulatePositionKnockoutStage: () => void
   resetKnockoutStage: () => void
+  predictionMode: PredictionMode
+  onPredictionModeChange: (mode: PredictionMode) => void
 }
