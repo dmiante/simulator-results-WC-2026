@@ -1,6 +1,6 @@
 import { calculateStandings, generateGroupMatches } from "@/db/matches"
 import { groups, teams, r32Placeholders } from "@/db/tournament-data"
-import { GroupStanding, Match, Team } from "@/lib/types"
+import { GroupStanding, Match, PredictionMode, Team } from "@/lib/types"
 import { useMemo, useState, useEffect } from "react"
 import { 
   assignThirdPlaceTeams,
@@ -229,9 +229,161 @@ function simulateAllKnockoutMatches(round32Matches: Match[]): Match[] {
   ]
 }
 
+function getPositionMatchWinner(match: Match): string {
+  if (!match.team1Id || !match.team2Id) return ""
+  return Math.random() > 0.5 ? match.team1Id : match.team2Id
+}
+
+function getPositionMatchLoser(match: Match): string {
+  if (!match.winnerId) return ""
+  if (match.winnerId === match.team1Id) return match.team2Id
+  if (match.winnerId === match.team2Id) return match.team1Id
+  return ""
+}
+
+function simulatePositionMatch(match: Match): Match {
+  const winnerId = getPositionMatchWinner(match)
+
+  return {
+    ...match,
+    team1Score: null,
+    team2Score: null,
+    penaltyWinnerId: undefined,
+    winnerId: winnerId || undefined,
+  }
+}
+
+function simulatePositionKnockoutMatches(round32Matches: Match[]): Match[] {
+  const simulatedR32 = round32Matches.map(simulatePositionMatch)
+
+  const round16Matches: Match[] = []
+  for (let i = 0; i < 8; i++) {
+    const team1Id = simulatedR32[i * 2]?.winnerId || ""
+    const team2Id = simulatedR32[i * 2 + 1]?.winnerId || ""
+    round16Matches.push(simulatePositionMatch({
+      id: `round16-${i + 1}`,
+      team1Id,
+      team2Id,
+      team1Score: null,
+      team2Score: null,
+      stage: "round16",
+      matchNumber: i + 1,
+    }))
+  }
+
+  const quarterMatches: Match[] = []
+  for (let i = 0; i < 4; i++) {
+    const team1Id = round16Matches[i * 2]?.winnerId || ""
+    const team2Id = round16Matches[i * 2 + 1]?.winnerId || ""
+    quarterMatches.push(simulatePositionMatch({
+      id: `quarter-${i + 1}`,
+      team1Id,
+      team2Id,
+      team1Score: null,
+      team2Score: null,
+      stage: "quarter",
+      matchNumber: i + 1,
+    }))
+  }
+
+  const semiMatches: Match[] = []
+  for (let i = 0; i < 2; i++) {
+    const team1Id = quarterMatches[i * 2]?.winnerId || ""
+    const team2Id = quarterMatches[i * 2 + 1]?.winnerId || ""
+    semiMatches.push(simulatePositionMatch({
+      id: `semi-${i + 1}`,
+      team1Id,
+      team2Id,
+      team1Score: null,
+      team2Score: null,
+      stage: "semi",
+      matchNumber: i + 1,
+    }))
+  }
+
+  const finalist1 = semiMatches[0]?.winnerId || ""
+  const finalist2 = semiMatches[1]?.winnerId || ""
+  const thirdPlace1 = getPositionMatchLoser(semiMatches[0])
+  const thirdPlace2 = getPositionMatchLoser(semiMatches[1])
+
+  const thirdPlaceMatch = simulatePositionMatch({
+    id: "third-1",
+    team1Id: thirdPlace1,
+    team2Id: thirdPlace2,
+    team1Score: null,
+    team2Score: null,
+    stage: "third",
+    matchNumber: 1,
+  })
+
+  const finalMatch = simulatePositionMatch({
+    id: "final-1",
+    team1Id: finalist1,
+    team2Id: finalist2,
+    team1Score: null,
+    team2Score: null,
+    stage: "final",
+    matchNumber: 1,
+  })
+
+  return [
+    ...simulatedR32,
+    ...round16Matches,
+    ...quarterMatches,
+    ...semiMatches,
+    thirdPlaceMatch,
+    finalMatch,
+  ]
+}
+
 // localStorage keys for persistence
 const STORAGE_KEY_GROUP = "wc2026-group-matches"
 const STORAGE_KEY_KNOCKOUT = "wc2026-knockout-matches"
+const STORAGE_KEY_GROUP_MODE = "wc2026-group-prediction-mode"
+const STORAGE_KEY_GROUP_POSITIONS = "wc2026-group-positions"
+const STORAGE_KEY_THIRD_PLACE_GROUP_ORDER = "wc2026-third-place-group-order"
+const STORAGE_KEY_KNOCKOUT_MODE = "wc2026-knockout-prediction-mode"
+const STORAGE_KEY_KNOCKOUT_POSITIONS = "wc2026-knockout-position-matches"
+
+function createInitialGroupPositions(): Record<string, string[]> {
+  return Object.fromEntries(Object.entries(groups).map(([groupName, teamIds]) => [groupName, [...teamIds]]))
+}
+
+function createInitialThirdPlaceGroupOrder(): string[] {
+  return Object.keys(groups)
+}
+
+function isPredictionMode(value: string | null): value is PredictionMode {
+  return value === "match" || value === "positions"
+}
+
+function normalizeGroupPositions(value: unknown): Record<string, string[]> | null {
+  if (!value || typeof value !== "object") return null
+
+  const parsed = value as Record<string, unknown>
+  const normalized: Record<string, string[]> = {}
+
+  for (const [groupName, teamIds] of Object.entries(groups)) {
+    const savedIds = parsed[groupName]
+    if (!Array.isArray(savedIds)) return null
+
+    const validIds = savedIds.filter((teamId): teamId is string => typeof teamId === "string" && teamIds.includes(teamId))
+    const missingIds = teamIds.filter((teamId) => !validIds.includes(teamId))
+    normalized[groupName] = [...validIds, ...missingIds].slice(0, teamIds.length)
+  }
+
+  return normalized
+}
+
+function normalizeThirdPlaceGroupOrder(value: unknown): string[] | null {
+  if (!Array.isArray(value)) return null
+
+  const groupNames = Object.keys(groups)
+  const validGroups = value.filter((groupName): groupName is string => typeof groupName === "string" && groupNames.includes(groupName))
+  const missingGroups = groupNames.filter((groupName) => !validGroups.includes(groupName))
+
+  return [...validGroups, ...missingGroups].slice(0, groupNames.length)
+}
 
 function loadStoredGroupMatches(): Match[] | null {
   try {
@@ -259,6 +411,33 @@ function loadStoredGroupMatches(): Match[] | null {
 function loadStoredKnockoutMatches(): Match[] | null {
   try {
     const savedKnockout = localStorage.getItem(STORAGE_KEY_KNOCKOUT)
+    return savedKnockout ? JSON.parse(savedKnockout) : null
+  } catch {
+    return null
+  }
+}
+
+function loadStoredGroupPositions(): Record<string, string[]> | null {
+  try {
+    const savedPositions = localStorage.getItem(STORAGE_KEY_GROUP_POSITIONS)
+    return savedPositions ? normalizeGroupPositions(JSON.parse(savedPositions)) : null
+  } catch {
+    return null
+  }
+}
+
+function loadStoredThirdPlaceGroupOrder(): string[] | null {
+  try {
+    const savedOrder = localStorage.getItem(STORAGE_KEY_THIRD_PLACE_GROUP_ORDER)
+    return savedOrder ? normalizeThirdPlaceGroupOrder(JSON.parse(savedOrder)) : null
+  } catch {
+    return null
+  }
+}
+
+function loadStoredPositionKnockoutMatches(): Match[] | null {
+  try {
+    const savedKnockout = localStorage.getItem(STORAGE_KEY_KNOCKOUT_POSITIONS)
     return savedKnockout ? JSON.parse(savedKnockout) : null
   } catch {
     return null
@@ -337,11 +516,105 @@ function generateEmptyKnockoutBracket(): Match[] {
   ]
 }
 
+function buildPositionStandings(groupPositions: Record<string, string[]>): Record<string, GroupStanding[]> {
+  const standings: Record<string, GroupStanding[]> = {}
+
+  Object.entries(groups).forEach(([groupName, teamIds]) => {
+    const orderedIds = groupPositions[groupName] ?? teamIds
+    standings[groupName] = orderedIds.map((teamId, index) => ({
+      teamId,
+      played: 3,
+      won: Math.max(3 - index, 0),
+      drawn: 0,
+      lost: index,
+      goalsFor: 0,
+      goalsAgainst: 0,
+      goalDifference: 0,
+      points: Math.max(9 - index * 3, 0),
+      group: groupName,
+    }))
+  })
+
+  return standings
+}
+
+function buildPositionThirdPlaceRanking(
+  groupPositions: Record<string, string[]>,
+  thirdPlaceGroupOrder: string[],
+): {
+  all: (GroupStanding & { group: string })[]
+  qualified: (GroupStanding & { group: string })[]
+  eliminated: (GroupStanding & { group: string })[]
+} {
+  const all = thirdPlaceGroupOrder
+    .map((groupName) => {
+      const teamId = groupPositions[groupName]?.[2]
+      if (!teamId) return null
+
+      return {
+        teamId,
+        played: 3,
+        won: 1,
+        drawn: 0,
+        lost: 2,
+        goalsFor: 0,
+        goalsAgainst: 0,
+        goalDifference: 0,
+        points: 3,
+        group: groupName,
+      }
+    })
+    .filter((standing): standing is GroupStanding & { group: string } => standing !== null)
+
+  return {
+    all,
+    qualified: all.slice(0, 8),
+    eliminated: all.slice(8),
+  }
+}
+
+function buildQualifiedTeamsFromStandings(
+  standingsByGroup: Record<string, GroupStanding[]>,
+  thirdPlaceRanking: { qualified: (GroupStanding & { group: string })[] },
+) {
+  const firstByGroup = new Map<string, string>()
+  const secondByGroup = new Map<string, string>()
+
+  Object.entries(standingsByGroup).forEach(([groupName, standings]) => {
+    if (standings[0]?.played === 3) {
+      firstByGroup.set(groupName, standings[0].teamId)
+      secondByGroup.set(groupName, standings[1].teamId)
+    }
+  })
+
+  const thirdPlaceTeams: ThirdPlaceTeam[] = thirdPlaceRanking.qualified.map((team) => ({
+    teamId: team.teamId,
+    group: team.group,
+    points: team.points,
+    goalDifference: team.goalDifference,
+    goalsFor: team.goalsFor,
+  }))
+
+  return {
+    first: Array.from(firstByGroup.values()),
+    second: Array.from(secondByGroup.values()),
+    thirdBest: thirdPlaceTeams.map((team) => team.teamId),
+    firstByGroup,
+    secondByGroup,
+    thirdPlaceTeams,
+  }
+}
+
 
 export function useTournament() {
 
   const [groupMatches, setGroupMatches] = useState<Match[]>(() => generateGroupMatches())
   const [knockoutMatches, setKnockoutMatches] = useState<Match[]>(() => generateEmptyKnockoutBracket())
+  const [positionKnockoutMatches, setPositionKnockoutMatches] = useState<Match[]>(() => generateEmptyKnockoutBracket())
+  const [groupPredictionMode, setGroupPredictionMode] = useState<PredictionMode>("match")
+  const [knockoutPredictionMode, setKnockoutPredictionMode] = useState<PredictionMode>("match")
+  const [groupPositionsByGroup, setGroupPositionsByGroup] = useState<Record<string, string[]>>(() => createInitialGroupPositions())
+  const [thirdPlaceGroupOrder, setThirdPlaceGroupOrder] = useState<string[]>(() => createInitialThirdPlaceGroupOrder())
   const [activeTab, setActiveTab] = useState<TournamentTab>("groups")
   const [isHydrated, setIsHydrated] = useState(false)
 
@@ -355,6 +628,7 @@ export function useTournament() {
           sharedStateParam,
           generateGroupMatches(),
           generateEmptyKnockoutBracket(),
+          generateEmptyKnockoutBracket(),
         )
 
         window.history.replaceState({}, "", stripSharedStateFromUrl(window.location.href))
@@ -362,7 +636,22 @@ export function useTournament() {
         if (sharedState) {
           setGroupMatches(sharedState.groupMatches)
           setKnockoutMatches(sharedState.knockoutMatches)
+          setPositionKnockoutMatches(sharedState.positionKnockoutMatches)
           setActiveTab(sharedState.activeTab)
+          if (sharedState.groupPredictionMode) {
+            setGroupPredictionMode(sharedState.groupPredictionMode)
+          }
+          if (sharedState.knockoutPredictionMode) {
+            setKnockoutPredictionMode(sharedState.knockoutPredictionMode)
+          }
+          const sharedGroupPositions = normalizeGroupPositions(sharedState.groupPositionsByGroup)
+          if (sharedGroupPositions) {
+            setGroupPositionsByGroup(sharedGroupPositions)
+          }
+          const sharedThirdPlaceGroupOrder = normalizeThirdPlaceGroupOrder(sharedState.thirdPlaceGroupOrder)
+          if (sharedThirdPlaceGroupOrder) {
+            setThirdPlaceGroupOrder(sharedThirdPlaceGroupOrder)
+          }
           setIsHydrated(true)
           return
         }
@@ -370,6 +659,11 @@ export function useTournament() {
 
       const storedGroupMatches = loadStoredGroupMatches()
       const storedKnockoutMatches = loadStoredKnockoutMatches()
+      const storedGroupMode = localStorage.getItem(STORAGE_KEY_GROUP_MODE)
+      const storedKnockoutMode = localStorage.getItem(STORAGE_KEY_KNOCKOUT_MODE)
+      const storedGroupPositions = loadStoredGroupPositions()
+      const storedThirdPlaceGroupOrder = loadStoredThirdPlaceGroupOrder()
+      const storedPositionKnockoutMatches = loadStoredPositionKnockoutMatches()
 
       if (storedGroupMatches) {
         setGroupMatches(storedGroupMatches)
@@ -377,6 +671,26 @@ export function useTournament() {
 
       if (storedKnockoutMatches) {
         setKnockoutMatches(storedKnockoutMatches)
+      }
+
+      if (isPredictionMode(storedGroupMode)) {
+        setGroupPredictionMode(storedGroupMode)
+      }
+
+      if (isPredictionMode(storedKnockoutMode)) {
+        setKnockoutPredictionMode(storedKnockoutMode)
+      }
+
+      if (storedGroupPositions) {
+        setGroupPositionsByGroup(storedGroupPositions)
+      }
+
+      if (storedThirdPlaceGroupOrder) {
+        setThirdPlaceGroupOrder(storedThirdPlaceGroupOrder)
+      }
+
+      if (storedPositionKnockoutMatches) {
+        setPositionKnockoutMatches(storedPositionKnockoutMatches)
       }
 
       setIsHydrated(true)
@@ -396,6 +710,36 @@ export function useTournament() {
       localStorage.setItem(STORAGE_KEY_KNOCKOUT, JSON.stringify(knockoutMatches))
     }
   }, [knockoutMatches, isHydrated])
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem(STORAGE_KEY_GROUP_MODE, groupPredictionMode)
+    }
+  }, [groupPredictionMode, isHydrated])
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem(STORAGE_KEY_KNOCKOUT_MODE, knockoutPredictionMode)
+    }
+  }, [knockoutPredictionMode, isHydrated])
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem(STORAGE_KEY_GROUP_POSITIONS, JSON.stringify(groupPositionsByGroup))
+    }
+  }, [groupPositionsByGroup, isHydrated])
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem(STORAGE_KEY_THIRD_PLACE_GROUP_ORDER, JSON.stringify(thirdPlaceGroupOrder))
+    }
+  }, [thirdPlaceGroupOrder, isHydrated])
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem(STORAGE_KEY_KNOCKOUT_POSITIONS, JSON.stringify(positionKnockoutMatches))
+    }
+  }, [positionKnockoutMatches, isHydrated])
 
   const teamsMap = useMemo(() => {
     const map: Record<string, Team> = {}
@@ -447,41 +791,41 @@ export function useTournament() {
     }
   }, [groupStandings])
 
-  const qualifiedTeams = useMemo(() => {
-    const firstByGroup = new Map<string, string>()
-    const secondByGroup = new Map<string, string>()
+  const qualifiedTeams = useMemo(
+    () => buildQualifiedTeamsFromStandings(groupStandings, thirdPlaceRanking),
+    [groupStandings, thirdPlaceRanking],
+  )
 
-    Object.entries(groupStandings).forEach(([groupName, standings]) => {
-      if (standings[0]?.played === 3) {
-        firstByGroup.set(groupName, standings[0].teamId)
-        secondByGroup.set(groupName, standings[1].teamId)
-      }
-    })
+  const positionGroupStandings = useMemo(
+    () => buildPositionStandings(groupPositionsByGroup),
+    [groupPositionsByGroup],
+  )
 
-    // Build third place teams with group info for FIFA assignment
-    const thirdPlaceTeams: ThirdPlaceTeam[] = thirdPlaceRanking.qualified.map(t => ({
-      teamId: t.teamId,
-      group: t.group,
-      points: t.points,
-      goalDifference: t.goalDifference,
-      goalsFor: t.goalsFor,
-    }))
+  const positionThirdPlaceRanking = useMemo(
+    () => buildPositionThirdPlaceRanking(groupPositionsByGroup, thirdPlaceGroupOrder),
+    [groupPositionsByGroup, thirdPlaceGroupOrder],
+  )
 
-    return {
-      first: Array.from(firstByGroup.values()),
-      second: Array.from(secondByGroup.values()),
-      thirdBest: thirdPlaceTeams.map(t => t.teamId),
-      // New structured data for FIFA bracket rules
-      firstByGroup,
-      secondByGroup,
-      thirdPlaceTeams,
-    }
-  }, [groupStandings, thirdPlaceRanking])
+  const positionQualifiedTeams = useMemo(
+    () => buildQualifiedTeamsFromStandings(positionGroupStandings, positionThirdPlaceRanking),
+    [positionGroupStandings, positionThirdPlaceRanking],
+  )
 
   const handleScoreChange = (matchId: string, team: "team1" | "team2", score: number | null) => {
     setGroupMatches((prev) =>
       prev.map((m) => (m.id === matchId ? { ...m, [team === "team1" ? "team1Score" : "team2Score"]: score } : m)),
     )
+  }
+
+  const handleGroupPositionsChange = (groupName: string, orderedTeamIds: string[]) => {
+    setGroupPositionsByGroup((prev) => ({
+      ...prev,
+      [groupName]: orderedTeamIds,
+    }))
+  }
+
+  const handleThirdPlaceGroupOrderChange = (orderedGroupNames: string[]) => {
+    setThirdPlaceGroupOrder(orderedGroupNames)
   }
 
   const handleKnockoutScoreChange = (matchId: string, team: "team1" | "team2", score: number | null) => {
@@ -517,6 +861,12 @@ export function useTournament() {
     )
   }
 
+  const handleKnockoutPositionWinner = (matchId: string, winnerId: string) => {
+    setPositionKnockoutMatches((prev) =>
+      prev.map((m) => (m.id === matchId ? { ...m, winnerId: m.winnerId === winnerId ? undefined : winnerId } : m)),
+    )
+  }
+
   const simulateGroupStage = () => {
     // Simulate all group matches
     const simulatedGroupMatches = groupMatches.map((match) => ({
@@ -543,6 +893,23 @@ export function useTournament() {
     const allKnockoutMatches = simulateAllKnockoutMatches(round32Matches)
 
     setKnockoutMatches(allKnockoutMatches)
+    setActiveTab("knockout")
+  }
+
+  const simulatePositionKnockoutStage = () => {
+    const { firstByGroup, secondByGroup, thirdPlaceTeams } = positionQualifiedTeams
+    if (firstByGroup.size !== 12 || secondByGroup.size !== 12 || thirdPlaceTeams.length !== 8) return
+
+    const thirdPlaceAssignments = assignThirdPlaceTeams(thirdPlaceTeams)
+    if (!thirdPlaceAssignments) {
+      console.error("Could not determine third-place assignments")
+      return
+    }
+
+    const round32Matches = resolveRound32Teams(firstByGroup, secondByGroup, thirdPlaceAssignments)
+    const allKnockoutMatches = simulatePositionKnockoutMatches(round32Matches)
+
+    setPositionKnockoutMatches(allKnockoutMatches)
     setActiveTab("knockout")
   }
 
@@ -625,46 +992,110 @@ export function useTournament() {
     setActiveTab("knockout")
   }
 
+  useEffect(() => {
+    const { firstByGroup, secondByGroup, thirdPlaceTeams } = positionQualifiedTeams
+    if (firstByGroup.size !== 12 || secondByGroup.size !== 12 || thirdPlaceTeams.length !== 8) return
+
+    const thirdPlaceAssignments = assignThirdPlaceTeams(thirdPlaceTeams)
+    if (!thirdPlaceAssignments) return
+
+    const round32Matches = resolveRound32Teams(firstByGroup, secondByGroup, thirdPlaceAssignments)
+    const nextSeed = round32Matches.map((match) => `${match.id}:${match.team1Id}:${match.team2Id}`).join("|")
+
+    queueMicrotask(() => {
+      setPositionKnockoutMatches((prev) => {
+        const currentRound32 = prev.filter((match) => match.stage === "round32")
+        const currentSeed = currentRound32.map((match) => `${match.id}:${match.team1Id}:${match.team2Id}`).join("|")
+        if (currentSeed === nextSeed) return prev
+
+        const emptyLaterRounds = generateEmptyKnockoutBracket().filter((match) => match.stage !== "round32")
+        return [...round32Matches, ...emptyLaterRounds]
+      })
+    })
+  }, [positionQualifiedTeams])
+
 const resetTournament = () => {
     localStorage.removeItem(STORAGE_KEY_GROUP)
     localStorage.removeItem(STORAGE_KEY_KNOCKOUT)
+    localStorage.removeItem(STORAGE_KEY_GROUP_MODE)
+    localStorage.removeItem(STORAGE_KEY_GROUP_POSITIONS)
+    localStorage.removeItem(STORAGE_KEY_THIRD_PLACE_GROUP_ORDER)
+    localStorage.removeItem(STORAGE_KEY_KNOCKOUT_MODE)
+    localStorage.removeItem(STORAGE_KEY_KNOCKOUT_POSITIONS)
     setGroupMatches(generateGroupMatches())
     setKnockoutMatches(generateEmptyKnockoutBracket())
+    setPositionKnockoutMatches(generateEmptyKnockoutBracket())
+    setGroupPredictionMode("match")
+    setKnockoutPredictionMode("match")
+    setGroupPositionsByGroup(createInitialGroupPositions())
+    setThirdPlaceGroupOrder(createInitialThirdPlaceGroupOrder())
     setActiveTab("groups")
   }
 
   const resetGroupStage = () => {
-    localStorage.removeItem(STORAGE_KEY_GROUP)
-    setGroupMatches(generateGroupMatches())
+    if (groupPredictionMode === "match") {
+      localStorage.removeItem(STORAGE_KEY_GROUP)
+      setGroupMatches(generateGroupMatches())
+    } else {
+      localStorage.removeItem(STORAGE_KEY_GROUP_POSITIONS)
+      localStorage.removeItem(STORAGE_KEY_THIRD_PLACE_GROUP_ORDER)
+      setGroupPositionsByGroup(createInitialGroupPositions())
+      setThirdPlaceGroupOrder(createInitialThirdPlaceGroupOrder())
+      setPositionKnockoutMatches(generateEmptyKnockoutBracket())
+    }
     setActiveTab("groups")
   }
 
   const resetKnockoutStage = () => {
-    localStorage.removeItem(STORAGE_KEY_KNOCKOUT)
-    setKnockoutMatches(generateEmptyKnockoutBracket())
+    if (knockoutPredictionMode === "match") {
+      localStorage.removeItem(STORAGE_KEY_KNOCKOUT)
+      setKnockoutMatches(generateEmptyKnockoutBracket())
+    } else {
+      localStorage.removeItem(STORAGE_KEY_KNOCKOUT_POSITIONS)
+      setPositionKnockoutMatches(generateEmptyKnockoutBracket())
+    }
     setActiveTab("knockout")
   }
 
   const groupsComplete =
     qualifiedTeams.first.length === 12 && qualifiedTeams.second.length === 12 && qualifiedTeams.thirdBest.length === 8
 
+  const positionGroupsComplete =
+    positionQualifiedTeams.first.length === 12 && positionQualifiedTeams.second.length === 12 && positionQualifiedTeams.thirdBest.length === 8
+
 
   return {
     groupMatches,
     knockoutMatches,
+    positionKnockoutMatches,
     activeTab,
     teamsMap,
     groupStandings,
+    positionGroupStandings,
     thirdPlaceRanking,
+    positionThirdPlaceRanking,
     qualifiedTeams,
+    positionQualifiedTeams,
     groupsComplete,
+    positionGroupsComplete,
+    groupPredictionMode,
+    knockoutPredictionMode,
+    groupPositionsByGroup,
+    thirdPlaceGroupOrder,
     setKnockoutMatches,
+    setPositionKnockoutMatches,
     setActiveTab,
+    setGroupPredictionMode,
+    setKnockoutPredictionMode,
     handleKnockoutScoreChange,
     handleKnockoutPenaltyWinner,
+    handleKnockoutPositionWinner,
     handleScoreChange,
+    handleGroupPositionsChange,
+    handleThirdPlaceGroupOrderChange,
     simulateGroupStage,
     simulateKnockoutStage,
+    simulatePositionKnockoutStage,
     simulateTournament,
     generateKnockoutBracket,
     resetTournament,
