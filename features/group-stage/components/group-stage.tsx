@@ -4,12 +4,15 @@ import { ExportImageButton } from "@/components/export-image-button"
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { MatchInput } from "@/features/group-stage/components/match-input"
 import { StandingsTable } from "@/features/group-stage/components/standings-table"
 
 import { GroupStageProps } from "../types"
+import { GroupPositionList } from "./group-position-list"
 import { ThirdPlaceTable } from "./third-place-table"
+import { ThirdPlaceDndTable } from "./third-place-dnd-table"
 import { Camera, Dices, RotateCcw } from "lucide-react"
 
 
@@ -22,24 +25,42 @@ export function GroupStage({
   qualifiedTeams,
   thirdPlaceRanking,
   simulateGroupStage,
-  resetGroups
+  resetGroups,
+  predictionMode,
+  onPredictionModeChange,
+  groupPositionsByGroup,
+  thirdPlaceGroupOrder,
+  onGroupPositionsChange,
+  onThirdPlaceGroupOrderChange,
 }: GroupStageProps) {
   return (
     <div className="space-y-8">
-      <div className="gap-2 flex flex-wrap justify-end">
-        <Button onClick={simulateGroupStage} className="gap-2 cursor-pointer" variant="default">
-          <Dices className="h-4 w-4" />
-          Simulate Groups
-        </Button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <Tabs value={predictionMode} onValueChange={(value) => onPredictionModeChange(value === "positions" ? "positions" : "match")}>
+          <TabsList>
+            <TabsTrigger value="match">Scores</TabsTrigger>
+            <TabsTrigger value="positions">Positions</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div className="gap-2 flex flex-wrap justify-end">
+        {predictionMode === "match" && (
+          <Button onClick={simulateGroupStage} className="gap-2 cursor-pointer" variant="default">
+            <Dices className="h-4 w-4" />
+            Simulate Groups
+          </Button>
+        )}
         <Button onClick={resetGroups} className="gap-2 cursor-pointer" variant="outline">
           <RotateCcw className="h-4 w-4" />
-          Reset Groups
+          Reset {predictionMode === "positions" ? "Positions" : "Groups"}
         </Button>
+        </div>
       </div>
       <div className="text-center space-y-2">
         <h2 className="text-xl sm:text-2xl font-bold">Group Stage</h2>
         <p className="text-muted-foreground">
-          June 11–27, 2026 • Simulate results and determine the qualifiers
+          {predictionMode === "positions"
+            ? "Drag countries into finishing positions and choose the best third-place teams"
+            : "June 11–27, 2026 • Simulate results and determine the qualifiers"}
         </p>
       </div>
 
@@ -89,30 +110,49 @@ export function GroupStage({
                 </CardAction>
               </CardHeader>
               <CardContent className="p-4 space-y-4">
-                {/* Standings */}
-                <StandingsTable standings={standings} teamsMap={teamsMap} qualifiedTeams={qualifiedTeams} />
+                {predictionMode === "positions" ? (
+                  <GroupPositionList
+                    teamIds={groupPositionsByGroup[groupName] || []}
+                    teamsMap={teamsMap}
+                    onReorder={(teamIds) => onGroupPositionsChange(groupName, teamIds)}
+                  />
+                ) : (
+                  <>
+                    {/* Standings */}
+                    <StandingsTable standings={standings} teamsMap={teamsMap} qualifiedTeams={qualifiedTeams} />
 
-                {/* Matches */}
-                <div className="space-y-2 pt-2 border-t border-border">
-                  <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Matches</h4>
-                  <div className="space-y-2">
-                    {matches.map((match) => (
-                      <MatchInput
-                        key={match.id}
-                        match={match}
-                        team1={teamsMap[match.team1Id]}
-                        team2={teamsMap[match.team2Id]}
-                        onScoreChange={onScoreChange}
-                      />
-                    ))}
-                  </div>
-                </div>
+                    {/* Matches */}
+                    <div className="space-y-2 pt-2 border-t border-border">
+                      <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Matches</h4>
+                      <div className="space-y-2">
+                        {matches.map((match) => (
+                          <MatchInput
+                            key={match.id}
+                            match={match}
+                            team1={teamsMap[match.team1Id]}
+                            team2={teamsMap[match.team2Id]}
+                            onScoreChange={onScoreChange}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           )
         })}
       </div>
-      <ThirdPlaceTable ranking={thirdPlaceRanking} teamsMap={teamsMap} />
+      {predictionMode === "positions" ? (
+        <ThirdPlaceDndTable
+          groupOrder={thirdPlaceGroupOrder}
+          groupPositionsByGroup={groupPositionsByGroup}
+          teamsMap={teamsMap}
+          onReorder={onThirdPlaceGroupOrderChange}
+        />
+      ) : (
+        <ThirdPlaceTable ranking={thirdPlaceRanking} teamsMap={teamsMap} />
+      )}
     </div>
   )
 }

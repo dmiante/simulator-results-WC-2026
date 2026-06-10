@@ -1,4 +1,4 @@
-import { GroupStanding, Match, Team } from "@/lib/types"
+import { GroupStanding, Match, PredictionMode, Team } from "@/lib/types"
 
 export interface GroupStageProps {
   groups: Record<string, string[]>
@@ -14,6 +14,12 @@ export interface GroupStageProps {
   }
   simulateGroupStage: () => void
   resetGroups: () => void
+  predictionMode: PredictionMode
+  onPredictionModeChange: (mode: PredictionMode) => void
+  groupPositionsByGroup: Record<string, string[]>
+  thirdPlaceGroupOrder: string[]
+  onGroupPositionsChange: (groupName: string, orderedTeamIds: string[]) => void
+  onThirdPlaceGroupOrderChange: (orderedGroupNames: string[]) => void
 }
 
 export interface MatchInputProps {
