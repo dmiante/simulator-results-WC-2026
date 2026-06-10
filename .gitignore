@@ -42,3 +42,6 @@ next-env.d.ts
 # generated AI agent skills
 .agents/
 skills-lock.json
+
+
+.todo
