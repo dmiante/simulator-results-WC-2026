@@ -7,7 +7,11 @@ export function TournamentHeader() {
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 text-3xl">⚽</div>
+            <img
+              src="/logo.png"
+              alt="FIFA World Cup 2026"
+              className="h-20 w-20 shrink-0 object-contain md:h-24 md:w-24"
+            />
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground text-balance">FIFA World Cup 2026</h1>
               <p className="text-muted-foreground text-sm mt-1">United States • Mexico • Canada</p>
