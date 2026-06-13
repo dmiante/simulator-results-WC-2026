@@ -53,7 +53,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
   const champion = getChampion(final)
   const getExportTarget = () => {
-    if (window.matchMedia("(min-width: 1024px)").matches) {
+    if (window.matchMedia("(min-width: 1280px)").matches) {
       return bracketRef.current
     }
 
@@ -63,24 +63,24 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between min-h-[40px]">
-        <Tabs value={predictionMode} onValueChange={(value) => onPredictionModeChange(value === "positions" ? "positions" : "match")}>
-          <TabsList>
+        <Tabs value={predictionMode} onValueChange={(value) => onPredictionModeChange(value === "positions" ? "positions" : "match")} className="w-full sm:w-auto">
+          <TabsList className="grid h-11 w-full grid-cols-2 sm:w-fit">
             <TabsTrigger value="match">Scores</TabsTrigger>
             <TabsTrigger value="positions">Positions</TabsTrigger>
           </TabsList>
         </Tabs>
-        <div className="gap-2 flex flex-wrap justify-end">
+        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
         {groupsComplete && (
           <Button
             onClick={predictionMode === "positions" ? simulatePositionKnockoutStage : simulateKnockoutStage}
-            className="gap-2 cursor-pointer"
+            className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto"
             variant="default"
           >
             <Swords className="h-4 w-4" />
             {predictionMode === "positions" ? "Simulate Winners" : "Simulate Knockout"}
           </Button>
         )}
-        <Button onClick={resetKnockoutStage} className="gap-2 cursor-pointer" variant="outline">
+        <Button onClick={resetKnockoutStage} className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto" variant="outline">
           <RotateCcw className="h-4 w-4" />
           Reset Knockout
         </Button>
@@ -98,7 +98,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
           }
           filename="world-cup-2026-knockout.png"
           label="Export Bracket"
-          className="gap-2 cursor-pointer"
+          className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto"
         />
         </div>
       </div>
@@ -111,7 +111,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
         </p>
       </div>
       {/* Desktop View */}
-      <div className="hidden lg:block">
+      <div className="hidden xl:block">
         <ZoomControl zoom={zoom} setZoom={setZoom} />
         <div
           ref={containerRef}
@@ -509,14 +509,14 @@ onScoreChange={onScoreChange}
       </div>
 
       {/* Mobile View */}
-      <div ref={mobileExportRef} className="lg:hidden space-y-4">
+      <div ref={mobileExportRef} className="space-y-4 xl:hidden">
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setMobileRound(Math.max(0, mobileRound - 1))}
             disabled={mobileRound === 0}
-            className="text-slate-500 dark:text-slate-400 cursor-pointer"
+            className="min-h-11 min-w-11 cursor-pointer text-slate-500 dark:text-slate-400"
             data-export-ignore="true"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -527,7 +527,7 @@ onScoreChange={onScoreChange}
             size="sm"
             onClick={() => setMobileRound(Math.min(mobileRounds.length - 1, mobileRound + 1))}
             disabled={mobileRound === mobileRounds.length - 1}
-            className="text-slate-500 dark:text-slate-400 cursor-pointer"
+            className="min-h-11 min-w-11 cursor-pointer text-slate-500 dark:text-slate-400"
             data-export-ignore="true"
           >
             <ChevronRight className="h-5 w-5" />
@@ -535,16 +535,22 @@ onScoreChange={onScoreChange}
         </div>
 
         {/* Round Dots */}
-        <div className="flex justify-center gap-2 mb-4">
+        <div className="mb-4 flex justify-center gap-1">
           {mobileRounds.map((_, idx) => (
             <button
               key={idx}
+              type="button"
               onClick={() => setMobileRound(idx)}
-              className={cn(
-                "w-2 h-2 rounded-full transition-all",
-                idx === mobileRound ? "bg-amber-500 w-6" : "bg-slate-300 dark:bg-slate-600",
-              )}
-            />
+              className="flex h-11 w-11 items-center justify-center rounded-full"
+              aria-label={`Show ${mobileRounds[idx].title}`}
+            >
+              <span
+                className={cn(
+                  "h-2.5 rounded-full transition-all",
+                  idx === mobileRound ? "w-7 bg-amber-500" : "w-2.5 bg-slate-300 dark:bg-slate-600",
+                )}
+              />
+            </button>
           ))}
         </div>
 

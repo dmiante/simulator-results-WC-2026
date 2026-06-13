@@ -73,7 +73,7 @@ export function ShareButton({
     status === "copied" ? "Link Copied" : status === "error" ? "Copy Failed" : "Share Link"
 
   return (
-    <Button onClick={handleShare} className="gap-2 cursor-pointer" variant="outline">
+    <Button onClick={handleShare} className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto" variant="outline">
       {status === "copied" ? <Check className="h-4 w-4" /> : status === "error" ? <Copy className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
       {label}
     </Button>

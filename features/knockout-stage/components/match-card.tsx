@@ -120,13 +120,13 @@ export function MatchCard({
             predictionMode === "positions" && !canPickTeam1 && "opacity-60",
           )}
         >
-          <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             {displayTeam1 && (!isTeam1TBD || hasResolvedTeam1) && (
               <TeamFlag code={displayTeam1.code} name={displayTeam1.name} />
             )}
             <span
               className={cn(
-                "text-sm font-medium text-slate-700 dark:text-slate-200",
+                "min-w-0 truncate text-sm font-medium text-slate-700 dark:text-slate-200",
                 isTeam1TBD && !hasResolvedTeam1 && "text-slate-400 dark:text-slate-500 italic",
                 hasResolvedTeam1 && "font-semibold",
                 selectedWinner === "team1" && "font-bold text-emerald-600 dark:text-emerald-400",
@@ -136,9 +136,9 @@ export function MatchCard({
               {team1Display}
             </span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-1">
             {predictionMode === "positions" && selectedWinner === "team1" && (
-              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">Winner</span>
+              <span className="hidden rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">Winner</span>
             )}
             {predictionMode === "match" && (
               <>
@@ -147,7 +147,7 @@ export function MatchCard({
                 size="sm"
                 variant={match.penaltyWinnerId === match.team1Id ? "default" : "outline"}
                 className={cn(
-                  "h-7 text-xs px-1.5 cursor-pointer",
+                  "h-9 min-w-10 px-2 text-xs cursor-pointer xl:h-7 xl:min-w-0 xl:px-1.5",
                   !match.penaltyWinnerId && "animate-pulse border-amber-400 text-amber-600 dark:border-amber-500 dark:text-amber-400",
                 )}
                 onClick={() => onPenaltyWinner(match.id, match.team1Id)}
@@ -165,7 +165,7 @@ export function MatchCard({
                 onScoreChange(match.id, "team1", val)
               }}
               className={cn(
-                "w-12 h-7 text-center text-sm p-0 font-bold bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-500 text-slate-800 dark:text-slate-100",
+                "h-9 w-12 text-center text-sm p-0 font-bold bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-500 text-slate-800 dark:text-slate-100 xl:h-7",
                 effectiveWinner === "team1" && "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-400 dark:border-emerald-500",
               )}
               placeholder="-"
@@ -197,13 +197,13 @@ export function MatchCard({
             predictionMode === "positions" && !canPickTeam2 && "opacity-60",
           )}
         >
-          <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             {displayTeam2 && (!isTeam2TBD || hasResolvedTeam2) && (
               <TeamFlag code={displayTeam2.code} name={displayTeam2.name} />
             )}
             <span
               className={cn(
-                "text-sm font-medium text-slate-700 dark:text-slate-200",
+                "min-w-0 truncate text-sm font-medium text-slate-700 dark:text-slate-200",
                 isTeam2TBD && !hasResolvedTeam2 && "text-slate-400 dark:text-slate-500 italic",
                 hasResolvedTeam2 && "font-semibold",
                 selectedWinner === "team2" && "font-bold text-emerald-600 dark:text-emerald-400",
@@ -213,9 +213,9 @@ export function MatchCard({
               {team2Display}
             </span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-1">
             {predictionMode === "positions" && selectedWinner === "team2" && (
-              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">Winner</span>
+              <span className="hidden rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">Winner</span>
             )}
             {predictionMode === "match" && (
               <>
@@ -224,7 +224,7 @@ export function MatchCard({
                 size="sm"
                 variant={match.penaltyWinnerId === match.team2Id ? "default" : "outline"}
                 className={cn(
-                  "h-7 text-xs px-1.5 cursor-pointer",
+                  "h-9 min-w-10 px-2 text-xs cursor-pointer xl:h-7 xl:min-w-0 xl:px-1.5",
                   !match.penaltyWinnerId && "animate-pulse border-amber-400 text-amber-600 dark:border-amber-500 dark:text-amber-400",
                 )}
                 onClick={() => onPenaltyWinner(match.id, match.team2Id)}
@@ -242,7 +242,7 @@ export function MatchCard({
                 onScoreChange(match.id, "team2", val)
               }}
               className={cn(
-                "w-12 h-7 text-center text-sm p-0 font-bold bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-500 text-slate-800 dark:text-slate-100",
+                "h-9 w-12 text-center text-sm p-0 font-bold bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-500 text-slate-800 dark:text-slate-100 xl:h-7",
                 effectiveWinner === "team2" && "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-400 dark:border-emerald-500",
               )}
               placeholder="-"

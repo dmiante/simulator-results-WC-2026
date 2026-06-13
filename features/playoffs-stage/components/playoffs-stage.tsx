@@ -328,7 +328,7 @@ export function PlayoffsStage({
       </div>
 
       <Tabs defaultValue="uefa" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-4">
+        <TabsList className="mb-4 grid h-11 w-full grid-cols-2">
           <TabsTrigger value="uefa">
             <span className="sm:hidden">UEFA (4)</span>
             <span className="hidden sm:inline">UEFA Playoffs (4 spots)</span>

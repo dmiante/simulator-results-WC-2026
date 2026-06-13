@@ -140,7 +140,7 @@ export function WorldCupSimulator() {
           }
         />
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid w-full max-w-xl grid-cols-3">
+          <TabsList className="grid h-11 w-full max-w-xl grid-cols-3">
             <TabsTrigger value="playoffs" className="gap-2 text-xs sm:text-sm">
               <Swords className="h-4 w-4 hidden sm:inline" />
               PlayOffs

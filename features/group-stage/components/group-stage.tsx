@@ -36,20 +36,20 @@ export function GroupStage({
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Tabs value={predictionMode} onValueChange={(value) => onPredictionModeChange(value === "positions" ? "positions" : "match")}>
-          <TabsList>
+        <Tabs value={predictionMode} onValueChange={(value) => onPredictionModeChange(value === "positions" ? "positions" : "match")} className="w-full sm:w-auto">
+          <TabsList className="grid h-11 w-full grid-cols-2 sm:w-fit">
             <TabsTrigger value="match">Scores</TabsTrigger>
             <TabsTrigger value="positions">Positions</TabsTrigger>
           </TabsList>
         </Tabs>
-        <div className="gap-2 flex flex-wrap justify-end">
+        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
         {predictionMode === "match" && (
-          <Button onClick={simulateGroupStage} className="gap-2 cursor-pointer" variant="default">
+          <Button onClick={simulateGroupStage} className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto" variant="default">
             <Dices className="h-4 w-4" />
             Simulate Groups
           </Button>
         )}
-        <Button onClick={resetGroups} className="gap-2 cursor-pointer" variant="outline">
+        <Button onClick={resetGroups} className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto" variant="outline">
           <RotateCcw className="h-4 w-4" />
           Reset {predictionMode === "positions" ? "Positions" : "Groups"}
         </Button>

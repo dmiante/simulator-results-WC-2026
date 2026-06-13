@@ -64,8 +64,8 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
             value={match.team1Score ?? ""}
             onChange={(e) => handleChange("team1", e.target.value)}
             className={cn(
-              "w-10 h-8 text-center p-0 text-sm font-medium",
-              compact && "w-8 h-7 text-xs",
+              "h-10 w-11 text-center p-0 text-sm font-medium lg:h-8 lg:w-10",
+              compact && "h-8 w-9 text-xs lg:h-7 lg:w-8",
               winner === "team1" && "border-green-500 bg-green-500/10",
             )}
             placeholder="-"
@@ -78,8 +78,8 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
             value={match.team2Score ?? ""}
             onChange={(e) => handleChange("team2", e.target.value)}
             className={cn(
-              "w-10 h-8 text-center p-0 text-sm font-medium",
-              compact && "w-8 h-7 text-xs",
+              "h-10 w-11 text-center p-0 text-sm font-medium lg:h-8 lg:w-10",
+              compact && "h-8 w-9 text-xs lg:h-7 lg:w-8",
               winner === "team2" && "border-green-500 bg-green-500/10",
             )}
             placeholder="-"
