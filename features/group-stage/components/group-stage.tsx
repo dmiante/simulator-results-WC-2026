@@ -59,7 +59,7 @@ export function GroupStage({
         <h2 className="text-xl sm:text-2xl font-bold">Group Stage</h2>
         <p className="text-muted-foreground">
           {predictionMode === "positions"
-            ? "Drag countries into finishing positions and choose the best third-place teams"
+            ? "Drag from each handle to set finishing positions and choose the best third-place teams"
             : "June 11–27, 2026 • Simulate results and determine the qualifiers"}
         </p>
       </div>
