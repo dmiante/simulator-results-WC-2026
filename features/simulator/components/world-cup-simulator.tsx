@@ -10,7 +10,6 @@ import { groups } from "@/db/tournament-data"
 import { useTournament } from "../hooks/use-tournament"
 import { TournamentTab } from "../types"
 import ButtonSimulator from "./button-simulator"
-import { ShareButton } from "./share-button"
 import { PlayoffsStage } from "@/features/playoffs-stage/components/playoffs-stage"
 import { usePlayoffs } from "@/features/playoffs-stage/hooks/use-playoffs"
 import { Team } from "@/lib/types"
@@ -126,18 +125,6 @@ export function WorldCupSimulator() {
           simulateKnockoutStage={simulateKnockoutStage}
           knockoutMatches={knockoutMatches}
           groupsComplete={groupsComplete}
-          extraActions={
-            <ShareButton
-              groupMatches={groupMatches}
-              knockoutMatches={knockoutMatches}
-              positionKnockoutMatches={positionKnockoutMatches}
-              activeTab={activeTab}
-              groupPredictionMode={groupPredictionMode}
-              knockoutPredictionMode={knockoutPredictionMode}
-              groupPositionsByGroup={groupPositionsByGroup}
-              thirdPlaceGroupOrder={thirdPlaceGroupOrder}
-            />
-          }
         />
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
           <TabsList className="grid h-11 w-full max-w-xl grid-cols-3">

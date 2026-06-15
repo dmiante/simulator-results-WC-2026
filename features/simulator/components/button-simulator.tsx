@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { RotateCcw, Sparkles, Trophy } from "lucide-react";
-import { TournamentSimulatorProps } from "../types";
+import { Button } from "@/components/ui/button"
+import { RotateCcw, Sparkles, Trophy } from "lucide-react"
+
+import { TournamentSimulatorProps } from "../types"
 
 
 export default function ButtonSimulator({
   simulateTournament,
   resetTournament,
-  extraActions,
 }: TournamentSimulatorProps) {
 
   return (
@@ -24,7 +24,6 @@ export default function ButtonSimulator({
           <RotateCcw className="h-4 w-4" />
           Reset All
         </Button>
-        {extraActions}
       </div>
     </div>
   )

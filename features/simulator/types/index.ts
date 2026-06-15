@@ -1,5 +1,3 @@
-import { ReactNode } from "react"
-
 import { Match } from "@/lib/types"
 
 export type TournamentTab = "playoffs" | "groups" | "knockout"
@@ -12,5 +10,4 @@ export interface TournamentSimulatorProps {
   generateKnockoutBracket: () => void
   resetTournament: () => void
   knockoutMatches: Match[]
-  extraActions?: ReactNode
 }
