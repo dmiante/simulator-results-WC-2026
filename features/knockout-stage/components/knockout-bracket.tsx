@@ -97,9 +97,9 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                 : {}
             }
             filename="world-cup-2026-knockout.png"
-            label="Export Bracket"
+            label="Share Bracket"
             shareLabel="Share Bracket"
-            ariaLabel="Export bracket image"
+            ariaLabel="Share bracket image"
             shareAriaLabel="Share bracket image"
             className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto"
           />
