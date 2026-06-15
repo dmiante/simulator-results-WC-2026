@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Check, Download, LoaderCircle, TriangleAlert } from "lucide-react"
-import { domToPng, type Options } from "modern-screenshot"
+import { useEffect, useRef, useState } from "react"
+import { Check, Download, LoaderCircle, Share2, TriangleAlert } from "lucide-react"
+import { domToBlob, type Options } from "modern-screenshot"
 
 import { Button } from "@/components/ui/button"
 
@@ -13,26 +13,81 @@ interface ExportImageButtonProps {
   getOptions?: (target: HTMLElement) => Partial<Options>
   filename: string
   label?: string
+  shareLabel?: string
   ariaLabel?: string
+  shareAriaLabel?: string
   showLabel?: boolean
   icon?: React.ComponentType<{ className?: string }>
+  shareIcon?: React.ComponentType<{ className?: string }>
   variant?: ButtonProps["variant"]
   size?: ButtonProps["size"]
   className?: string
 }
 
-type ExportStatus = "idle" | "exporting" | "success" | "error"
+type ExportStatus = "idle" | "exporting" | "downloaded" | "shared" | "error"
 
 function getBackgroundColor(): string {
   const rootBackground = getComputedStyle(document.documentElement).getPropertyValue("--background").trim()
   return rootBackground || getComputedStyle(document.body).backgroundColor || "#ffffff"
 }
 
-function downloadImage(dataUrl: string, filename: string) {
+function getExportOptions(target: HTMLElement, getOptions?: (target: HTMLElement) => Partial<Options>): Options {
+  return {
+    width: Math.ceil(target.scrollWidth || target.clientWidth),
+    height: Math.ceil(target.scrollHeight || target.clientHeight),
+    scale: 2,
+    maximumCanvasSize: 16384,
+    backgroundColor: getBackgroundColor(),
+    filter: (node) => !(node instanceof HTMLElement && node.dataset.exportIgnore === "true"),
+    ...getOptions?.(target),
+  }
+}
+
+function exportTargetToBlob(target: HTMLElement, getOptions?: (target: HTMLElement) => Partial<Options>) {
+  return domToBlob(target, getExportOptions(target, getOptions))
+}
+
+function downloadImage(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob)
   const link = document.createElement("a")
   link.download = filename
-  link.href = dataUrl
+  link.href = url
   link.click()
+  window.setTimeout(() => {
+    URL.revokeObjectURL(url)
+  }, 0)
+}
+
+function createImageFile(blob: Blob, filename: string) {
+  return new File([blob], filename, { type: blob.type || "image/png" })
+}
+
+function canShareFile(file: File) {
+  if (typeof navigator.share !== "function") {
+    return false
+  }
+
+  if (typeof navigator.canShare !== "function") {
+    return true
+  }
+
+  try {
+    return navigator.canShare({ files: [file] })
+  } catch {
+    return false
+  }
+}
+
+function supportsFileShare() {
+  if (typeof File === "undefined") {
+    return false
+  }
+
+  return canShareFile(new File([new Uint8Array([0])], "share-test.png", { type: "image/png" }))
+}
+
+function isShareAbort(error: unknown) {
+  return error instanceof DOMException && error.name === "AbortError"
 }
 
 export function ExportImageButton({
@@ -40,14 +95,23 @@ export function ExportImageButton({
   getOptions,
   filename,
   label = "Export Image",
+  shareLabel,
   ariaLabel,
+  shareAriaLabel,
   showLabel = true,
   icon: Icon,
+  shareIcon: ShareIcon,
   variant = "outline",
   size,
   className,
 }: ExportImageButtonProps) {
   const [status, setStatus] = useState<ExportStatus>("idle")
+  const [canShareFiles, setCanShareFiles] = useState(false)
+  const preparedExportRef = useRef<{ target: HTMLElement; blobPromise: Promise<Blob> } | null>(null)
+
+  useEffect(() => {
+    setCanShareFiles(supportsFileShare())
+  }, [])
 
   useEffect(() => {
     if (status === "idle" || status === "exporting") {
@@ -63,6 +127,31 @@ export function ExportImageButton({
     }
   }, [status])
 
+  const prepareExport = () => {
+    const target = getTarget()
+
+    if (!target) {
+      preparedExportRef.current = null
+      return
+    }
+
+    preparedExportRef.current = {
+      target,
+      blobPromise: exportTargetToBlob(target, getOptions),
+    }
+  }
+
+  const getExportBlob = (target: HTMLElement) => {
+    const preparedExport = preparedExportRef.current
+    preparedExportRef.current = null
+
+    if (preparedExport?.target === target) {
+      return preparedExport.blobPromise
+    }
+
+    return exportTargetToBlob(target, getOptions)
+  }
+
   const handleExport = async () => {
     const target = getTarget()
 
@@ -74,36 +163,57 @@ export function ExportImageButton({
     setStatus("exporting")
 
     try {
-      const dataUrl = await domToPng(target, {
-        width: Math.ceil(target.scrollWidth || target.clientWidth),
-        height: Math.ceil(target.scrollHeight || target.clientHeight),
-        scale: 2,
-        maximumCanvasSize: 16384,
-        backgroundColor: getBackgroundColor(),
-        filter: (node) => !(node instanceof HTMLElement && node.dataset.exportIgnore === "true"),
-        ...getOptions?.(target),
-      })
+      const blob = await getExportBlob(target)
+      const file = createImageFile(blob, filename)
 
-      downloadImage(dataUrl, filename)
-      setStatus("success")
+      if (canShareFile(file)) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: filename,
+          })
+          setStatus("shared")
+          return
+        } catch (error) {
+          if (isShareAbort(error)) {
+            setStatus("idle")
+            return
+          }
+        }
+      }
+
+      downloadImage(file, filename)
+      setStatus("downloaded")
     } catch {
       setStatus("error")
     }
   }
 
+  const idleLabel = canShareFiles ? shareLabel ?? label : label
+  const idleAccessibleLabel = canShareFiles ? shareAriaLabel ?? idleLabel : ariaLabel ?? idleLabel
+  const IdleIcon = canShareFiles ? ShareIcon ?? Share2 : Icon
+
   const buttonLabel =
     status === "exporting"
-      ? "Exporting..."
-      : status === "success"
+      ? "Preparing..."
+      : status === "shared"
+        ? "Shared"
+        : status === "downloaded"
         ? "Downloaded"
         : status === "error"
           ? "Try Again"
           : label
 
-  const accessibleLabel = ariaLabel ?? buttonLabel
+  const accessibleLabel = status === "idle" ? idleAccessibleLabel : buttonLabel
 
   return (
     <Button
+      onPointerDown={prepareExport}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          prepareExport()
+        }
+      }}
       onClick={handleExport}
       className={className}
       variant={variant}
@@ -115,12 +225,12 @@ export function ExportImageButton({
     >
       {status === "exporting" ? (
         <LoaderCircle className="h-4 w-4 animate-spin" />
-      ) : status === "success" ? (
+      ) : status === "shared" || status === "downloaded" ? (
         <Check className="h-4 w-4" />
       ) : status === "error" ? (
         <TriangleAlert className="h-4 w-4" />
-      ) : Icon ? (
-        <Icon className="h-4 w-4" />
+      ) : IdleIcon ? (
+        <IdleIcon className="h-4 w-4" />
       ) : (
         <Download className="h-4 w-4" />
       )}

@@ -102,6 +102,7 @@ export function GroupStage({
                     getTarget={() => document.getElementById(`group-card-${groupName}`)}
                     filename={`Group ${groupName}.png`}
                     ariaLabel={`Screenshot group ${groupName}`}
+                    shareAriaLabel={`Share group ${groupName}`}
                     showLabel={false}
                     icon={Camera}
                     size="icon-sm"
