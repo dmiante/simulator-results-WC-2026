@@ -6,6 +6,7 @@ import { Users, GitBranch, Swords } from "lucide-react"
 import { GroupStage } from "@/features/group-stage/components/group-stage"
 import { KnockoutBracket } from "@/features/knockout-stage/components/knockout-bracket"
 import { TournamentHeader } from "@/components/layout/tournament-header"
+import { Footer } from "@/components/layout/footer"
 import { groups } from "@/db/tournament-data"
 import { useTournament } from "../hooks/use-tournament"
 import { TournamentTab } from "../types"
@@ -188,6 +189,7 @@ export function WorldCupSimulator() {
           </TabsContent>
         </Tabs>
       </div>
+      <Footer />
     </div>
   )
 }
