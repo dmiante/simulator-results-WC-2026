@@ -70,36 +70,36 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
           </TabsList>
         </Tabs>
         <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
-        {groupsComplete && (
-          <Button
-            onClick={predictionMode === "positions" ? simulatePositionKnockoutStage : simulateKnockoutStage}
-            className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto"
-            variant="default"
-          >
-            <Swords className="h-4 w-4" />
-            {predictionMode === "positions" ? "Simulate Winners" : "Simulate Knockout"}
+          {groupsComplete && (
+            <Button
+              onClick={predictionMode === "positions" ? simulatePositionKnockoutStage : simulateKnockoutStage}
+              className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto"
+              variant="default"
+            >
+              <Swords className="h-4 w-4" />
+              {predictionMode === "positions" ? "Simulate Winners" : "Simulate Knockout"}
+            </Button>
+          )}
+          <Button onClick={resetKnockoutStage} className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto" variant="outline">
+            <RotateCcw className="h-4 w-4" />
+            Reset Knockout
           </Button>
-        )}
-        <Button onClick={resetKnockoutStage} className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto" variant="outline">
-          <RotateCcw className="h-4 w-4" />
-          Reset Knockout
-        </Button>
-        <ExportImageButton
-          getTarget={getExportTarget}
-          getOptions={(target) =>
-            target === bracketRef.current
-              ? {
+          <ExportImageButton
+            getTarget={getExportTarget}
+            getOptions={(target) =>
+              target === bracketRef.current
+                ? {
                   style: {
                     transform: "none",
                     transformOrigin: "top left",
                   },
                 }
-              : {}
-          }
-          filename="world-cup-2026-knockout.png"
-          label="Export Bracket"
-          className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto"
-        />
+                : {}
+            }
+            filename="world-cup-2026-knockout.png"
+            label="Export Bracket"
+            className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto"
+          />
         </div>
       </div>
       <div className="text-center space-y-2">
@@ -156,7 +156,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
                         match={match}
                         team1={teamsMap[match.team1Id]}
                         team2={teamsMap[match.team2Id]}
-onScoreChange={onScoreChange}
+                        onScoreChange={onScoreChange}
                         onPenaltyWinner={onPenaltyWinner}
                         placeholder1={placeholders.team1}
                         placeholder2={placeholders.team2}
@@ -558,7 +558,7 @@ onScoreChange={onScoreChange}
         {mobileRound === 4 && champion && teamsMap[champion] && (
           <div className="flex flex-col items-center gap-2 mb-6 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-400/50 dark:border-amber-500/30">
             <Trophy className="h-8 w-8 text-amber-500" />
-            <span className="text-2xl">{teamsMap[champion].flag}</span>
+            <TeamFlag code={teamsMap[champion].code} name={teamsMap[champion].name} width={160} widthImg={160} />
             <span className="font-bold text-amber-600 dark:text-amber-400">{teamsMap[champion].name}</span>
             <span className="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">World Champion</span>
           </div>
