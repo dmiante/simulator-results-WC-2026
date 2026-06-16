@@ -63,12 +63,16 @@ function createImageFile(blob: Blob, filename: string) {
 }
 
 function canShareFile(file: File) {
+  if (typeof navigator === "undefined") {
+    return false
+  }
+
   if (typeof navigator.share !== "function") {
     return false
   }
 
   if (typeof navigator.canShare !== "function") {
-    return true
+    return false
   }
 
   try {
@@ -107,10 +111,22 @@ export function ExportImageButton({
 }: ExportImageButtonProps) {
   const [status, setStatus] = useState<ExportStatus>("idle")
   const [canShareFiles, setCanShareFiles] = useState(false)
+  const [isMobileViewport, setIsMobileViewport] = useState(false)
   const preparedExportRef = useRef<{ target: HTMLElement; blobPromise: Promise<Blob> } | null>(null)
 
   useEffect(() => {
-    setCanShareFiles(supportsFileShare())
+    const mediaQuery = window.matchMedia("(max-width: 639px)")
+    const updateMobileViewport = () => {
+      setIsMobileViewport(mediaQuery.matches)
+      setCanShareFiles(supportsFileShare())
+    }
+
+    updateMobileViewport()
+    mediaQuery.addEventListener("change", updateMobileViewport)
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateMobileViewport)
+    }
   }, [])
 
   useEffect(() => {
@@ -166,7 +182,7 @@ export function ExportImageButton({
       const blob = await getExportBlob(target)
       const file = createImageFile(blob, filename)
 
-      if (canShareFile(file)) {
+      if (shouldUseNativeShare && canShareFile(file)) {
         try {
           await navigator.share({
             files: [file],
@@ -189,9 +205,10 @@ export function ExportImageButton({
     }
   }
 
-  const idleLabel = canShareFiles ? shareLabel ?? label : label
-  const idleAccessibleLabel = canShareFiles ? shareAriaLabel ?? idleLabel : ariaLabel ?? idleLabel
-  const IdleIcon = canShareFiles ? ShareIcon ?? Share2 : Icon
+  const shouldUseNativeShare = isMobileViewport && canShareFiles
+  const idleLabel = shouldUseNativeShare ? shareLabel ?? label : label
+  const idleAccessibleLabel = shouldUseNativeShare ? shareAriaLabel ?? idleLabel : ariaLabel ?? idleLabel
+  const IdleIcon = shouldUseNativeShare ? ShareIcon ?? Share2 : Icon
 
   const buttonLabel =
     status === "exporting"
@@ -202,7 +219,7 @@ export function ExportImageButton({
         ? "Downloaded"
         : status === "error"
           ? "Try Again"
-          : label
+          : idleLabel
 
   const accessibleLabel = status === "idle" ? idleAccessibleLabel : buttonLabel
 
