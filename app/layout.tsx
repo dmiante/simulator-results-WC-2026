@@ -6,68 +6,61 @@ import "./globals.css"
 
 import { Inter, Geist_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
+import { LanguageProvider } from "@/components/language-provider"
+import { messages } from "@/lib/i18n"
+import { getServerLocale } from "@/lib/i18n-server"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" })
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://wcsimulator2026.vercel.app"),
-  title: {
-    default: "FIFA World Cup 2026 Simulator",
-    template: "%s | WC 2026 Simulator",
-  },
-  description:
-    "Predict match results and simulate the FIFA World Cup 2026 tournament. Enter scores for all 48 teams across group stages and knockout rounds.",
-  keywords: [
-    "FIFA",
-    "World Cup",
-    "2026",
-    "simulator",
-    "football",
-    "soccer",
-    "predictions",
-    "bracket",
-    "knockout",
-    "group stage",
-    "world cup predictor",
-  ],
-  referrer: "strict-origin-when-cross-origin",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "FIFA World Cup 2026 Simulator",
-    description:
-      "Predict match results and simulate the FIFA World Cup 2026 tournament with 48 teams across group stages and knockout rounds.",
-    url: "/",
-    siteName: "WC 2026 Simulator",
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "FIFA World Cup 2026 Simulator",
-    description:
-      "Predict match results and simulate the FIFA World Cup 2026 tournament with 48 teams.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale()
+  const metadata = messages[locale].metadata
+
+  return {
+    metadataBase: new URL("https://wcsimulator2026.vercel.app"),
+    title: {
+      default: metadata.title,
+      template: metadata.titleTemplate,
+    },
+    description: metadata.description,
+    keywords: metadata.keywords,
+    referrer: "strict-origin-when-cross-origin",
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      title: metadata.title,
+      description: metadata.description,
+      url: "/",
+      siteName: metadata.siteName,
+      locale: metadata.locale,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: metadata.title,
+      description: metadata.shortDescription,
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-  icons: {
-    icon: [
-      { url: "/logo.svg", type: "image/svg+xml" },
-      { url: "/logo.png", type: "image/png" },
-    ],
-    apple: "/logo.png",
-  },
+    icons: {
+      icon: [
+        { url: "/logo.svg", type: "image/svg+xml" },
+        { url: "/logo.png", type: "image/png" },
+      ],
+      apple: "/logo.png",
+    },
+  }
 }
 
 export const viewport: Viewport = {
@@ -76,13 +69,15 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getServerLocale()
+
   return (
-    <html lang="en" className={`${inter.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${inter.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
@@ -90,8 +85,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Analytics />
+          <LanguageProvider initialLocale={locale}>
+            {children}
+            <Analytics />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
