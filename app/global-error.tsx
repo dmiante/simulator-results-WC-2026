@@ -1,5 +1,11 @@
 "use client"
 
+import { useSyncExternalStore } from "react"
+
+import { defaultLocale, getLocaleFromAcceptLanguage, messages } from "@/lib/i18n"
+
+const subscribe = () => () => {}
+
 export default function GlobalError({
   error,
   reset,
@@ -7,8 +13,15 @@ export default function GlobalError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const locale = useSyncExternalStore(
+    subscribe,
+    () => getLocaleFromAcceptLanguage(navigator.languages?.join(",") || navigator.language),
+    () => defaultLocale,
+  )
+  const t = messages[locale]
+
   return (
-    <html lang="en">
+    <html lang={locale} suppressHydrationWarning>
       <body style={{ margin: 0, fontFamily: "system-ui, sans-serif" }}>
         <div
           style={{
@@ -22,9 +35,9 @@ export default function GlobalError({
           }}
         >
           <h2 style={{ fontSize: "1.25rem", fontWeight: 600 }}>
-            Something went wrong
+            {t.error.title}
           </h2>
-          <p style={{ color: "#666" }}>A critical error occurred.</p>
+          <p style={{ color: "#666" }}>{t.error.criticalDescription}</p>
           <button
             onClick={reset}
             style={{
@@ -35,7 +48,7 @@ export default function GlobalError({
               background: "transparent",
             }}
           >
-            Try again
+            {t.error.tryAgain}
           </button>
         </div>
       </body>
