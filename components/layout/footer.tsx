@@ -1,10 +1,16 @@
+"use client"
+
 import { Github } from "lucide-react"
 
+import { useTranslations } from "@/components/language-provider"
+
 export function Footer() {
+  const t = useTranslations()
+
   return (
     <footer className="border-t border-border bg-card">
       <div className="container mx-auto flex flex-col items-center justify-between gap-3 px-4 py-5 text-sm text-muted-foreground sm:flex-row">
-        <p>FIFA World Cup 2026 Simulator</p>
+        <p>{t.footer.title}</p>
         <a
           href="https://github.com/dmiante"
           target="_blank"
