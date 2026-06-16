@@ -20,6 +20,7 @@ import {
 import { CSS } from "@dnd-kit/utilities"
 import { GripVertical } from "lucide-react"
 
+import { useTranslations } from "@/components/language-provider"
 import { ConfederationBadge } from "@/components/confederation-badge"
 import { TeamFlag } from "@/components/team-flag"
 import { Team } from "@/lib/types"
@@ -38,6 +39,7 @@ interface SortableTeamRowProps {
 }
 
 function SortableTeamRow({ teamId, index, team }: SortableTeamRowProps) {
+  const t = useTranslations()
   const { attributes, listeners, setActivatorNodeRef, setNodeRef, transform, transition, isDragging } = useSortable({
     id: teamId,
   })
@@ -62,7 +64,7 @@ function SortableTeamRow({ teamId, index, team }: SortableTeamRowProps) {
         ref={setActivatorNodeRef}
         type="button"
         className="flex h-11 w-11 shrink-0 touch-none cursor-grab items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground active:cursor-grabbing"
-        aria-label={`Move ${team?.name || teamId}`}
+        aria-label={t.positionList.moveTeam(team?.name || teamId)}
         {...attributes}
         {...listeners}
       >
@@ -82,7 +84,7 @@ function SortableTeamRow({ teamId, index, team }: SortableTeamRowProps) {
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold text-foreground">{team?.name || teamId}</div>
         <div className="text-xs text-muted-foreground">
-          {status === "direct" ? "Direct qualifier" : status === "third" ? "Third-place pool" : "Eliminated"}
+          {status === "direct" ? t.positionList.directQualifier : status === "third" ? t.positionList.thirdPlacePool : t.positionList.eliminated}
         </div>
       </div>
       {team?.confederation && <ConfederationBadge confederation={team.confederation} />}

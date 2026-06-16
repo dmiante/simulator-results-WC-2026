@@ -22,6 +22,7 @@ import {
 import { CSS } from "@dnd-kit/utilities"
 import { GripVertical } from "lucide-react"
 
+import { useTranslations } from "@/components/language-provider"
 import { ConfederationBadge } from "@/components/confederation-badge"
 import { TeamFlag } from "@/components/team-flag"
 import { Team } from "@/lib/types"
@@ -41,6 +42,7 @@ interface SortableThirdPlaceRowProps {
 }
 
 function SortableThirdPlaceRow({ groupName, index, team }: SortableThirdPlaceRowProps) {
+  const t = useTranslations()
   const { attributes, listeners, setActivatorNodeRef, setNodeRef, transform, transition, isDragging } = useSortable({
     id: groupName,
   })
@@ -63,7 +65,7 @@ function SortableThirdPlaceRow({ groupName, index, team }: SortableThirdPlaceRow
         ref={setActivatorNodeRef}
         type="button"
         className="flex h-11 w-11 touch-none cursor-grab items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground active:cursor-grabbing"
-        aria-label={`Move Group ${groupName} third-place team`}
+        aria-label={t.thirdPlaces.moveGroupThird(groupName)}
         {...attributes}
         {...listeners}
       >
@@ -80,13 +82,13 @@ function SortableThirdPlaceRow({ groupName, index, team }: SortableThirdPlaceRow
       <div className="flex min-w-0 items-center gap-2">
         {team && <TeamFlag code={team.code} name={team.name} />}
         <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-foreground">{team?.name || "TBD"}</div>
-          <div className="text-xs text-muted-foreground">Group {groupName}</div>
+          <div className="truncate text-sm font-semibold text-foreground">{team?.name || t.common.tbd}</div>
+          <div className="text-xs text-muted-foreground">{t.common.groupLabel(groupName)}</div>
         </div>
         {team?.confederation && <ConfederationBadge confederation={team.confederation} />}
       </div>
       <span className={cn("text-xs font-semibold", qualified ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground")}>
-        {qualified ? "Qualified" : "Eliminated"}
+        {qualified ? t.common.qualified : t.common.eliminated}
       </span>
     </div>
   )
@@ -98,6 +100,8 @@ export function ThirdPlaceDndTable({
   teamsMap,
   onReorder,
 }: ThirdPlaceDndTableProps) {
+  const t = useTranslations()
+
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -135,10 +139,10 @@ export function ThirdPlaceDndTable({
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500/20 text-sm font-bold text-amber-500">
             3
           </span>
-          Best Third Places
+          {t.thirdPlaces.bestTitle}
         </h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Drag from the handle to rank third-place teams. The top 8 qualify to Round of 32.
+          {t.thirdPlaces.bestDescription}
         </p>
       </div>
 
@@ -153,7 +157,7 @@ export function ThirdPlaceDndTable({
                 <Fragment key={groupName}>
                   {index === 8 && (
                     <div className="bg-muted/40 px-4 py-2 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                      Eliminated Third Places
+                      {t.thirdPlaces.eliminatedThirdPlaces}
                     </div>
                   )}
                   <SortableThirdPlaceRow groupName={groupName} index={index} team={team} />

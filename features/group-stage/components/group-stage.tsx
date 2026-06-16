@@ -1,6 +1,7 @@
 "use client"
 
 import { ExportImageButton } from "@/components/export-image-button"
+import { useTranslations } from "@/components/language-provider"
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -33,52 +34,54 @@ export function GroupStage({
   onGroupPositionsChange,
   onThirdPlaceGroupOrderChange,
 }: GroupStageProps) {
+  const t = useTranslations()
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Tabs value={predictionMode} onValueChange={(value) => onPredictionModeChange(value === "positions" ? "positions" : "match")} className="w-full sm:w-auto">
           <TabsList className="grid h-11 w-full grid-cols-2 sm:w-fit">
-            <TabsTrigger value="match">Scores</TabsTrigger>
-            <TabsTrigger value="positions">Positions</TabsTrigger>
+            <TabsTrigger value="match">{t.modes.scores}</TabsTrigger>
+            <TabsTrigger value="positions">{t.modes.positions}</TabsTrigger>
           </TabsList>
         </Tabs>
         <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end">
         {predictionMode === "match" && (
           <Button onClick={simulateGroupStage} className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto" variant="default">
             <Dices className="h-4 w-4" />
-            Simulate Groups
+            {t.groupStage.simulateGroups}
           </Button>
         )}
         <Button onClick={resetGroups} className="min-h-11 w-full gap-2 cursor-pointer sm:w-auto" variant="outline">
           <RotateCcw className="h-4 w-4" />
-          Reset {predictionMode === "positions" ? "Positions" : "Groups"}
+          {predictionMode === "positions" ? t.groupStage.resetPositions : t.groupStage.resetGroups}
         </Button>
         </div>
       </div>
       <div className="text-center space-y-2">
-        <h2 className="text-xl sm:text-2xl font-bold">Group Stage</h2>
+        <h2 className="text-xl sm:text-2xl font-bold">{t.groupStage.title}</h2>
         <p className="text-muted-foreground">
           {predictionMode === "positions"
-            ? "Drag from each handle to set finishing positions and choose the best third-place teams"
-            : "June 11–27, 2026 • Simulate results and determine the qualifiers"}
+            ? t.groupStage.descriptionPositions
+            : t.groupStage.descriptionMatch}
         </p>
       </div>
 
       {/* Progress indicator */}
       <div className="flex flex-wrap items-center gap-4 p-4 bg-muted/50 rounded-lg">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Qualified:</span>
+          <span className="text-sm text-muted-foreground">{t.groupStage.qualified}</span>
           <Badge variant="default">
             {qualifiedTeams.first.length + qualifiedTeams.second.length + qualifiedTeams.thirdBest.length} / 32
           </Badge>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-blue-500" />
-          <span className="text-xs text-muted-foreground">1st & 2nd Place</span>
+          <span className="text-xs text-muted-foreground">{t.groupStage.firstSecondPlace}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-amber-500" />
-          <span className="text-xs text-muted-foreground">Best 3rd</span>
+          <span className="text-xs text-muted-foreground">{t.groupStage.bestThird}</span>
         </div>
       </div>
 
@@ -95,14 +98,14 @@ export function GroupStage({
                   <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
                     {groupName}
                   </span>
-                  Group {groupName}
+                  {t.common.groupLabel(groupName)}
                 </CardTitle>
                 <CardAction>
                   <ExportImageButton
                     getTarget={() => document.getElementById(`group-card-${groupName}`)}
-                    filename={`Group ${groupName}.png`}
-                    ariaLabel={`Screenshot group ${groupName}`}
-                    shareAriaLabel={`Share group ${groupName}`}
+                    filename={t.groupStage.groupFilename(groupName)}
+                    ariaLabel={t.groupStage.screenshotGroup(groupName)}
+                    shareAriaLabel={t.groupStage.shareGroup(groupName)}
                     showLabel={false}
                     icon={Camera}
                     size="icon-sm"
@@ -124,7 +127,7 @@ export function GroupStage({
 
                     {/* Matches */}
                     <div className="space-y-2 pt-2 border-t border-border">
-                      <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Matches</h4>
+                      <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t.groupStage.matches}</h4>
                       <div className="space-y-2">
                         {matches.map((match) => (
                           <MatchInput

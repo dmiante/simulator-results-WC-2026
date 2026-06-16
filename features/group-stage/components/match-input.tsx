@@ -1,12 +1,16 @@
 "use client"
 
 import { Input } from "@/components/ui/input"
+import { useLanguage } from "@/components/language-provider"
 import { cn } from "@/lib/utils"
+import { getVenueDisplayName } from "@/lib/i18n"
 import { MatchInputProps } from "../types"
 import { TeamFlag } from "@/components/team-flag"
 import { MatchDateTime } from "@/components/match-datetime"
 
 export function MatchInput({ match, team1, team2, onScoreChange, compact = false }: MatchInputProps) {
+  const { locale, messages: t } = useLanguage()
+
   const handleChange = (team: "team1" | "team2", value: string) => {
     const score = value === "" ? null : Math.max(0, Math.min(99, Number.parseInt(value) || 0))
     onScoreChange(match.id, team, score)
@@ -24,9 +28,9 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
   if (!team1 || !team2) {
     return (
       <div className="flex items-center justify-center gap-3 p-2 bg-muted/30 rounded-lg">
-        <span className="text-sm text-muted-foreground">TBD</span>
-        <span className="text-muted-foreground">vs</span>
-        <span className="text-sm text-muted-foreground">TBD</span>
+        <span className="text-sm text-muted-foreground">{t.common.tbd}</span>
+        <span className="text-muted-foreground">{t.common.vs}</span>
+        <span className="text-sm text-muted-foreground">{t.common.tbd}</span>
       </div>
     )
   }
@@ -107,7 +111,7 @@ export function MatchInput({ match, team1, team2, onScoreChange, compact = false
       {hasMatchInfo && !compact && (
         <div className="flex items-center justify-between px-2 text-xs text-muted-foreground/70">
           {match.dateTime && <MatchDateTime dateTime={match.dateTime} />}
-          {match.venue && <span className="truncate ml-2">{match.venue}</span>}
+          {match.venue && <span className="truncate ml-2">{getVenueDisplayName(match.venue, locale)}</span>}
         </div>
       )}
     </div>

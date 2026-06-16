@@ -4,9 +4,12 @@ import { cn } from "@/lib/utils"
 import { StandingsTableProps } from "../types"
 import { TeamFlag } from "@/components/team-flag"
 import { ConfederationBadge } from "@/components/confederation-badge"
+import { useTranslations } from "@/components/language-provider"
 
 
 export function StandingsTable({ standings, teamsMap, qualifiedTeams }: StandingsTableProps) {
+  const t = useTranslations()
+
   const getQualificationStatus = (teamId: string, position: number) => {
     if (qualifiedTeams.first.includes(teamId)) return "first"
     if (qualifiedTeams.second.includes(teamId)) return "second"
@@ -23,14 +26,14 @@ export function StandingsTable({ standings, teamsMap, qualifiedTeams }: Standing
         <table className="min-w-[360px] w-full text-sm">
           <thead>
             <tr className="text-xs text-muted-foreground border-b border-border">
-              <th className="text-center py-2 font-medium">#</th>
-              <th className="text-left py-2 font-medium">Team</th>
-              <th className="text-center py-2 font-medium">P</th>
-              <th className="text-center py-2 font-medium">W</th>
-              <th className="text-center py-2 font-medium">D</th>
-              <th className="text-center py-2 font-medium">L</th>
-              <th className="text-center py-2 font-medium">GD</th>
-              <th className="text-center py-2 font-medium">Pts</th>
+              <th className="text-center py-2 font-medium">{t.standings.rank}</th>
+              <th className="text-left py-2 font-medium">{t.standings.team}</th>
+              <th className="text-center py-2 font-medium">{t.standings.played}</th>
+              <th className="text-center py-2 font-medium">{t.standings.won}</th>
+              <th className="text-center py-2 font-medium">{t.standings.drawn}</th>
+              <th className="text-center py-2 font-medium">{t.standings.lost}</th>
+              <th className="text-center py-2 font-medium">{t.standings.goalDifference}</th>
+              <th className="text-center py-2 font-medium">{t.standings.points}</th>
             </tr>
           </thead>
           <tbody>
@@ -63,7 +66,7 @@ export function StandingsTable({ standings, teamsMap, qualifiedTeams }: Standing
                   </td>
                   <td className="py-2">
                     <div className="flex items-center gap-2">
-                      <TeamFlag code={team?.code || "xx"} name={team?.name || "Unknown"} />
+                      <TeamFlag code={team?.code || "xx"} name={team?.name || t.standings.unknown} />
                       <span className="font-medium text-foreground truncate max-w-[80px] sm:max-w-[100px]">{team?.name}</span>
                       {team?.confederation && <ConfederationBadge confederation={team.confederation} />}
                     </div>

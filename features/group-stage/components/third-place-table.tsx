@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 import { GroupStanding, Team } from "@/lib/types"
 import { TeamFlag } from "@/components/team-flag"
 import { ConfederationBadge } from "@/components/confederation-badge"
+import { useTranslations } from "@/components/language-provider"
 
 interface ThirdPlaceTableProps {
   ranking: {
@@ -17,6 +18,8 @@ interface ThirdPlaceTableProps {
 }
 
 export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
+  const t = useTranslations()
+
   // Verificar si ranking existe y tiene datos
   if (!ranking || !ranking.all || ranking.all.length === 0) {
     return (
@@ -26,14 +29,14 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
             <span className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-sm">
               3°
             </span>
-            Ranking de Terceros Lugares
+            {t.thirdPlaces.title}
           </h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Los mejores 8 terceros clasifican a la Ronda de 32
+            {t.thirdPlaces.description}
           </p>
         </div>
         <div className="p-8 text-center text-muted-foreground">
-          No hay datos disponibles aún. Ingresa resultados en los grupos.
+          {t.thirdPlaces.noData}
         </div>
       </div>
     )
@@ -51,7 +54,7 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
           <span className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-bold text-sm">
             3°
           </span>
-          Ranking Third Places
+           {t.thirdPlaces.title}
         </h3>
       </div>
 
@@ -60,17 +63,17 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
           <table className="w-full text-sm">
           <thead>
             <tr className="text-xs text-muted-foreground border-b border-border bg-muted/20">
-              <th className="text-center py-3 px-2 font-medium">#</th>
-              <th className="text-left py-3 px-2 font-medium">Team</th>
-              <th className="text-center py-3 px-2 font-medium">Group</th>
-              <th className="text-center py-3 px-2 font-medium">P</th>
-              <th className="text-center py-3 px-2 font-medium">W</th>
-              <th className="text-center py-3 px-2 font-medium">D</th>
-              <th className="text-center py-3 px-2 font-medium">L</th>
-              <th className="text-center py-3 px-2 font-medium">GF</th>
-              <th className="text-center py-3 px-2 font-medium">GC</th>
-              <th className="text-center py-3 px-2 font-medium">GD</th>
-              <th className="text-center py-3 px-2 font-medium">Pts</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.rank}</th>
+              <th className="text-left py-3 px-2 font-medium">{t.standings.team}</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.group}</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.played}</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.won}</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.drawn}</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.lost}</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.goalsFor}</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.goalsAgainst}</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.goalDifference}</th>
+              <th className="text-center py-3 px-2 font-medium">{t.standings.points}</th>
             </tr>
           </thead>
           <tbody>
@@ -102,7 +105,7 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
                   </td>
                   <td className="py-3 px-2">
                     <div className="flex items-center gap-2">
-                      <TeamFlag code={teamData?.code} name={teamData?.name || "Unknown"} />
+                      <TeamFlag code={teamData?.code} name={teamData?.name || t.standings.unknown} />
                       <span className="font-medium truncate">
                         {teamData?.name || team.teamId}
                       </span>
@@ -135,7 +138,7 @@ export function ThirdPlaceTable({ ranking, teamsMap }: ThirdPlaceTableProps) {
       <div className="p-3 border-t border-border flex flex-wrap gap-4 text-xs bg-muted/20">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-blue-500" />
-          <span className="text-muted-foreground">Clasificado (confirmado)</span>
+           <span className="text-muted-foreground">{t.thirdPlaces.qualifiedConfirmed}</span>
         </div>
       </div>
     </div>
