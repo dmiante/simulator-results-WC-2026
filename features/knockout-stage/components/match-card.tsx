@@ -1,3 +1,6 @@
+"use client"
+
+import { useTranslations } from "@/components/language-provider"
 import { TeamFlag } from "@/components/team-flag"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -35,6 +38,7 @@ export function MatchCard({
   predictionMode?: PredictionMode
   className?: string
 }) {
+  const t = useTranslations()
   const isTeam1TBD = !team1 || team1.name === "TBD"
   const isTeam2TBD = !team2 || team2.name === "TBD"
 
@@ -48,10 +52,10 @@ export function MatchCard({
 
   // Display text for teams - show resolved team if available, otherwise placeholder
   const team1Display = isTeam1TBD
-    ? (hasResolvedTeam1 ? resolvedTeam1.name : (placeholder1 || "TBD"))
+    ? (hasResolvedTeam1 ? resolvedTeam1.name : (placeholder1 || t.common.tbd))
     : team1.name
   const team2Display = isTeam2TBD
-    ? (hasResolvedTeam2 ? resolvedTeam2.name : (placeholder2 || "TBD"))
+    ? (hasResolvedTeam2 ? resolvedTeam2.name : (placeholder2 || t.common.tbd))
     : team2.name
 
   // Get team codes for penalty buttons
@@ -138,7 +142,7 @@ export function MatchCard({
           </div>
           <div className="flex shrink-0 items-center gap-1">
             {predictionMode === "positions" && selectedWinner === "team1" && (
-              <span className="hidden rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">Winner</span>
+              <span className="hidden rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">{t.common.winner}</span>
             )}
             {predictionMode === "match" && (
               <>
@@ -215,7 +219,7 @@ export function MatchCard({
           </div>
           <div className="flex shrink-0 items-center gap-1">
             {predictionMode === "positions" && selectedWinner === "team2" && (
-              <span className="hidden rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">Winner</span>
+              <span className="hidden rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">{t.common.winner}</span>
             )}
             {predictionMode === "match" && (
               <>
