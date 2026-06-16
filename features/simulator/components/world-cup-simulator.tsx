@@ -3,11 +3,13 @@
 import { useMemo } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, GitBranch, Swords } from "lucide-react"
+import { useLanguage } from "@/components/language-provider"
 import { GroupStage } from "@/features/group-stage/components/group-stage"
 import { KnockoutBracket } from "@/features/knockout-stage/components/knockout-bracket"
 import { TournamentHeader } from "@/components/layout/tournament-header"
 import { Footer } from "@/components/layout/footer"
 import { groups } from "@/db/tournament-data"
+import { getTeamDisplayName, localizeTeamsMap } from "@/lib/i18n"
 import { useTournament } from "../hooks/use-tournament"
 import { TournamentTab } from "../types"
 import ButtonSimulator from "./button-simulator"
@@ -16,6 +18,7 @@ import { usePlayoffs } from "@/features/playoffs-stage/hooks/use-playoffs"
 import { Team } from "@/lib/types"
 
 export function WorldCupSimulator() {
+  const { locale, messages: t } = useLanguage()
   // Playoffs state (determines which teams go to groups)
   const {
     playoffsState,
@@ -70,9 +73,11 @@ export function WorldCupSimulator() {
   const activeKnockoutThirdPlaceRanking = knockoutPredictionMode === "positions" ? positionThirdPlaceRanking : thirdPlaceRanking
   const activeGroupsComplete = knockoutPredictionMode === "positions" ? positionGroupsComplete : groupsComplete
 
+  const localizedBaseTeamsMap = useMemo(() => localizeTeamsMap(baseTeamsMap, locale), [baseTeamsMap, locale])
+
   // Create a dynamic teamsMap that replaces placeholders with playoff winners
   const teamsMap = useMemo(() => {
-    const map: Record<string, Team> = { ...baseTeamsMap }
+    const map: Record<string, Team> = { ...localizedBaseTeamsMap }
 
     // Map playoff slot IDs to their winner team data
     const playoffTeamsById: Record<string, Team> = {}
@@ -87,7 +92,7 @@ export function WorldCupSimulator() {
         // Update the placeholder entry with the winner's info
         map[slotId] = {
           id: slotId, // Keep the slot ID for group stage compatibility
-          name: winnerTeam.name,
+          name: getTeamDisplayName(winnerTeam, locale),
           code: winnerTeam.code,
           flag: winnerTeam.flag,
           confederation: winnerTeam.confederation,
@@ -96,7 +101,7 @@ export function WorldCupSimulator() {
     })
 
     return map
-  }, [baseTeamsMap, playoffsState.playoffTeams, playoffWinners])
+  }, [localizedBaseTeamsMap, locale, playoffsState.playoffTeams, playoffWinners])
 
   // Combined reset function
   const resetTournament = () => {
@@ -131,15 +136,15 @@ export function WorldCupSimulator() {
           <TabsList className="grid h-11 w-full max-w-xl grid-cols-3">
             <TabsTrigger value="playoffs" className="gap-2 text-xs sm:text-sm">
               <Swords className="h-4 w-4 hidden sm:inline" />
-              PlayOffs
+              {t.simulator.tabs.playoffs}
             </TabsTrigger>
             <TabsTrigger value="groups" className="gap-2 text-xs sm:text-sm">
               <Users className="h-4 w-4 hidden sm:inline" />
-              Group Stage
+              {t.simulator.tabs.groups}
             </TabsTrigger>
             <TabsTrigger value="knockout" className="gap-2 text-xs sm:text-sm">
               <GitBranch className="h-4 w-4 hidden sm:inline" />
-              Knockout
+              {t.simulator.tabs.knockout}
             </TabsTrigger>
           </TabsList>
 
