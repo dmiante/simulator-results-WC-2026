@@ -5,6 +5,7 @@ import { Check, Download, LoaderCircle, Share2, TriangleAlert } from "lucide-rea
 import { domToBlob, type Options } from "modern-screenshot"
 
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "@/components/language-provider"
 
 type ButtonProps = React.ComponentProps<typeof Button>
 
@@ -98,7 +99,7 @@ export function ExportImageButton({
   getTarget,
   getOptions,
   filename,
-  label = "Export Image",
+  label,
   shareLabel,
   ariaLabel,
   shareAriaLabel,
@@ -109,6 +110,7 @@ export function ExportImageButton({
   size,
   className,
 }: ExportImageButtonProps) {
+  const t = useTranslations()
   const [status, setStatus] = useState<ExportStatus>("idle")
   const [canShareFiles, setCanShareFiles] = useState(false)
   const [isMobileViewport, setIsMobileViewport] = useState(false)
@@ -206,19 +208,20 @@ export function ExportImageButton({
   }
 
   const shouldUseNativeShare = isMobileViewport && canShareFiles
-  const idleLabel = shouldUseNativeShare ? shareLabel ?? label : label
+  const defaultLabel = label ?? t.exportImage.exportImage
+  const idleLabel = shouldUseNativeShare ? shareLabel ?? defaultLabel : defaultLabel
   const idleAccessibleLabel = shouldUseNativeShare ? shareAriaLabel ?? idleLabel : ariaLabel ?? idleLabel
   const IdleIcon = shouldUseNativeShare ? ShareIcon ?? Share2 : Icon
 
   const buttonLabel =
     status === "exporting"
-      ? "Preparing..."
+      ? t.exportImage.preparing
       : status === "shared"
-        ? "Shared"
+        ? t.exportImage.shared
         : status === "downloaded"
-        ? "Downloaded"
+        ? t.exportImage.downloaded
         : status === "error"
-          ? "Try Again"
+          ? t.exportImage.tryAgain
           : idleLabel
 
   const accessibleLabel = status === "idle" ? idleAccessibleLabel : buttonLabel
