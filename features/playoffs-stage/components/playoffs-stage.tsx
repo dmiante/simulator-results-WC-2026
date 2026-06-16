@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useLanguage } from "@/components/language-provider"
 import { cn } from "@/lib/utils"
+import { formatPlayoffDate, getTeamDisplayName, getVenueDisplayName, Messages } from "@/lib/i18n"
 import { PlayoffMatch, UEFAPlayoffPath, ICPlayoffPath, PlayoffTeam } from "../types"
 import { usePlayoffs } from "../hooks/use-playoffs"
 import { Trophy, Calendar, MapPin } from "lucide-react"
@@ -18,9 +20,24 @@ interface PlayoffMatchCardProps {
   getTeam: (id: string | null) => PlayoffTeam | undefined
 }
 
+function getPlayoffSourceLabel(source: string | undefined, t: Messages) {
+  if (!source) return t.common.tbd
+
+  const semifinalWinner = source.match(/^Winner SF(\d)$/)
+  if (semifinalWinner) return t.playoffs.winnerSf(semifinalWinner[1])
+
+  const matchWinner = source.match(/^Winner Match (\d)$/)
+  if (matchWinner) return t.playoffs.winnerMatch(matchWinner[1])
+
+  return source
+}
+
 function PlayoffMatchCard({ match, getTeam }: PlayoffMatchCardProps) {
+  const { locale, messages: t } = useLanguage()
   const team1 = match.team1Id ? getTeam(match.team1Id) : null
   const team2 = match.team2Id ? getTeam(match.team2Id) : null
+  const team1Name = team1 ? getTeamDisplayName(team1, locale) : ""
+  const team2Name = team2 ? getTeamDisplayName(team2, locale) : ""
   const hasPenaltyScore = match.penaltyTeam1Score !== undefined && match.penaltyTeam2Score !== undefined
   const penaltyWinnerSide = match.penaltyWinnerId
     ? match.penaltyWinnerId === match.team1Id ? "team1" : "team2"
@@ -41,12 +58,12 @@ function PlayoffMatchCard({ match, getTeam }: PlayoffMatchCardProps) {
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
           <Calendar className="h-3 w-3" />
-          <span>{match.date}</span>
+          <span>{formatPlayoffDate(match.date, locale)}</span>
         </div>
         {match.venue && (
           <div className="flex items-center gap-1">
             <MapPin className="h-3 w-3" />
-            <span className="truncate max-w-[80px] sm:max-w-[120px]">{match.venue}</span>
+            <span className="truncate max-w-[80px] sm:max-w-[120px]">{getVenueDisplayName(match.venue, locale)}</span>
           </div>
         )}
       </div>
@@ -61,18 +78,18 @@ function PlayoffMatchCard({ match, getTeam }: PlayoffMatchCardProps) {
         )}>
           {team1 ? (
             <>
-              <TeamFlag code={team1.code} name={team1.name} />
+              <TeamFlag code={team1.code} name={team1Name} />
               <span className="hidden sm:inline"><ConfederationBadge confederation={team1.confederation} /></span>
               <span className={cn(
                 "text-sm truncate min-w-0",
                 winner === "team2" && !match.penaltyWinnerId && "text-muted-foreground"
               )}>
-                {team1.name}
+                {team1Name}
               </span>
             </>
           ) : (
             <span className="text-sm text-muted-foreground italic truncate">
-              {match.team1FromMatch || "TBD"}
+              {getPlayoffSourceLabel(match.team1FromMatch, t)}
             </span>
           )}
         </div>
@@ -124,14 +141,14 @@ function PlayoffMatchCard({ match, getTeam }: PlayoffMatchCardProps) {
                 "text-sm truncate min-w-0",
                 winner === "team1" && !match.penaltyWinnerId && "text-muted-foreground"
               )}>
-                {team2.name}
+                {team2Name}
               </span>
               <span className="hidden sm:inline"><ConfederationBadge confederation={team2.confederation} /></span>
-              <TeamFlag code={team2.code} name={team2.name} />
+              <TeamFlag code={team2.code} name={team2Name} />
             </>
           ) : (
             <span className="text-sm text-muted-foreground italic truncate">
-              {match.team2FromMatch || "TBD"}
+              {getPlayoffSourceLabel(match.team2FromMatch, t)}
             </span>
           )}
         </div>
@@ -158,7 +175,7 @@ function PlayoffMatchCard({ match, getTeam }: PlayoffMatchCardProps) {
             </div>
 
             <div className="flex items-center justify-center border-x border-border/60 bg-muted/60 px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Pen
+              {t.common.penalties}
             </div>
 
             <div
@@ -191,23 +208,25 @@ interface UEFAPathCardProps {
 }
 
 function UEFAPathCard({ path, getTeam, winner }: UEFAPathCardProps) {
+  const { locale, messages: t } = useLanguage()
   const winnerTeam = winner ? getTeam(winner) : null
+  const winnerTeamName = winnerTeam ? getTeamDisplayName(winnerTeam, locale) : ""
 
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="text-lg flex items-center gap-2">
-            <span>{path.name}</span>
+            <span>{t.playoffs.uefaPath(path.id)}</span>
             <Badge variant="outline" className="text-xs">
-              → Group {path.targetGroup}
+              {t.playoffs.pathToGroup(path.targetGroup)}
             </Badge>
           </CardTitle>
           {winnerTeam && (
             <Badge className="bg-green-500/20 text-green-600 border-green-500/30">
               <Trophy className="h-3 w-3 mr-1" />
-              <TeamFlag code={winnerTeam.code} name={winnerTeam.name} />
-              {winnerTeam.name}
+              <TeamFlag code={winnerTeam.code} name={winnerTeamName} />
+              {winnerTeamName}
             </Badge>
           )}
         </div>
@@ -216,7 +235,7 @@ function UEFAPathCard({ path, getTeam, winner }: UEFAPathCardProps) {
         {/* Semifinals */}
         <div className="space-y-2">
           <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Semifinals - March 26, 2026
+            {t.playoffs.semifinals(formatPlayoffDate(path.semifinal1.date, locale))}
           </h4>
           <div className="grid gap-2">
             <PlayoffMatchCard
@@ -233,7 +252,7 @@ function UEFAPathCard({ path, getTeam, winner }: UEFAPathCardProps) {
         {/* Final */}
         <div className="space-y-2">
           <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Final - March 31, 2026
+            {t.playoffs.final(formatPlayoffDate(path.final.date, locale))}
           </h4>
           <PlayoffMatchCard
             match={path.final}
@@ -252,22 +271,24 @@ interface ICPathCardProps {
 }
 
 function ICPathCard({ path, getTeam, winner }: ICPathCardProps) {
+  const { locale, messages: t } = useLanguage()
   const winnerTeam = winner ? getTeam(winner) : null
+  const winnerTeamName = winnerTeam ? getTeamDisplayName(winnerTeam, locale) : ""
 
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="text-lg flex items-center gap-2">
-            <span>{path.name}</span>
+            <span>{t.playoffs.icPath(path.id)}</span>
             <Badge variant="outline" className="text-xs">
-              → Group {path.targetGroup}
+              {t.playoffs.pathToGroup(path.targetGroup)}
             </Badge>
           </CardTitle>
           {winnerTeam && (
             <Badge className="bg-green-500/20 text-green-600 border-green-500/30">
               <Trophy className="h-3 w-3 mr-1" />
-              <TeamFlag code={winnerTeam.code} name={winnerTeam.name} /> {winnerTeam.code}
+              <TeamFlag code={winnerTeam.code} name={winnerTeamName} /> {winnerTeam.code}
             </Badge>
           )}
         </div>
@@ -276,7 +297,7 @@ function ICPathCard({ path, getTeam, winner }: ICPathCardProps) {
         {/* Semifinal */}
         <div className="space-y-2">
           <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Semifinal - March 26, 2026
+            {t.playoffs.semifinal(formatPlayoffDate(path.semifinal.date, locale))}
           </h4>
           <PlayoffMatchCard
             match={path.semifinal}
@@ -287,7 +308,7 @@ function ICPathCard({ path, getTeam, winner }: ICPathCardProps) {
         {/* Final */}
         <div className="space-y-2">
           <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Final - March 31, 2026
+            {t.playoffs.final(formatPlayoffDate(path.final.date, locale))}
           </h4>
           <PlayoffMatchCard
             match={path.final}
@@ -306,6 +327,7 @@ interface PlayoffsStageProps {
 export function PlayoffsStage({
   playoffsState: externalState
 }: PlayoffsStageProps = {}) {
+  const { locale, messages: t } = useLanguage()
   const { playoffsState: internalState } = usePlayoffs()
 
   // Use external state/handlers if provided, otherwise use internal hook
@@ -321,28 +343,28 @@ export function PlayoffsStage({
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-xl sm:text-2xl font-bold">Qualification Playoffs</h2>
+        <h2 className="text-xl sm:text-2xl font-bold">{t.playoffs.title}</h2>
         <p className="text-muted-foreground">
-          March 26-31, 2026 • Determine the final 6 teams for the World Cup
+          {t.playoffs.description}
         </p>
       </div>
 
       <Tabs defaultValue="uefa" className="w-full">
         <TabsList className="mb-4 grid h-11 w-full grid-cols-2">
           <TabsTrigger value="uefa">
-            <span className="sm:hidden">UEFA (4)</span>
-            <span className="hidden sm:inline">UEFA Playoffs (4 spots)</span>
+            <span className="sm:hidden">{t.playoffs.uefaShort}</span>
+            <span className="hidden sm:inline">{t.playoffs.uefaLong}</span>
           </TabsTrigger>
           <TabsTrigger value="ic">
-            <span className="sm:hidden">IC Playoffs (2)</span>
-            <span className="hidden sm:inline">Inter-Confederation (2 spots)</span>
+            <span className="sm:hidden">{t.playoffs.icShort}</span>
+            <span className="hidden sm:inline">{t.playoffs.icLong}</span>
           </TabsTrigger>
         </TabsList>
 
         {/* UEFA Playoffs */}
         <TabsContent value="uefa" className="space-y-4">
           <div className="text-sm text-muted-foreground text-center mb-4">
-            16 teams compete in 4 paths • Winners qualify for the World Cup
+            {t.playoffs.uefaDescription}
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             {uefaPaths.map((path) => (
@@ -359,7 +381,7 @@ export function PlayoffsStage({
         {/* Inter-Confederation Playoffs */}
         <TabsContent value="ic" className="space-y-4">
           <div className="text-sm text-muted-foreground text-center mb-4">
-            6 teams compete in 2 paths in Mexico • Winners qualify for the World Cup
+            {t.playoffs.icDescription}
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             {icPaths.map((path) => (
@@ -377,7 +399,7 @@ export function PlayoffsStage({
       {/* Winners Summary */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Qualified Teams Summary</CardTitle>
+          <CardTitle className="text-lg">{t.playoffs.qualifiedSummary}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -395,18 +417,18 @@ export function PlayoffsStage({
                   )}
                 >
                   <div className="text-xs text-muted-foreground mb-4">
-                    {isUefa ? `UEFA Path ${pathLetter.toUpperCase()}` : `IC Path ${pathLetter}`}
+                    {isUefa ? t.playoffs.uefaPath(pathLetter.toUpperCase()) : t.playoffs.icPath(pathLetter)}
                   </div>
                   {winnerTeam ? (
                     <div className="flex flex-col items-center gap-2">
-                      <TeamFlag code={winnerTeam.code} name={winnerTeam.name} />
-                      <div className="text-sm font-medium">{winnerTeam.name}</div>
+                      <TeamFlag code={winnerTeam.code} name={getTeamDisplayName(winnerTeam, locale)} />
+                      <div className="text-sm font-medium">{getTeamDisplayName(winnerTeam, locale)}</div>
                       <ConfederationBadge confederation={winnerTeam.confederation} />
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-2">
-                      <Image src="/fifa_flag.svg" alt="TBD" width={30} height={30} unoptimized />
-                      <div className="text-sm text-muted-foreground">TBD</div>
+                      <Image src="/fifa_flag.svg" alt={t.common.tbd} width={30} height={30} unoptimized />
+                      <div className="text-sm text-muted-foreground">{t.common.tbd}</div>
                     </div>
                   )}
                 </div>
