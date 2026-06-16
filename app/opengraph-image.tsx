@@ -1,10 +1,16 @@
 import { ImageResponse } from "next/og"
 
-export const alt = "FIFA World Cup 2026 Simulator"
+import { messages } from "@/lib/i18n"
+import { getServerLocale } from "@/lib/i18n-server"
+
+export const alt = "FIFA World Cup 2026 Simulator / Simulador"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
-export default function Image() {
+export default async function Image() {
+  const locale = await getServerLocale()
+  const t = messages[locale]
+
   return new ImageResponse(
     (
       <div
@@ -42,7 +48,7 @@ export default function Image() {
             display: "flex",
           }}
         >
-          FIFA World Cup 2026
+          {t.header.title}
         </div>
 
         {/* Subtitle */}
@@ -55,7 +61,7 @@ export default function Image() {
             display: "flex",
           }}
         >
-          Tournament Simulator
+          {t.simulator.title}
         </div>
 
         {/* Host countries */}
@@ -69,11 +75,11 @@ export default function Image() {
             alignItems: "center",
           }}
         >
-          <span>🇺🇸 United States</span>
+          <span>{locale === "es" ? "🇺🇸 Estados Unidos" : "🇺🇸 United States"}</span>
           <span style={{ opacity: 0.5 }}>•</span>
-          <span>🇲🇽 Mexico</span>
+          <span>{locale === "es" ? "🇲🇽 México" : "🇲🇽 Mexico"}</span>
           <span style={{ opacity: 0.5 }}>•</span>
-          <span>🇨🇦 Canada</span>
+          <span>{locale === "es" ? "🇨🇦 Canadá" : "🇨🇦 Canada"}</span>
         </div>
 
         {/* Stats bar */}
@@ -96,7 +102,7 @@ export default function Image() {
             }}
           >
             <span style={{ fontSize: 28, fontWeight: 700 }}>48</span>
-            <span style={{ fontSize: 14, color: "#93c5fd" }}>Teams</span>
+            <span style={{ fontSize: 14, color: "#93c5fd" }}>{t.common.teams}</span>
           </div>
           <div
             style={{
@@ -107,7 +113,7 @@ export default function Image() {
             }}
           >
             <span style={{ fontSize: 28, fontWeight: 700 }}>12</span>
-            <span style={{ fontSize: 14, color: "#93c5fd" }}>Groups</span>
+            <span style={{ fontSize: 14, color: "#93c5fd" }}>{t.common.groups}</span>
           </div>
           <div
             style={{
@@ -118,7 +124,7 @@ export default function Image() {
             }}
           >
             <span style={{ fontSize: 28, fontWeight: 700 }}>104</span>
-            <span style={{ fontSize: 14, color: "#93c5fd" }}>Matches</span>
+            <span style={{ fontSize: 14, color: "#93c5fd" }}>{t.common.matches}</span>
           </div>
         </div>
       </div>
