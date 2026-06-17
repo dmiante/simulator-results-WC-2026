@@ -2,10 +2,11 @@
 
 import { useMemo } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, GitBranch, Swords } from "lucide-react"
+import { ClipboardList, Users, GitBranch, Swords } from "lucide-react"
 import { useLanguage } from "@/components/language-provider"
 import { GroupStage } from "@/features/group-stage/components/group-stage"
 import { KnockoutBracket } from "@/features/knockout-stage/components/knockout-bracket"
+import { SquadsSection } from "@/features/squads/components/squads-section"
 import { TournamentHeader } from "@/components/layout/tournament-header"
 import { Footer } from "@/components/layout/footer"
 import { groups } from "@/db/tournament-data"
@@ -114,7 +115,7 @@ export function WorldCupSimulator() {
   }
 
   const handleTabChange = (value: string) => {
-    if (value === "playoffs" || value === "groups" || value === "knockout") {
+    if (value === "playoffs" || value === "groups" || value === "squads" || value === "knockout") {
       setActiveTab(value as TournamentTab)
     }
   }
@@ -133,7 +134,7 @@ export function WorldCupSimulator() {
           groupsComplete={groupsComplete}
         />
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid h-11 w-full max-w-xl grid-cols-3">
+          <TabsList className="grid h-11 w-full max-w-3xl grid-cols-4">
             <TabsTrigger value="playoffs" className="gap-2 text-xs sm:text-sm">
               <Swords className="h-4 w-4 hidden sm:inline" />
               {t.simulator.tabs.playoffs}
@@ -141,6 +142,10 @@ export function WorldCupSimulator() {
             <TabsTrigger value="groups" className="gap-2 text-xs sm:text-sm">
               <Users className="h-4 w-4 hidden sm:inline" />
               {t.simulator.tabs.groups}
+            </TabsTrigger>
+            <TabsTrigger value="squads" className="gap-2 text-xs sm:text-sm">
+              <ClipboardList className="h-4 w-4 hidden sm:inline" />
+              {t.simulator.tabs.squads}
             </TabsTrigger>
             <TabsTrigger value="knockout" className="gap-2 text-xs sm:text-sm">
               <GitBranch className="h-4 w-4 hidden sm:inline" />
@@ -172,6 +177,10 @@ export function WorldCupSimulator() {
               onGroupPositionsChange={handleGroupPositionsChange}
               onThirdPlaceGroupOrderChange={handleThirdPlaceGroupOrderChange}
             />
+          </TabsContent>
+
+          <TabsContent value="squads" className="mt-6">
+            <SquadsSection groups={groups} teamsMap={teamsMap} playoffWinners={playoffWinners} />
           </TabsContent>
 
           <TabsContent value="knockout" className="mt-6">

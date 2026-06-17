@@ -1,6 +1,6 @@
 import { Match } from "@/lib/types"
 
-export type TournamentTab = "playoffs" | "groups" | "knockout"
+export type TournamentTab = "playoffs" | "groups" | "squads" | "knockout"
 
 export interface TournamentSimulatorProps {
   simulateTournament: () => void

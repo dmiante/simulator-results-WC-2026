@@ -95,6 +95,7 @@ const en = {
     tabs: {
       playoffs: "PlayOffs",
       groups: "Group Stage",
+      squads: "Squads",
       knockout: "Knockout",
     },
   },
@@ -116,6 +117,22 @@ const en = {
     screenshotGroup: (groupName: string) => `Screenshot group ${groupName}`,
     shareGroup: (groupName: string) => `Share group ${groupName}`,
     groupFilename: (groupName: string) => `Group ${groupName}.png`,
+  },
+  squads: {
+    title: "Official Squads",
+    description:
+      "Initial structure to load the squads for every team in the group stage. Example data can be replaced once you share an official source.",
+    teamsBadge: "48 teams",
+    groupDescription: "Squads for the 4 teams in this group",
+    pendingOfficialSource: "Squad pending official source.",
+    clubPending: "Club to be confirmed",
+    tbd: "TBD",
+    positions: {
+      goalkeeper: "Goalkeepers",
+      defender: "Defenders",
+      midfielder: "Midfielders",
+      forward: "Forwards",
+    },
   },
   standings: {
     rank: "#",
@@ -277,6 +294,7 @@ const es: Messages = {
     tabs: {
       playoffs: "Repechajes",
       groups: "Fase de grupos",
+      squads: "Plantillas",
       knockout: "Eliminatorias",
     },
   },
@@ -298,6 +316,22 @@ const es: Messages = {
     screenshotGroup: (groupName: string) => `Capturar grupo ${groupName}`,
     shareGroup: (groupName: string) => `Compartir grupo ${groupName}`,
     groupFilename: (groupName: string) => `Grupo ${groupName}.png`,
+  },
+  squads: {
+    title: "Plantillas oficiales",
+    description:
+      "Estructura inicial para cargar las plantillas de las selecciones clasificadas a la fase de grupos. Los datos de ejemplo se pueden reemplazar cuando compartas una fuente oficial.",
+    teamsBadge: "48 selecciones",
+    groupDescription: "Plantillas de las 4 selecciones del grupo",
+    pendingOfficialSource: "Plantilla pendiente de fuente oficial.",
+    clubPending: "Club por confirmar",
+    tbd: "Por definir",
+    positions: {
+      goalkeeper: "Porteros",
+      defender: "Defensas",
+      midfielder: "Mediocampistas",
+      forward: "Delanteros",
+    },
   },
   standings: {
     rank: "#",
