@@ -135,6 +135,10 @@ export function WorldCupSimulator() {
         />
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
           <TabsList className="grid h-11 w-full max-w-3xl grid-cols-4">
+            <TabsTrigger value="squads" className="gap-2 text-xs sm:text-sm">
+              <ClipboardList className="h-4 w-4 hidden sm:inline" />
+              {t.simulator.tabs.squads}
+            </TabsTrigger>
             <TabsTrigger value="playoffs" className="gap-2 text-xs sm:text-sm">
               <Swords className="h-4 w-4 hidden sm:inline" />
               {t.simulator.tabs.playoffs}
@@ -142,10 +146,6 @@ export function WorldCupSimulator() {
             <TabsTrigger value="groups" className="gap-2 text-xs sm:text-sm">
               <Users className="h-4 w-4 hidden sm:inline" />
               {t.simulator.tabs.groups}
-            </TabsTrigger>
-            <TabsTrigger value="squads" className="gap-2 text-xs sm:text-sm">
-              <ClipboardList className="h-4 w-4 hidden sm:inline" />
-              {t.simulator.tabs.squads}
             </TabsTrigger>
             <TabsTrigger value="knockout" className="gap-2 text-xs sm:text-sm">
               <GitBranch className="h-4 w-4 hidden sm:inline" />
