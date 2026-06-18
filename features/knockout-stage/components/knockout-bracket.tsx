@@ -149,7 +149,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Left R32 */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
+                <div className="mb-3 flex h-8 items-center justify-center text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {t.knockout.round32}
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>
@@ -183,7 +183,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Left R16 */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
+                <div className="mb-3 flex h-8 items-center justify-center text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {t.knockout.round16}
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r16Gap}px`, paddingTop: `${r16Offset}px` }}>
@@ -219,10 +219,10 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Left QF */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
+                <div className="mb-3 flex h-8 items-center justify-center text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {t.knockout.quarterFinals}
                 </div>
-                <div className="flex flex-col" style={{ gap: `${qfGap + 80}px`, paddingTop: `${qfOffset}px` }}>
+                <div className="flex flex-col" style={{ gap: `${qfGap + 95}px`, paddingTop: `${qfOffset}px` }}>
                   {leftQF.map((match) => {
                     const placeholders = getMatchPlaceholders(match)
                     return (
@@ -247,15 +247,15 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               <div style={{ paddingTop: `${qfOffset + headerHeight}px` }}>
                 <BracketConnector
                   matchCount={2}
-                  matchHeight={matchHeight}
-                  gap={qfGap + 80}
+                  matchHeight={matchHeight - 18}
+                  gap={qfGap + 120}
                   connectorWidth={connectorWidth}
                 />
               </div>
 
               {/* Left SF */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
+                <div className="mb-3 flex h-8 items-center justify-center text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {t.knockout.semiFinals}
                 </div>
                 <div style={{ paddingTop: `${sfOffset + 40}px` }}>
@@ -281,7 +281,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Connector SF -> Final (left) */}
               <div style={{ paddingTop: `${headerHeight + sfOffset + 40}px` }}>
-                <svg width={connectorWidth} height={matchHeight} className="shrink-0">
+                <svg width={connectorWidth} height={matchHeight} className="block shrink-0 overflow-visible">
                   <line
                     x1={0}
                     y1={matchHeight / 2}
@@ -295,7 +295,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* CENTER - Final & 3rd Place */}
               <div className="flex flex-col items-center">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
+                <div className="mb-3 flex h-8 items-center justify-center text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {t.knockout.final}
                 </div>
                 <div className="flex flex-col items-center gap-8" style={{ paddingTop: `${sfOffset - 230}px` }}>
@@ -358,7 +358,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Connector Final -> SF (right) */}
               <div style={{ paddingTop: `${headerHeight + sfOffset + 40}px` }}>
-                <svg width={connectorWidth} height={matchHeight} className="shrink-0">
+                <svg width={connectorWidth} height={matchHeight} className="block shrink-0 overflow-visible">
                   <line
                     x1={0}
                     y1={matchHeight / 2}
@@ -372,7 +372,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Right SF */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
+                <div className="mb-3 flex h-8 items-center justify-center text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {t.knockout.semiFinals}
                 </div>
                 <div style={{ paddingTop: `${sfOffset + 40}px` }}>
@@ -400,8 +400,8 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
               <div style={{ paddingTop: `${qfOffset + headerHeight}px` }}>
                 <BracketConnector
                   matchCount={2}
-                  matchHeight={matchHeight}
-                  gap={qfGap + 80}
+                  matchHeight={matchHeight - 18}
+                  gap={qfGap + 120}
                   connectorWidth={connectorWidth}
                   direction="left"
                 />
@@ -409,10 +409,10 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Right QF */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
+                <div className="mb-3 flex h-8 items-center justify-center text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {t.knockout.quarterFinals}
                 </div>
-                <div className="flex flex-col" style={{ gap: `${qfGap + 80}px`, paddingTop: `${qfOffset}px` }}>
+                <div className="flex flex-col" style={{ gap: `${qfGap + 95}px`, paddingTop: `${qfOffset}px` }}>
                   {rightQF.map((match) => {
                     const placeholders = getMatchPlaceholders(match)
                     return (
@@ -446,7 +446,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Right R16 */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
+                <div className="mb-3 flex h-8 items-center justify-center text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {t.knockout.round16}
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r16Gap}px`, paddingTop: `${r16Offset}px` }}>
@@ -483,7 +483,7 @@ export function KnockoutBracket({ matches, setMatches, teamsMap, onScoreChange, 
 
               {/* Right R32 */}
               <div className="flex flex-col">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-3 py-2">
+                <div className="mb-3 flex h-8 items-center justify-center text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {t.knockout.round32}
                 </div>
                 <div className="flex flex-col" style={{ gap: `${r32Gap}px` }}>

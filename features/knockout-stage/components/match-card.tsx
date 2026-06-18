@@ -94,7 +94,7 @@ export function MatchCard({
   return (
     <div
       className={cn(
-        "rounded-lg border-2 overflow-hidden transition-all w-[270px] min-h-[95px]",
+        "rounded-lg border-2 overflow-hidden transition-all w-[270px] min-h-[95px] xl:h-[96px] xl:min-h-[96px]",
         "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600",
         isFinal && "border-amber-500/70 dark:border-amber-500/50 shadow-lg shadow-amber-500/20",
         isThirdPlace && "border-orange-500/50 dark:border-orange-500/40",
@@ -142,7 +142,7 @@ export function MatchCard({
           </div>
           <div className="flex shrink-0 items-center gap-1">
             {predictionMode === "positions" && selectedWinner === "team1" && (
-              <span className="hidden rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">{t.common.winner}</span>
+              <span className="hidden whitespace-nowrap rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">{t.common.winner}</span>
             )}
             {predictionMode === "match" && (
               <>
@@ -219,7 +219,7 @@ export function MatchCard({
           </div>
           <div className="flex shrink-0 items-center gap-1">
             {predictionMode === "positions" && selectedWinner === "team2" && (
-              <span className="hidden rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">{t.common.winner}</span>
+              <span className="hidden whitespace-nowrap rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white sm:inline-flex">{t.common.winner}</span>
             )}
             {predictionMode === "match" && (
               <>

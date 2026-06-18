@@ -43,7 +43,7 @@ export function BracketConnector({
   const totalHeight = matchCount * (matchHeight + gap) - gap
 
   return (
-    <svg width={connectorWidth} height={totalHeight} className="shrink-0">
+    <svg width={connectorWidth} height={totalHeight} className="block shrink-0 overflow-visible">
       {paths}
     </svg>
   )

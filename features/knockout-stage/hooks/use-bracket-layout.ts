@@ -5,7 +5,7 @@ import { resolveQualifiedTeam } from "../utils/bracket-utils"
 
 // Layout constants for the bracket
 export const BRACKET_LAYOUT = {
-  matchHeight: 95,
+  matchHeight: 96,
   r32Gap: 16,
   connectorWidth: 50,
   // Height of the round header (text-xs py-2 = 32px + mb-3 = 12px = 44px)
