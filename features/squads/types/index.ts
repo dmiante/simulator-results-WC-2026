@@ -12,6 +12,8 @@ export interface SquadPlayer {
 export interface TeamSquad {
   teamId: string
   source?: string
+  sourceUrl?: string
+  announcementUrl?: string
   lastUpdated?: string
   players: SquadPlayer[]
 }
