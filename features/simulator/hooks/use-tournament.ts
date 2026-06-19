@@ -511,6 +511,31 @@ function generateEmptyKnockoutBracket(): Match[] {
   ]
 }
 
+function mergePositionKnockoutSeed(prev: Match[], round32Matches: Match[]): Match[] {
+  const prevById = new Map(prev.map((match) => [match.id, match]))
+  const mergedRound32 = round32Matches.map((match) => {
+    const previous = prevById.get(match.id)
+    if (!previous) return match
+
+    const winnerId = previous.winnerId === match.team1Id || previous.winnerId === match.team2Id
+      ? previous.winnerId
+      : undefined
+
+    return {
+      ...previous,
+      team1Id: match.team1Id,
+      team2Id: match.team2Id,
+      winnerId,
+    }
+  })
+
+  const laterRounds = generateEmptyKnockoutBracket()
+    .filter((match) => match.stage !== "round32")
+    .map((match) => prevById.get(match.id) ?? match)
+
+  return [...mergedRound32, ...laterRounds]
+}
+
 function buildPositionStandings(groupPositions: Record<string, string[]>): Record<string, GroupStanding[]> {
   const standings: Record<string, GroupStanding[]> = {}
 
@@ -952,6 +977,8 @@ export function useTournament() {
   }
 
   useEffect(() => {
+    if (!isHydrated) return
+
     const { firstByGroup, secondByGroup, thirdPlaceTeams } = positionQualifiedTeams
     if (firstByGroup.size !== 12 || secondByGroup.size !== 12 || thirdPlaceTeams.length !== 8) return
 
@@ -967,11 +994,10 @@ export function useTournament() {
         const currentSeed = currentRound32.map((match) => `${match.id}:${match.team1Id}:${match.team2Id}`).join("|")
         if (currentSeed === nextSeed) return prev
 
-        const emptyLaterRounds = generateEmptyKnockoutBracket().filter((match) => match.stage !== "round32")
-        return [...round32Matches, ...emptyLaterRounds]
+        return mergePositionKnockoutSeed(prev, round32Matches)
       })
     })
-  }, [positionQualifiedTeams])
+  }, [positionQualifiedTeams, isHydrated])
 
 const resetTournament = () => {
     localStorage.removeItem(STORAGE_KEY_GROUP)
