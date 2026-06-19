@@ -392,7 +392,7 @@ function loadStoredGroupMatches(): Match[] | null {
 
     return parsed.map((match) => {
       const fresh = freshById.get(match.id)
-      if (fresh && !match.dateTime) {
+      if (fresh && match.dateTime !== fresh.dateTime) {
         return { ...match, dateTime: fresh.dateTime, venue: fresh.venue }
       }
 

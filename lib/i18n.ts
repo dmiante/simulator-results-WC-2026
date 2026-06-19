@@ -587,7 +587,7 @@ export function getVenueDisplayName(venue: string, locale: Locale): string {
   return venue
 }
 
-export function formatDateTime(dateTime: string, locale: Locale): string | null {
+export function formatDateTime(dateTime: string, locale: Locale, timeZone?: string): string | null {
   const date = new Date(dateTime)
   if (Number.isNaN(date.getTime())) return null
 
@@ -596,6 +596,8 @@ export function formatDateTime(dateTime: string, locale: Locale): string | null 
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
+    timeZone,
+    timeZoneName: "short",
   }).format(date)
 }
 

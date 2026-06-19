@@ -111,9 +111,9 @@ export const officialMatches: Array<{
   // QAT vs SUI: 12:00 PM (UTC-7) = 19:00 UTC
   { team1Id: "qat", team2Id: "sui", group: "B", matchNumber: 8, venue: "Santa Clara, Levi's Stadium", dateTime: "2026-06-13T19:00:00Z" },
   // CIV vs ECU: 7:00 PM (UTC-4) = 23:00 UTC
-  { team1Id: "civ", team2Id: "ecu", group: "E", matchNumber: 9, venue: "Philadelphia, Lincoln Financial Field", dateTime: "2026-06-13T23:00:00Z" },
+  { team1Id: "civ", team2Id: "ecu", group: "E", matchNumber: 9, venue: "Philadelphia, Lincoln Financial Field", dateTime: "2026-06-14T23:00:00Z" },
   // GER vs CUR: 12:00 PM (UTC-5) = 17:00 UTC
-  { team1Id: "ger", team2Id: "cur", group: "E", matchNumber: 10, venue: "Houston, NRG Stadium", dateTime: "2026-06-13T17:00:00Z" },
+  { team1Id: "ger", team2Id: "cur", group: "E", matchNumber: 10, venue: "Houston, NRG Stadium", dateTime: "2026-06-14T17:00:00Z" },
 
   // June 14 - Groups F, G, H
   // NED vs JPN: 3:00 PM (UTC-5) = 20:00 UTC
@@ -121,19 +121,19 @@ export const officialMatches: Array<{
   // UEFA B vs TUN: 8:00 PM (UTC-6) = 02:00 UTC+1
   { team1Id: "uefab", team2Id: "tun", group: "F", matchNumber: 12, venue: "Guadalupe, Estadio BBVA", dateTime: "2026-06-15T02:00:00Z" },
   // SAU vs URU: 6:00 PM (UTC-4) = 22:00 UTC
-  { team1Id: "sau", team2Id: "uru", group: "H", matchNumber: 13, venue: "Miami Gardens, Hard Rock Stadium", dateTime: "2026-06-14T22:00:00Z" },
+  { team1Id: "sau", team2Id: "uru", group: "H", matchNumber: 13, venue: "Miami Gardens, Hard Rock Stadium", dateTime: "2026-06-15T22:00:00Z" },
   // ESP vs CPV: 12:00 PM (UTC-4) = 16:00 UTC
-  { team1Id: "esp", team2Id: "cpv", group: "H", matchNumber: 14, venue: "Atlanta, Mercedes-Benz Stadium", dateTime: "2026-06-14T16:00:00Z" },
+  { team1Id: "esp", team2Id: "cpv", group: "H", matchNumber: 14, venue: "Atlanta, Mercedes-Benz Stadium", dateTime: "2026-06-15T16:00:00Z" },
   // IRN vs NZL: 6:00 PM (UTC-7) = 01:00 UTC+1
-  { team1Id: "irn", team2Id: "nzl", group: "G", matchNumber: 15, venue: "Inglewood, SoFi Stadium", dateTime: "2026-06-15T01:00:00Z" },
+  { team1Id: "irn", team2Id: "nzl", group: "G", matchNumber: 15, venue: "Inglewood, SoFi Stadium", dateTime: "2026-06-16T01:00:00Z" },
   // BEL vs EGY: 12:00 PM (UTC-7) = 19:00 UTC
-  { team1Id: "bel", team2Id: "egy", group: "G", matchNumber: 16, venue: "Seattle, Lumen Field", dateTime: "2026-06-14T19:00:00Z" },
+  { team1Id: "bel", team2Id: "egy", group: "G", matchNumber: 16, venue: "Seattle, Lumen Field", dateTime: "2026-06-15T19:00:00Z" },
 
   // June 15 - Groups H, I, J
   // FRA vs SEN: 3:00 PM (UTC-4) = 19:00 UTC
-  { team1Id: "fra", team2Id: "sen", group: "I", matchNumber: 17, venue: "East Rutherford, MetLife Stadium", dateTime: "2026-06-15T19:00:00Z" },
+  { team1Id: "fra", team2Id: "sen", group: "I", matchNumber: 17, venue: "East Rutherford, MetLife Stadium", dateTime: "2026-06-16T19:00:00Z" },
   // ICP2 vs NOR: 6:00 PM (UTC-4) = 22:00 UTC
-  { team1Id: "icp2", team2Id: "nor", group: "I", matchNumber: 18, venue: "Foxborough, Gillette Stadium", dateTime: "2026-06-15T22:00:00Z" },
+  { team1Id: "icp2", team2Id: "nor", group: "I", matchNumber: 18, venue: "Foxborough, Gillette Stadium", dateTime: "2026-06-16T22:00:00Z" },
 
   // June 16 - Groups I, J
   // ARG vs ALG: 8:00 PM (UTC-5) = 01:00 UTC+1
@@ -141,9 +141,9 @@ export const officialMatches: Array<{
   // AUT vs JOR: 9:00 PM (UTC-7) = 04:00 UTC+1
   { team1Id: "aut", team2Id: "jor", group: "J", matchNumber: 20, venue: "Santa Clara, Levi's Stadium", dateTime: "2026-06-17T04:00:00Z" },
   // GHA vs PAN: 7:00 PM (UTC-4) = 23:00 UTC
-  { team1Id: "gha", team2Id: "pan", group: "L", matchNumber: 21, venue: "Toronto, BMO Field", dateTime: "2026-06-16T23:00:00Z" },
+  { team1Id: "gha", team2Id: "pan", group: "L", matchNumber: 21, venue: "Toronto, BMO Field", dateTime: "2026-06-17T23:00:00Z" },
   // ENG vs CRO: 3:00 PM (UTC-5) = 20:00 UTC
-  { team1Id: "eng", team2Id: "cro", group: "L", matchNumber: 22, venue: "Arlington, AT&T Stadium", dateTime: "2026-06-16T20:00:00Z" },
+  { team1Id: "eng", team2Id: "cro", group: "L", matchNumber: 22, venue: "Arlington, AT&T Stadium", dateTime: "2026-06-17T20:00:00Z" },
 
   // June 17 - Groups K, L
   // POR vs ICP1: 12:00 PM (UTC-5) = 17:00 UTC
@@ -164,12 +164,12 @@ export const officialMatches: Array<{
   { team1Id: "mex", team2Id: "kor", group: "A", matchNumber: 28, venue: "Zapopan, Estadio Akron", dateTime: "2026-06-19T01:00:00Z" },
 
   // June 19 - Groups C, D
-  // BRA vs HAI: 9:00 PM (UTC-4) = 01:00 UTC+1
-  { team1Id: "bra", team2Id: "hai", group: "C", matchNumber: 29, venue: "Philadelphia, Lincoln Financial Field", dateTime: "2026-06-20T01:00:00Z" },
+  // BRA vs HAI: 8:30 PM (UTC-4) = 00:30 UTC
+  { team1Id: "bra", team2Id: "hai", group: "C", matchNumber: 29, venue: "Philadelphia, Lincoln Financial Field", dateTime: "2026-06-20T00:30:00Z" },
   // SCO vs MAR: 6:00 PM (UTC-4) = 22:00 UTC
   { team1Id: "sco", team2Id: "mar", group: "C", matchNumber: 30, venue: "Foxborough, Gillette Stadium", dateTime: "2026-06-19T22:00:00Z" },
-  // UEFA C vs PAR: 9:00 PM (UTC-7) = 04:00 UTC+1
-  { team1Id: "uefac", team2Id: "par", group: "D", matchNumber: 31, venue: "Santa Clara, Levi's Stadium", dateTime: "2026-06-20T04:00:00Z" },
+  // UEFA C vs PAR: 8:00 PM (UTC-7) = 03:00 UTC
+  { team1Id: "uefac", team2Id: "par", group: "D", matchNumber: 31, venue: "Santa Clara, Levi's Stadium", dateTime: "2026-06-20T03:00:00Z" },
   // USA vs AUS: 12:00 PM (UTC-7) = 19:00 UTC
   { team1Id: "usa", team2Id: "aus", group: "D", matchNumber: 32, venue: "Seattle, Lumen Field", dateTime: "2026-06-19T19:00:00Z" },
 

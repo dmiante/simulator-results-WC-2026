@@ -16,6 +16,10 @@ interface MatchDateTimeProps {
  */
 const subscribe = () => () => {}
 
+function getUserTimeZone(): string {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone
+}
+
 export function MatchDateTime({ dateTime, className }: MatchDateTimeProps) {
   const isHydrated = useSyncExternalStore(subscribe, () => true, () => false)
   const { locale } = useLanguage()
@@ -23,7 +27,7 @@ export function MatchDateTime({ dateTime, className }: MatchDateTimeProps) {
   const display = useMemo(() => {
     if (!isHydrated) return null
 
-    return formatDateTime(dateTime, locale)
+    return formatDateTime(dateTime, locale, getUserTimeZone())
   }, [dateTime, isHydrated, locale])
 
   // SSR/initial render: show placeholder to avoid hydration mismatch
