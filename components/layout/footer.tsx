@@ -12,7 +12,7 @@ export function Footer() {
       <div className="container mx-auto flex flex-col items-center justify-between gap-3 px-4 py-5 text-sm text-muted-foreground sm:flex-row">
         <p>{t.footer.title}</p>
         <a
-          href="https://github.com/dmiante"
+          href="https://github.com/dmiante/simulator-results-WC-2026"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 font-medium text-foreground transition-colors hover:text-primary"
